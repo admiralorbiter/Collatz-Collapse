@@ -1,0 +1,138 @@
+use crate::{solve_starting_residue, AffineError, ValuationWord};
+use num_bigint::BigUint;
+use num_traits::{One, Zero};
+
+/// Encapsulates the exact affine transformation n_k = (3^k * n_0 + c_k) / 2^{A_k} for a valuation prefix.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AffinePrefix {
+    pub valuations: ValuationWord,
+    pub odd_steps: usize,
+    pub total_twos: u64,
+    pub constant: BigUint,
+    pub starting_residue: BigUint,
+    pub modulus_exponent: u64,
+}
+
+impl AffinePrefix {
+    /// Constructs an AffinePrefix from a ValuationWord, computing c_k and closed-form starting residue.
+    pub fn from_valuation_word(word: ValuationWord) -> Result<Self, AffineError> {
+        if word.is_empty() {
+            return Err(AffineError::EmptyValuationWord);
+        }
+
+        let k = word.len();
+        let a_k = word.total_valuation();
+        let mut c_k = BigUint::zero();
+        let mut partial_sum = 0u64;
+
+        // Recurrence: c_0 = 0, c_{i+1} = 3 * c_i + 2^{A_i}
+        for &a_i in word.as_slice() {
+            c_k = (&c_k * 3u32) + (BigUint::one() << partial_sum);
+            partial_sum += a_i as u64;
+        }
+
+        let starting_residue = solve_starting_residue(&c_k, k, a_k)?;
+
+        Ok(Self {
+            valuations: word,
+            odd_steps: k,
+            total_twos: a_k,
+            constant: c_k,
+            starting_residue,
+            modulus_exponent: a_k,
+        })
+    }
+
+    /// Evaluates the affine transformation n_k = (3^k * n_0 + c_k) / 2^{A_k} for a concrete starting value n_0.
+    pub fn apply(&self, n_0: &BigUint) -> Result<BigUint, AffineError> {
+        let pow3_k = BigUint::from(3u32).pow(self.odd_steps as u32);
+        let numerator = (pow3_k * n_0) + &self.constant;
+        let denominator = BigUint::one() << self.total_twos;
+
+        if (&numerator % &denominator).is_zero() {
+            Ok(numerator >> self.total_twos)
+        } else {
+            Err(AffineError::Overflow)
+        }
+    }
+
+    /// Checks if multiplicative contraction holds: 2^{A_k} > 3^k
+    pub fn is_multiplicative_contracting(&self) -> bool {
+        let pow3_k = BigUint::from(3u32).pow(self.odd_steps as u32);
+        let pow2_a = BigUint::one() << self.total_twos;
+        pow2_a > pow3_k
+    }
+
+    /// Computes the exact integer descent threshold B = floor(c_k / (2^{A_k} - 3^k)) + 1.
+    /// Returns None if 2^{A_k} <= 3^k.
+    pub fn compute_descent_threshold(&self) -> Option<BigUint> {
+        compute_descent_threshold(&self.constant, self.odd_steps, self.total_twos)
+    }
+}
+
+/// Helper function to compute threshold B = floor(c_k / (2^{A_k} - 3^k)) + 1.
+pub fn compute_descent_threshold(c_k: &BigUint, k: usize, a_k: u64) -> Option<BigUint> {
+    let pow3_k = BigUint::from(3u32).pow(k as u32);
+    let pow2_a = BigUint::one() << a_k;
+
+    if pow2_a <= pow3_k {
+        return None;
+    }
+
+    let diff = pow2_a - pow3_k;
+    let b = (c_k / diff) + 1u32;
+    Some(b)
+}
+
+/// Diagnostic metadata measuring affine growth vs paradoxical sequence discrepancy.
+#[derive(Debug, Clone, PartialEq)]
+pub struct AffineDiagnostics {
+    pub growth_debt: f64,
+    pub is_contracting: bool,
+    pub descent_threshold: Option<BigUint>,
+}
+
+impl AffineDiagnostics {
+    pub fn from_prefix(prefix: &AffinePrefix) -> Self {
+        let k_float = prefix.odd_steps as f64;
+        let a_float = prefix.total_twos as f64;
+        let growth_debt = k_float * 3.0f64.log2() - a_float;
+
+        Self {
+            growth_debt,
+            is_contracting: prefix.is_multiplicative_contracting(),
+            descent_threshold: prefix.compute_descent_threshold(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_affine_prefix_creation() {
+        // Valuation word (1, 1), k=2, A_k=2.
+        // c_1 = 3(0) + 2^0 = 1. c_2 = 3(1) + 2^1 = 5.
+        // Residue mod 4 is 3.
+        let word = ValuationWord::new(vec![1, 1]).unwrap();
+        let prefix = AffinePrefix::from_valuation_word(word).unwrap();
+        assert_eq!(prefix.constant, BigUint::from(5u32));
+        assert_eq!(prefix.starting_residue, BigUint::from(3u32));
+        assert_eq!(prefix.total_twos, 2);
+    }
+
+    #[test]
+    fn test_apply_affine() {
+        // n_0 = 3, word (1, 1). 3 -> 5 -> 1.
+        // n_2 = (9(3) + 5) / 4 = 32 / 4 = 8? Wait, 3*3+1=10->5; 3*5+1=16->1.
+        // Wait, n_2 in odd steps: n_0=3 -> n_1=5 -> n_2=1.
+        // Formula: n_2 = (3^2 * 3 + 5)/4 = (27 + 5)/4 = 32/4 = 8.
+        // Ah! Notice valuation for 3: 3*3+1=10 (v2=1) -> 5. valuation for 5: 3*5+1=16 (v2=4) -> 1.
+        // Word for 3 is actually (1, 4)! Total twos = 5.
+        let word = ValuationWord::new(vec![1, 4]).unwrap();
+        let prefix = AffinePrefix::from_valuation_word(word).unwrap();
+        // n_2 = (9(3) + c_2)/32 = (27 + 5)/32 = 1. Correct!
+        assert_eq!(prefix.apply(&BigUint::from(3u32)).unwrap(), BigUint::from(1u32));
+    }
+}

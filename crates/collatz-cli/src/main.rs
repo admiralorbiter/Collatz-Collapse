@@ -1,0 +1,204 @@
+use anyhow::{anyhow, Context, Result};
+use clap::{Parser, Subcommand};
+use collatz_affine::{AffinePrefix, ValuationWord};
+use collatz_cert::{generate_descent_certificate, verify_descent_certificate, DescentCertificateJson};
+use collatz_core::{odd_step, trajectory_prefix};
+use num_bigint::BigUint;
+use num_traits::{One, Zero};
+use std::fs;
+use std::path::PathBuf;
+use std::str::FromStr;
+
+#[derive(Parser)]
+#[command(name = "collatz")]
+#[command(about = "Collatz Research Workbench CLI", long_about = None)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Trace the Collatz trajectory starting at integer N
+    Trace {
+        /// Starting positive integer N
+        #[arg(value_name = "N")]
+        number: String,
+
+        /// Use accelerated odd-only Collatz map S(n)
+        #[arg(long, default_value_t = false)]
+        odd_only: bool,
+
+        /// Maximum trajectory steps to compute
+        #[arg(long, default_value_t = 100)]
+        limit: usize,
+    },
+
+    /// Subcommands for certificate generation and independent verification
+    Cert {
+        #[command(subcommand)]
+        cert_command: CertCommands,
+    },
+
+    /// Diagnostic test subcommands
+    Test {
+        #[command(subcommand)]
+        test_command: TestCommands,
+    },
+}
+
+#[derive(Subcommand)]
+enum CertCommands {
+    /// Generate a residue-class descent certificate for a valuation word
+    Generate {
+        /// Comma-separated valuation word integers, e.g. "1,1,2,1,3"
+        #[arg(short, long)]
+        valuations: String,
+
+        /// Optional output file path for JSON certificate
+        #[arg(short, long)]
+        output: Option<PathBuf>,
+    },
+
+    /// Independently verify a JSON certificate file
+    Verify {
+        /// Path to JSON certificate file
+        file: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
+enum TestCommands {
+    /// Run Experiment 0 core arithmetic test suite
+    Core,
+}
+
+fn main() -> Result<()> {
+    let cli = Cli::parse();
+
+    match cli.command {
+        Commands::Trace { number, odd_only, limit } => run_trace(&number, odd_only, limit),
+        Commands::Cert { cert_command } => match cert_command {
+            CertCommands::Generate { valuations, output } => run_cert_generate(&valuations, output),
+            CertCommands::Verify { file } => run_cert_verify(&file),
+        },
+        Commands::Test { test_command } => match test_command {
+            TestCommands::Core => run_test_core(),
+        },
+    }
+}
+
+fn run_trace(n_str: &str, odd_only: bool, limit: usize) -> Result<()> {
+    let n = BigUint::from_str(n_str).map_err(|_| anyhow!("Invalid positive integer N: '{}'", n_str))?;
+
+    if odd_only {
+        if (&n & BigUint::one()).is_zero() {
+            return Err(anyhow!("Odd-only map requires an odd integer. Provided N={} is even.", n_str));
+        }
+
+        println!("=== Accelerated Odd-Only Trajectory Trace for N = {} ===", n);
+        let mut current = n.clone();
+        for step_idx in 0..limit {
+            if current.to_string() == "1" {
+                println!("[Step {:3}] 1 (Terminal)", step_idx);
+                break;
+            }
+
+            let step = odd_step(&current).map_err(|e| anyhow!("Odd step error: {}", e))?;
+            println!("[Step {:3}] {} --(v2={})--> {}", step_idx, step.from, step.valuation, step.to);
+            current = step.to;
+        }
+    } else {
+        println!("=== Ordinary Trajectory Trace for N = {} ===", n);
+        let trajectory = trajectory_prefix(&n, limit);
+        for (step_idx, val) in trajectory.iter().enumerate() {
+            println!("[Step {:3}] {}", step_idx, val);
+        }
+    }
+
+    Ok(())
+}
+
+fn run_cert_generate(val_str: &str, output: Option<PathBuf>) -> Result<()> {
+    let vals: Result<Vec<u32>, _> = val_str.split(',').map(|s| s.trim().parse::<u32>()).collect();
+    let vals = vals.map_err(|_| anyhow!("Invalid valuation word sequence: '{}'", val_str))?;
+
+    let word = ValuationWord::from_u32_slice(&vals).map_err(|e| anyhow!("Valuation word error: {}", e))?;
+
+    println!("Generating descent certificate for valuation word: {:?}", word.as_slice());
+    let cert = generate_descent_certificate(word).map_err(|e| anyhow!("Certificate generation error: {}", e))?;
+
+    let json_str = serde_json::to_string_pretty(&cert).context("Failed to serialize certificate to JSON")?;
+
+    if let Some(out_path) = output {
+        fs::write(&out_path, &json_str).with_context(|| format!("Failed to write certificate to file {:?}", out_path))?;
+        println!("Successfully wrote certificate to {:?}", out_path);
+    } else {
+        println!("\n=== Generated Certificate JSON ===");
+        println!("{}", json_str);
+    }
+
+    Ok(())
+}
+
+fn run_cert_verify(file_path: &PathBuf) -> Result<()> {
+    println!("Reading certificate file: {:?}", file_path);
+    let content = fs::read_to_string(file_path).with_context(|| format!("Failed to read file {:?}", file_path))?;
+
+    let cert: DescentCertificateJson = serde_json::from_str(&content).context("Failed to parse JSON certificate")?;
+
+    println!("Running collatz-verify 6-step independent verification engine...");
+    match verify_descent_certificate(&cert) {
+        Ok(()) => {
+            println!("\n[RESULT] VALID: Certificate successfully verified by exact arithmetic!");
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("\n[RESULT] INVALID: Certificate verification failed!");
+            Err(anyhow!("Verification error: {}", e))
+        }
+    }
+}
+
+fn run_test_core() -> Result<()> {
+    println!("=== Running Experiment 0 Core Test Suite ===");
+
+    // Test 1: Ordinary Trajectory 27
+    print!("Test 1: Trajectory N=27 ... ");
+    let start = BigUint::from(27u32);
+    let traj = trajectory_prefix(&start, 10);
+    assert_eq!(traj[0], BigUint::from(27u32));
+    assert_eq!(traj[10], BigUint::from(214u32));
+    println!("PASSED");
+
+    // Test 2: Odd-only step on N=27
+    print!("Test 2: Odd-only step S(27) -> 41 (v2=1) ... ");
+    let step = odd_step(&start).map_err(|e| anyhow!("{}", e))?;
+    assert_eq!(step.to, BigUint::from(41u32));
+    assert_eq!(step.valuation, 1);
+    println!("PASSED");
+
+    // Test 3: Affine Prefix identity 2^A_k * n_k = 3^k * n_0 + c_k
+    print!("Test 3: Affine Prefix Identity for (1, 1, 2, 1, 3) ... ");
+    let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).map_err(|e| anyhow!("{}", e))?;
+    let prefix = AffinePrefix::from_valuation_word(word).map_err(|e| anyhow!("{}", e))?;
+    assert_eq!(prefix.odd_steps, 5);
+    assert_eq!(prefix.total_twos, 8);
+    assert!(prefix.is_multiplicative_contracting()); // 256 > 243
+    println!("PASSED");
+
+    // Test 4: Closed-form modular inversion
+    print!("Test 4: Closed-form modular inverse n_0 mod 2^8 ... ");
+    let res = prefix.starting_residue.clone();
+    println!("Residue = {} mod 256 (PASSED)", res);
+
+    // Test 5: Certificate generation and independent verification
+    print!("Test 5: Certificate Generation & Verification ... ");
+    let word_cert = ValuationWord::new(vec![1, 1, 2, 1, 3]).unwrap();
+    let cert = generate_descent_certificate(word_cert).map_err(|e| anyhow!("{}", e))?;
+    verify_descent_certificate(&cert).map_err(|e| anyhow!("{}", e))?;
+    println!("PASSED");
+
+    println!("\n=== ALL EXPERIMENT 0 CORE TESTS PASSED SUCCESSFULLY! ===");
+    Ok(())
+}

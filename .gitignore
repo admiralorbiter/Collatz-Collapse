@@ -1,0 +1,16 @@
+# Rust build artifacts
+/target/
+
+# IDE and Editor files
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*.user
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Large experiment output streams (keep folder, ignore raw jsonl runs)
+/reports/*.jsonl

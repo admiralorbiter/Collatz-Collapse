@@ -1,0 +1,17 @@
+{
+  "schema_version": "descent_v1",
+  "valuation_word": [
+    1,
+    1,
+    2,
+    1,
+    3
+  ],
+  "total_twos": 8,
+  "odd_steps": 5,
+  "starting_residue": "39",
+  "modulus_exponent": 8,
+  "constant": "251",
+  "descent_threshold": "20",
+  "checked_exceptions": []
+}
