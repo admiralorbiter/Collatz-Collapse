@@ -128,9 +128,10 @@ $$-\frac{1}{3} = 1 + 2 + 2^3 + 2^5 + 2^7 + \dots = \dots 10101011_2$$
 At $x = -1/3$, $v_2(3x+1) = \infty$, causing the odd-only map $S(x)$ to be undefined. Any valuation word whose prefixes force residues approaching $-1/3 \pmod{2^{A_k}}$ will exhibit unbounded valuation growth ($a_i \to \infty$).
 
 ### 5.3 2-Adic Realizability vs. Ordinary Integer Realizability
-* **2-Adic Realizability:** In $\mathbb{Z}_2$, **every** infinite valuation word not converging to $-1/3$ is realized by a unique 2-adic integer.
+* **2-Adic Realizability:** In $\mathbb{Z}_2$, **every** infinite valuation word not converging to the **2-adic pole or singularity $-1/3$** (where $3x+1=0$ and the accelerated odd-only map is undefined) is realized by a unique 2-adic integer. Note that $-1/3$ is an essential topological singularity, while $-1$ is a 2-adic fixed point.
 * **Ordinary Integer Realizability ($\mathbb{N}^+$):** A valuation word is realized by a positive integer $n \in \mathbb{N}^+$ if and only if its 2-adic limit $x_{\infty}$ has a finite binary length and $x_{\infty} > 0$.
-* **Spurious Abstract Paths:** In CEGAR, an abstract trajectory cycle with positive growth debt is always realizable in $\mathbb{Z}_2$ (often approaching a negative 2-adic integer like $-1$ or $-5/7$). It is "spurious" only because it violates the positivity and threshold bounds of $\mathbb{N}^+$.
+* **Spurious Abstract Paths:** In CEGAR, an abstract trajectory cycle with positive growth debt is always realizable in $\mathbb{Z}_2$ (often approaching a negative 2-adic integer like $-1$ or $-5/7$). Intermediate positivity guards ($n_i \ge 1$) establish positive-integer feasibility for the particular concretized trace.
+
 
 ---
 
