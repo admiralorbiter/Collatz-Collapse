@@ -1,0 +1,8 @@
+{
+  "schema_version": "non_returning_word_v1",
+  "valuation_word": [1, 1, 2],
+  "start_residue": "1",
+  "end_residue": "5",
+  "modulus": "16",
+  "reason": "Return congruence (2^A - 3^k)r_0 - c_w == 0 mod 2^4 fails"
+}

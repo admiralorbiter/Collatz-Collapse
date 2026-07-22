@@ -1,0 +1,46 @@
+{
+  "schema_version": "finite_fuel_macrocycle_v2",
+  "valuation_word": [
+    1,
+    1,
+    2
+  ],
+  "odd_steps": 3,
+  "total_twos": 4,
+  "affine_constant": "19",
+  "state_modulus_exponent": 4,
+  "start_residue": "7",
+  "return_residue": "7",
+  "fixed_point_linear_form": {
+    "alpha": "11",
+    "beta": "19",
+    "definition": "alpha*n + beta",
+    "normalization": "positive_leading_coefficient"
+  },
+  "fixed_point": {
+    "numerator": "-19",
+    "denominator": "11",
+    "positive_integer": false
+  },
+  "countdown": {
+    "multiplier_kind": "expanding",
+    "multiplier_numerator": "27",
+    "multiplier_denominator": "16",
+    "word_repetition_offset": 1,
+    "return_state_offset": 4,
+    "valuation_drop_per_lap": 4,
+    "word_repetitions_definition": "floor((v2(alpha*n+beta)-1)/A)",
+    "return_state_repetitions_definition": "floor((v2(alpha*n+beta)-m)/A)"
+  },
+  "one_lap_witness": "231",
+  "finite_repetition_proof": {
+    "claim_id": "CLM-FINITE-FUEL-4-3",
+    "proof_artifact": "claims/verified/macrocycle_4_3_finite.json",
+    "proof_hash": "84c8270ec46feedf28dff729db49cb649f0965e7d487fce1c5d4f0035ff1dd6c"
+  },
+  "infinite_realization_proof": {
+    "claim_id": "CLM-NO-POSITIVE-INFINITE-4-3",
+    "proof_artifact": "claims/verified/macrocycle_4_3_no_infinite.json",
+    "proof_hash": "cf9048859d1868155bf94dc6ddec24fcbbdc6cfac4b336bb4a8c021115da0412"
+  }
+}

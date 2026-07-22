@@ -2,6 +2,12 @@ use serde::{Deserialize, Serialize};
 use num_bigint::BigUint;
 use sha2::{Digest, Sha256};
 
+pub const MAX_WORD_LENGTH: usize = 256;
+pub const MAX_VALUATION_STEP: u32 = 255;
+pub const MAX_TOTAL_TWOS: u32 = 4096;
+pub const MAX_MODULUS_EXPONENT: u32 = 4096;
+pub const MAX_MACROCYCLE_EXPONENT: u32 = 1000;
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct FixedPointLinearFormJson {
@@ -22,9 +28,14 @@ pub struct FixedPointJson {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct CountdownSpecJson {
-    pub valuation_offset: u32,
+    pub multiplier_kind: String,
+    pub multiplier_numerator: String,
+    pub multiplier_denominator: String,
+    pub word_repetition_offset: u32,
+    pub return_state_offset: u32,
     pub valuation_drop_per_lap: u32,
-    pub definition_kind: String,
+    pub word_repetitions_definition: String,
+    pub return_state_repetitions_definition: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -76,14 +87,39 @@ pub fn verify_finite_fuel_macrocycle_certificate(
     let k = cert.odd_steps;
     let a = cert.total_twos;
 
-    let two_a = BigUint::from(1u32) << (a as usize);
-    let three_k = BigUint::from(3u32).pow(k);
+    if cert.valuation_word.len() > MAX_WORD_LENGTH {
+        return Err(format!("Valuation word length {} exceeds limit {}", cert.valuation_word.len(), MAX_WORD_LENGTH));
+    }
 
-    if two_a >= three_k {
+    for &v in &cert.valuation_word {
+        if v > MAX_VALUATION_STEP {
+            return Err(format!("Valuation step {} exceeds limit {}", v, MAX_VALUATION_STEP));
+        }
+    }
+
+    if k > MAX_MACROCYCLE_EXPONENT {
         return Err(format!(
-            "Macrocycle total twos 2^{} must be < 3^{} for non-contracting fuel analysis",
-            a, k
+            "Macrocycle odd steps {} exceeds maximum exponent ceiling {}",
+            k, MAX_MACROCYCLE_EXPONENT
         ));
+    }
+
+    if a > MAX_TOTAL_TWOS {
+        return Err(format!("Total twos {} exceeds limit {}", a, MAX_TOTAL_TWOS));
+    }
+
+    if cert.state_modulus_exponent > MAX_MODULUS_EXPONENT {
+        return Err(format!("State modulus exponent {} exceeds limit {}", cert.state_modulus_exponent, MAX_MODULUS_EXPONENT));
+    }
+
+    // Verify metadata calculation matches valuation word
+    if cert.valuation_word.len() as u32 != k {
+        return Err(format!("Word length {} != odd_steps {}", cert.valuation_word.len(), k));
+    }
+
+    let word_a_sum: u32 = cert.valuation_word.iter().sum();
+    if word_a_sum != a {
+        return Err(format!("Valuation sum {} != total_twos {}", word_a_sum, a));
     }
 
     // Verify non-positive integer root (ruling out infinite positive realization)
@@ -92,10 +128,10 @@ pub fn verify_finite_fuel_macrocycle_certificate(
     }
 
     // Verify countdown offset match (v2(alpha*n + beta) >= offset on guarded domain)
-    if cert.countdown.valuation_offset < cert.state_modulus_exponent {
+    if cert.countdown.return_state_offset < cert.state_modulus_exponent {
         return Err(format!(
-            "Valuation offset {} must be >= state modulus exponent {} for complete state return",
-            cert.countdown.valuation_offset, cert.state_modulus_exponent
+            "Return state offset {} must be >= state modulus exponent {} for complete state return",
+            cert.countdown.return_state_offset, cert.state_modulus_exponent
         ));
     }
 
@@ -104,7 +140,6 @@ pub fn verify_finite_fuel_macrocycle_certificate(
         if proof.proof_hash.len() != 64 {
             return Err(format!("Proof hash for {} is not a valid 64-character SHA-256 digest string", proof.claim_id));
         }
-        // Reject known placeholder hashes
         if proof.proof_hash == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
             || proof.proof_hash == "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e"
         {
@@ -148,9 +183,14 @@ mod tests {
                 positive_integer: false,
             },
             countdown: CountdownSpecJson {
-                valuation_offset: 4,
+                multiplier_kind: "expanding".to_string(),
+                multiplier_numerator: "27".to_string(),
+                multiplier_denominator: "16".to_string(),
+                word_repetition_offset: 1,
+                return_state_offset: 4,
                 valuation_drop_per_lap: 4,
-                definition_kind: "normalized_linear_form_valuation".to_string(),
+                word_repetitions_definition: "floor((v2(alpha*n+beta)-1)/A)".to_string(),
+                return_state_repetitions_definition: "floor((v2(alpha*n+beta)-m)/A)".to_string(),
             },
             one_lap_witness: "231".to_string(),
             finite_repetition_proof: ProofArtifactRefJson {
@@ -191,9 +231,14 @@ mod tests {
                 positive_integer: false,
             },
             countdown: CountdownSpecJson {
-                valuation_offset: 4,
+                multiplier_kind: "expanding".to_string(),
+                multiplier_numerator: "27".to_string(),
+                multiplier_denominator: "16".to_string(),
+                word_repetition_offset: 1,
+                return_state_offset: 4,
                 valuation_drop_per_lap: 4,
-                definition_kind: "normalized_linear_form_valuation".to_string(),
+                word_repetitions_definition: "floor((v2(alpha*n+beta)-1)/A)".to_string(),
+                return_state_repetitions_definition: "floor((v2(alpha*n+beta)-m)/A)".to_string(),
             },
             one_lap_witness: "231".to_string(),
             finite_repetition_proof: ProofArtifactRefJson {

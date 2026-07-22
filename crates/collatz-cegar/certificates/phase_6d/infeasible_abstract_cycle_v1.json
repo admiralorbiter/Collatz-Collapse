@@ -1,0 +1,7 @@
+{
+  "schema_version": "infeasible_abstract_cycle_v1",
+  "valuation_word": [5, 5],
+  "start_residue": "7",
+  "modulus_exponent": 4,
+  "reason": "1-lap cycle fails positivity guards or valuation replay"
+}

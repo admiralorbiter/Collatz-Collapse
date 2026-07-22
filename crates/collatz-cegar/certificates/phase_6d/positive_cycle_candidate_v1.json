@@ -1,0 +1,8 @@
+{
+  "schema_version": "positive_cycle_candidate_v1",
+  "valuation_word": [2, 1],
+  "start_residue": "1",
+  "modulus_exponent": 2,
+  "starting_n": "1",
+  "note": "Derived positive integer fixed point root candidate requiring exact replay validation"
+}

@@ -1,182 +1,225 @@
 #!/usr/bin/env python3
 """
-Independent Python Reference Oracle for Collatz Certificates (Phase 5.5 Gate Deliverable)
+Independent Python Reference Oracle for Phase 6D (Collatz Research Workbench)
 
-Zero-dependency Python 3 implementation that independently verifies:
-- `descent_v1`: Closed-form residues, affine constants c_k, multiplicative Nat bounds, threshold B, exception loops.
-- `tail_descent_v1`: Analytical tail descent thresholds a_crit.
-- `cover_v1`: Antichain disjointness, exact Haar measure sum, and SHA-256 Merkle root.
+Verifies affine constants c_k, 2-adic fixed points x* = c_k / (2^A - 3^k),
+canonical linear forms L_w(n) = alpha * n + beta, return congruence gate (2^A - 3^k)r_0 - c_w == 0 mod 2^m,
+exact rational fixed-point replay, one-lap witness, countdown metric calculations, and 5-way classification.
 """
 
-import json
 import sys
-import hashlib
-from math import floor
+import json
+from math import gcd
 
-def solve_modular_inverse_3k(k):
-    """Computes (3^k)^-1 mod 2^m for arbitrary m using Hensel's Lemma in Python."""
-    mod = 2**2048
-    pow3 = pow(3, k, mod)
-    inv = pow(pow3, -1, mod)
-    return inv
+def compute_affine_prefix(vals):
+    k = len(vals)
+    c_k = 0
+    A_curr = 0
+    for v in vals:
+        c_k = 3 * c_k + (1 << A_curr)
+        A_curr += v
+    return k, A_curr, c_k
 
-def compute_affine_constant(valuations):
-    """Computes c_k = sum 3^(k-1-i) * 2^(A_i)."""
-    c = 0
-    curr_a = 0
-    k = len(valuations)
-    for i, a in enumerate(valuations):
-        c = 3 * c + (1 << curr_a)
-        curr_a += a
-    return c, curr_a
+def canonicalize_primitive(vals):
+    n = len(vals)
+    for length in range(1, n // 2 + 1):
+        if n % length == 0:
+            unit = vals[:length]
+            if unit * (n // length) == vals:
+                return unit, True
+    return vals, False
 
-def verify_direct_concrete_enumeration(cert):
-    """
-    Route B: Verifies certificate via direct concrete integer enumeration & trajectory iteration.
-    Independently proves soundness without reusing algebraic formulas.
-    """
-    word = cert["valuation_word"]
-    r = int(cert["starting_residue"])
-    mod = 1 << cert["modulus_exponent"]
-    descent_threshold = int(cert["descent_threshold"])
-    
-    # Test concrete representatives r, r + 2^m, r + 2*2^m up to max(descent_threshold + 50, r + 50)
-    tested_count = 0
-    for n in range(r, max(descent_threshold + 50, r + 100 * mod), mod):
-        if n <= 0 or n % 2 == 0:
-            continue
-            
-        curr = n
-        for a_i in word:
-            numerator = 3 * curr + 1
-            # Verify exact 2-adic valuation step
-            val = 0
-            while numerator % 2 == 0:
-                numerator //= 2
-                val += 1
-            assert val >= a_i, f"Valuation step for n={n} was {val}, expected at least {a_i}"
-            curr = numerator
-            
-        # Verify descent condition for integers >= descent_threshold
-        if n >= descent_threshold:
-            assert curr < n, f"Descent condition failed for n={n}: final iterate {curr} >= {n}"
-            
-        tested_count += 1
-        if tested_count >= 20:
-            break
-            
-    return True
-
-def verify_descent_certificate(cert):
-    """Independently verifies a descent_v1 certificate using both Route A and Route B."""
-    assert cert.get("schema_version") == "descent_v1", "Invalid schema version"
-    word = cert["valuation_word"]
-    assert len(word) > 0, "Valuation word cannot be empty"
-    
-    # Route A: Symbolic algebraic check
-    k = len(word)
-    c_k, total_twos = compute_affine_constant(word)
-    assert c_k == int(cert["constant"]), "Affine constant mismatch"
-    
-    semantics = cert.get("valuation_semantics", "terminal_at_least")
-    mod_exp = cert["modulus_exponent"]
-    
-    if semantics == "exact_word":
-        assert mod_exp == total_twos + 1, "Modulus exponent mismatch for exact_word"
-        pow3 = pow(3, k, 1 << (total_twos + 1))
-        inv3 = pow(pow3, -1, 1 << (total_twos + 1))
-        expected_res = ((1 << total_twos) - c_k) * inv3 % (1 << (total_twos + 1))
+def verify_rational_fixed_point_replay(c_k, A, k, vals):
+    diff_d = (1 << A) - (3**k)
+    if diff_d < 0:
+        raw_q, raw_p = -c_k, -diff_d
     else:
-        assert mod_exp == total_twos, "Modulus exponent mismatch for terminal_at_least"
-        pow3 = pow(3, k, 1 << total_twos)
-        inv3 = pow(pow3, -1, 1 << total_twos)
-        expected_res = (-c_k) * inv3 % (1 << total_twos)
-        
-    assert expected_res == int(cert["starting_residue"]), f"Residue mismatch: expected {expected_res}, got {cert['starting_residue']}"
-    
-    # Route B: Direct concrete iteration
-    assert verify_direct_concrete_enumeration(cert), "Route B direct concrete enumeration failed"
-    return True
+        raw_q, raw_p = c_k, diff_d
 
-def reconstruct_complete_residue_transitions_python(modulus_exponent):
-    """Reconstructs 100% of legal residue transitions modulo 2^m in Python."""
-    modulus = 1 << modulus_exponent
-    transitions = []
-    
-    for r in range(1, modulus, 2):
-        val_r = (3 * r + 1).bit_length() - 1 - ((3 * r + 1) ^ ((3 * r + 1) - 1)).bit_length() + 1
-        # Calculate exact trailing zeros
-        val_r = (3 * r + 1) & -(3 * r + 1)
-        val_r = val_r.bit_length() - 1
-        
-        if val_r >= modulus_exponent:
-            for dst in range(1, modulus, 2):
-                transitions.append((r, dst, val_r))
-        else:
-            num_targets = 1 << val_r
-            step = 1 << (modulus_exponent - val_r)
-            base_dst = ((3 * r + 1) >> val_r) % modulus
-            for j in range(num_targets):
-                target_r = (base_dst + j * step) % modulus
-                transitions.append((r, target_r, val_r))
-                
-    return transitions
+    g = gcd(raw_q, raw_p)
+    q, p = raw_q // g, raw_p // g
+    if p < 0:
+        p, q = -p, -q
 
-def verify_scalar_lyapunov_certificate(cert):
-    """Independently verifies scalar_lyapunov_v1 certificate in Python over complete 100% reconstructed relation."""
-    assert cert.get("schema_version") == "scalar_lyapunov_v1", "Invalid schema version"
-    assert cert.get("strict_margin", 0) > 0, "Strict margin must be > 0"
-    assert cert.get("non_negative_weights") is True, "non_negative_weights must be true"
-    
-    m = cert["modulus_exponent"]
-    q = cert["global_scale_q"]
-    margin = cert["strict_margin"]
-    weights = {int(k): int(v) for k, v in cert["residue_weights"].items()}
-    
-    # 1. Assert all weights are >= 0
-    for r, w in weights.items():
-        assert w >= 0, f"Negative weight for residue {r}: {w}"
-        
-    # 2. Reconstruct complete transition relation
-    complete_transitions = reconstruct_complete_residue_transitions_python(m)
-    
-    # 3. Verify nonterminal transitions (r_src != 1) satisfy w_dst - w_src <= -margin - q*(2 - a)
-    for r_src, r_dst, val in complete_transitions:
-        if r_src == 1:
+    initial_q, initial_p = q, p
+
+    for idx, expected_v in enumerate(vals):
+        y = 3 * q + p
+        if y == 0:
+            return False, idx, expected_v, "Infinite"
+        actual_v = (abs(y) & -abs(y)).bit_length() - 1
+        if actual_v != expected_v:
+            return False, idx, expected_v, actual_v
+        next_q_num = y >> expected_v
+        next_p = p
+        next_g = gcd(next_q_num, next_p)
+        q, p = next_q_num // next_g, next_p // next_g
+
+    if q * initial_p != initial_q * p:
+        return False, len(vals), 0, 0
+
+    return True, None, None, None
+
+def solve_one_lap_witness(vals, start_r, m):
+    k, A, c_k = compute_affine_prefix(vals)
+    target_exp = max(m, A) + A
+    mod_search = 1 << target_exp
+    for n in range(start_r, start_r + mod_search * 50, 1 << m):
+        if n <= 0:
             continue
-            
-        w_src = weights[r_src]
-        w_dst = weights[r_dst]
-        diff = w_dst - w_src
-        target = -margin - q * (2 - val)
-        assert diff <= target, f"Lyapunov inequality violated for {r_src}->{r_dst} (val={val}): diff={diff} > target={target}"
-        
-    return True
+        curr = n
+        valid = True
+        for v in vals:
+            if curr < 1:
+                valid = False
+                break
+            num = 3 * curr + 1
+            tz = (num & -num).bit_length() - 1
+            if tz != v:
+                valid = False
+                break
+            curr = num >> v
+        if valid and curr >= 1:
+            return n
+    return None
 
+def synthesize_phase_6d(raw_vals, start_r, m):
+    # Step 1: One-lap witness check on ORIGINAL candidate (includes positivity guards n_i >= 1)
+    witness = solve_one_lap_witness(raw_vals, start_r, m)
+    if witness is None:
+        return {"classification": "InfeasibleAbstractCycle", "reason": "No positive 1-lap witness found"}
 
-def main():
-    print("=== Collatz Independent Python Reference Oracle (Phase 5.5) ===")
-    
-    # Sample Test Certificate: [2, 2] exact contracting leaf
-    sample_cert = {
-        "schema_version": "descent_v1",
-        "valuation_word": [2, 2],
-        "total_twos": 4,
-        "odd_steps": 2,
-        "starting_residue": "1",
-        "modulus_exponent": 4,
-        "constant": "7",
-        "descent_threshold": "2",
-        "checked_exceptions": [],
-        "valuation_semantics": "terminal_at_least"
+    k_orig, A_orig, c_k_orig = compute_affine_prefix(raw_vals)
+    two_a_orig = 1 << A_orig
+    three_k_orig = 3**k_orig
+    diff_d_orig = two_a_orig - three_k_orig
+
+    # Step 2: Return state congruence gate on ORIGINAL candidate
+    return_diff = diff_d_orig * start_r - c_k_orig
+    mod_m = 1 << m
+    if (return_diff % mod_m) != 0:
+        return {"classification": "NonReturningWord", "start_r": start_r, "reason": "Return congruence fails"}
+
+    # Step 3: Exact rational fixed point replay gate on ORIGINAL candidate
+    ok, mismatch_step, exp_v, act_v = verify_rational_fixed_point_replay(c_k_orig, A_orig, k_orig, raw_vals)
+    if not ok:
+        return {
+            "classification": "FixedPointWordMismatch",
+            "fixed_point": f"{c_k_orig}/{diff_d_orig}",
+            "first_mismatch_step": mismatch_step,
+            "expected_valuation": exp_v,
+            "actual_valuation": act_v
+        }
+
+    # Step 4: ONLY NOW Apply Primitive & Rotational Canonicalization (after candidate validation!)
+    prim_vals, is_repeated = canonicalize_primitive(raw_vals)
+    k, A, c_k = compute_affine_prefix(prim_vals)
+    two_a = 1 << A
+    three_k = 3**k
+    diff_d = two_a - three_k
+
+    if prim_vals == [2] and start_r % 4 == 1:
+        return {
+            "classification": "TrivialPositiveCycle",
+            "start_n": 1,
+            "is_primitive_canonical": is_repeated
+        }
+
+    if diff_d < 0:
+        alpha = -diff_d
+        beta = c_k
+        fp_num = -c_k
+        fp_den = alpha
+    else:
+        alpha = diff_d
+        beta = -c_k
+        fp_num = c_k
+        fp_den = alpha
+
+    if diff_d > 0 and (c_k % diff_d == 0) and (c_k // diff_d > 0):
+        return {
+            "classification": "PositiveCycleCandidate",
+            "starting_n": c_k // diff_d,
+            "valuation_word": prim_vals
+        }
+
+    return {
+        "classification": "FiniteFuelMacrocycle",
+        "valuation_word": prim_vals,
+        "k": k,
+        "A": A,
+        "c_k": c_k,
+        "alpha": alpha,
+        "beta": beta,
+        "fixed_point": f"{fp_num}/{fp_den}",
+        "one_lap_witness": witness,
+        "countdown_offset": m,
+        "valuation_drop": A
     }
 
+def main():
+    print("=== Phase 6D Independent Python Reference Oracle ===")
     
-    if verify_descent_certificate(sample_cert):
-        print("[SUCCESS]: Independent Python Oracle verified sample certificate successfully!")
-    else:
-        print("[FAILURE]: Verification failed!")
-        sys.exit(1)
+    # Regression test affine constants for (2), (2,2), (2,2,2)
+    k1, A1, c1 = compute_affine_prefix([2])
+    print(f"affine([2]) => k={k1}, A={A1}, c={c1}")
+    assert (k1, A1, c1) == (1, 2, 1)
 
-if __name__ == "__main__":
+    k2, A2, c2 = compute_affine_prefix([2, 2])
+    print(f"affine([2,2]) => k={k2}, A={A2}, c={c2}")
+    assert (k2, A2, c2) == (2, 4, 7)
+
+    k3, A3, c3 = compute_affine_prefix([2, 2, 2])
+    print(f"affine([2,2,2]) => k={k3}, A={A3}, c={c3}")
+    assert (k3, A3, c3) == (3, 6, 37)
+
+    # Test w = (1)
+    res_w1 = synthesize_phase_6d([1], 3, 2)
+    print(f"w=(1), r=3 mod 4 => {res_w1['classification']} (alpha={res_w1.get('alpha')}, beta={res_w1.get('beta')})")
+    assert res_w1['classification'] == "FiniteFuelMacrocycle"
+    assert res_w1['alpha'] == 1 and res_w1['beta'] == 1
+
+    # Test w = (1, 1, 2)
+    res_w112 = synthesize_phase_6d([1, 1, 2], 7, 4)
+    print(f"w=(1,1,2), r=7 mod 16 => {res_w112['classification']} (alpha={res_w112.get('alpha')}, beta={res_w112.get('beta')})")
+    assert res_w112['classification'] == "FiniteFuelMacrocycle"
+    assert res_w112['alpha'] == 11 and res_w112['beta'] == 19
+
+    # Test w = (2)
+    res_w2 = synthesize_phase_6d([2], 1, 2)
+    print(f"w=(2), r=1 mod 4 => {res_w2['classification']}")
+    assert res_w2['classification'] == "TrivialPositiveCycle"
+
+    # Test w = (5, 5)
+    res_infeasible = synthesize_phase_6d([5, 5], 7, 4)
+    print(f"w=(5,5), r=7 mod 16 => {res_infeasible['classification']}")
+    assert res_infeasible['classification'] == "InfeasibleAbstractCycle"
+
+    print("\n--- Bounded Corpus Search over Alphabet {1,2,3} (k=1..3, m=4) ---")
+    summary = {}
+    expanding_count = 0
+    contracting_count = 0
+
+    import itertools
+    for k in range(1, 4):
+        for vals in itertools.product((1, 2, 3), repeat=k):
+            a_sum = sum(vals)
+            three_k = 3**k
+            two_a = 1 << a_sum
+            if three_k > two_a:
+                expanding_count += 8
+            else:
+                contracting_count += 8
+
+            for r in range(1, 16, 2):
+                res = synthesize_phase_6d(list(vals), r, 4)
+                cls = res['classification']
+                summary[cls] = summary.get(cls, 0) + 1
+    
+    print(f"Expanding Candidates (3^k > 2^A): {expanding_count}")
+    print(f"Contracting Candidates (2^A > 3^k): {contracting_count}")
+    print(json.dumps(summary, indent=2))
+    print("Python Reference Oracle: ALL CHECKS PASSED SUCCESSFULLY.")
+
+if __name__ == '__main__':
     main()
