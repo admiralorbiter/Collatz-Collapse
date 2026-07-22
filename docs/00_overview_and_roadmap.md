@@ -82,21 +82,28 @@ Phase 5: Macrostep CEGAR & Linear Ranking Invariant Synthesis [COMPLETE]
    ├── Automated Certificate Emission (descent_v1, tail_descent_v1, infeasible_subsumption_v1)
    └── collatz-cegar crate & NegativeRefinementLemmaJson cutoff artifacts
         │
-Phase 6: Automated Transition Invariants & SyGuS Synthesis
-   ├── Piecewise ranking functions & linear difference constraints
-   └── Well-foundedness bounds & path-complete Lyapunov graph covers
-
+Phase 6: Macrocycle Invariant Synthesis & 2-Adic Fixed-Point Dichotomy [COMPLETE]
+   ├── Phase 6A: Valuation-Preserving Modulus Refinement & Tail-Descent Invariants
+   ├── Phase 6B: Residue-Weighted Discrete Scalar Invariant Synthesis & Graph Contraction
+   ├── Phase 6C: Certificate Schema Formalization & Lean 4 Export Pipeline
+   └── Phase 6D: Periodic 2-Adic Fixed-Point & Finite-Fuel Dichotomy Invariants
         │
-Phase 7: Word-Based Automata & Equality Saturation
-   ├── LSB-first binary transducers & regular residue languages
-   └── e-graph macrostep canonicalization (`collatz-egraph`)
+Phase 7: Full 2-Adic Language Invariant Synthesis & System-Level Integration [IN PROGRESS]
+   ├── Phase 7A: Infinite-Language Semantics & Büchi/Omega-Regular Model Checking
+   ├── Phase 7B: Size-Change Termination (SCT) & Ramsey Closure Synthesis (size_change_scc_v1)
+   ├── Phase 7C: Multidimensional Energy Games & Progress Measure Computation
+   ├── Phase 7D: History-Sensitive Trace Partitioning (Memory Depth 0 -> 1 -> 2 -> 3)
+   └── Phase 7E: Non-Semilinear Integrality Boundary & 2-Layer Architecture
         │
-Phase 8: Proof Production (SAT/LRAT & Lean 4 Formalization)
+Phase 8: Diophantine Cycle Bounds & SAT/LRAT Proof Production
+   ├── collatz-diophantine (Simons & de Weger linear forms in logarithms)
    ├── Boolean SAT bit-blasting & LRAT UNSAT proof generation
    └── Lean 4 certificate import macros & formally verified kernel
         │
-Phase 9: High-Performance GPU & Sharded Distributed Execution
-   └── Optional CUDA/OpenCL kernels & deterministic residue-shard partitioning
+Phase 9: Dual 2-Adic/3-Adic Coupling & High-Performance GPU Execution
+   ├── Dual (p, q)-adic endpoint compatibility diagnostics
+   └── CUDA/OpenCL kernels & deterministic residue-shard partitioning
+
 ```
 
 ---

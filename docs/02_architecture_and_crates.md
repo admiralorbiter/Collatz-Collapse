@@ -27,8 +27,10 @@ PHASE 2: ADVANCED SOLVERS & SYNTHESIS (Scaffolded as needed)
     ├── collatz-sat/           # SAT bit-blasting & LRAT proof logging
     ├── collatz-sygus/         # Syntax-guided synthesis interface
     ├── collatz-automata/      # Binary transducers & residue regular languages
+    ├── collatz-diophantine/   # Simons & de Weger Diophantine cycle bounds
     ├── collatz-egraph/        # Equality saturation for affine macrosteps
     └── collatz-report/        # Markdown & JSONL experiment summaries
+
 ```
 
 ---

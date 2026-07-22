@@ -207,17 +207,53 @@ For any $m \ge 2$ and odd integer $n \equiv 2^m - 1 \pmod{2^m}$:
    - **Exit Rule ($\tau_m(n) = 0$):** $S(n) \equiv 2^{m-1} - 1 \pmod{2^m}$ (exits the self-loop to residue $2^{m-1} - 1$).
    - For $m = 4$ ($r = 15 \pmod{16}$): $(15, \tau=0) \xrightarrow{a=1} 7 \pmod{16}$ (exits to residue 7!).
 
-### 9.2 Macrocycle Countdown Invariant ($v_2(11n+19)$) & 2-Adic Fixed Point
-For the macrocycle $7 \to 11 \to 9 \to 7$ under valuation word $w = (1, 1, 2)$, the composed macrostep is:
-$$F(n) = \frac{27n+19}{16}$$
+### 9.3 Periodic 2-Adic Fixed-Point & Finite-Fuel Dichotomy Theorem
 
-**Theorem (Macrocycle Countdown Invariant):**
-1. **2-Adic Fixed Point:** $F(x) = x \iff 16x = 27x + 19 \iff x = -\frac{19}{11} \in \mathbb{Z}_2$. The 2-adic point $x = -\frac{19}{11}$ has the unique periodic valuation word $(1, 1, 2)^\infty$.
-2. **Exact Invariant Identity:**
-   $$11 F(n) + 19 = \frac{27(11n+19)}{16} \implies v_2(11 F(n) + 19) = v_2(11n+19) - 4$$
-3. **Normalized Macrocycle Fuel:** Under the guard $\text{ExactWord}(1, 1, 2)$, $\sigma(n) = \left\lfloor \frac{v_2(11n+19) - 4}{4} \right\rfloor$ decreases by **exactly 1** per lap.
-4. **Universal Arbitrary Finite Repetition:** For every $L \ge 1$, $n \equiv -\frac{19}{11} \pmod{2^{4L+4}}$ forces $L$ complete laps of the macrocycle $(7 \to 11 \to 9 \to 7)^L$.
-5. **No Infinite Positive Realization:** Since $-\frac{19}{11}$ is not a positive integer, $v_2(11n+19)$ is strictly finite for all $n \in \mathbb{N}^+$. Thus, **no positive integer can realize the macrocycle infinitely** (`infinite_positive_realization: ruled_out`).
+Let $S: \mathbb{Z}_2^{\text{odd}} \to \mathbb{Z}_2^{\text{odd}}$ be the accelerated Collatz map on odd 2-adic integers.
+Let $w = (a_1, \ldots, a_k) \in (\mathbb{N}^+)^k$, $A = \sum_{i=1}^k a_i$, and $F_w(n) = \frac{3^k n + c_w}{2^A}$.
+
+Since $2^A - 3^k$ is odd and non-zero,
+$$x_w^* = \frac{c_w}{2^A - 3^k} \in \mathbb{Z}_2$$
+is the unique 2-adic fixed point of $F_w$, and its exact 2-adic valuation sequence is $w^\infty$.
+
+For the normalized fixed-point linear form $L_w(n) = \alpha n + \beta = \pm((2^A - 3^k)n - c_w)$ with $\alpha > 0$:
+$$L_w(F_w(n)) = \frac{3^k}{2^A} L_w(n) \implies v_2(L_w(F_w(n))) = v_2(L_w(n)) - A \quad \text{whenever } L_w(n) \neq 0.$$
+
+- **Positive Integer Cycle**: If $x_w^* \in \mathbb{N}^+$ and exact rational replay succeeds, it yields a positive integer periodic orbit ($x_w^* = 1$ for $w = (2)$).
+- **Word-Specific Finite-Fuel Invariant**: If $x_w^* \notin \mathbb{N}^+$, no positive integer realizes $w^\infty$. For every odd positive integer $n \in \mathbb{N}^+_{\text{odd}}$, the valuation $v_2(L_w(n))$ is finite and
+  $$N_{\text{word}}(n) = \max\left(0, \left\lfloor \frac{v_2(L_w(n)) - 1}{A} \right\rfloor\right)$$
+  bounds the number of consecutive complete repetitions of $w$ beginning at $n$.
+
+---
+
+## 10. Multi-Word Trajectories & Size-Change Termination (Phase 7 Framework)
+
+### 10.1 Size-Change Feature Vectors & Monotonicity Graphs
+For trajectories switching among multiple valuation words $w_1, w_2, \ldots$ inside abstract SCCs, termination is analyzed over a multidimensional feature vector:
+$$\mathbf{v}(n) = \big(v_2(L_1(n)), v_2(L_2(n)), \ldots, v_2(L_d(n)), \text{bitlength}(n), \text{growth\_debt}, \text{control\_state}\big)$$
+
+For each transition $e: u \to v$ under macrostep $F_w$, define a bipartite size-change monotonicity graph $G_e = (V_{\text{src}} \cup V_{\text{dst}}, E_e)$ with edge relations:
+* **Strict Decrease ($\downarrow$):** $v_j(F_w(n)) < v_i(n)$
+* **Non-Increase ($\le$):** $v_j(F_w(n)) \le v_i(n)$
+* **Reset ($\star$):** Component is reset to an arbitrary bounded value.
+
+### 10.2 Ramsey Transitive Closure & Idempotent Graph Criterion
+Form the transitive closure of size-change graphs under composition $\mathcal{G}^*$. 
+- **Theorem (Ben-Amram SCT & Podelski-Rybalchenko):** An abstract SCC terminates if and only if every idempotent graph $G \in \mathcal{G}^*$ (satisfying $G = G \circ G$) contains a strict descending self-edge $v_i \xrightarrow{\downarrow} v_i$.
+
+### 10.3 Büchi Automata over Infinite Valuation Words
+Trajectories are represented as infinite words $w_0 w_1 w_2 \ldots \in \Sigma^\omega$.
+The language of non-contracting infinite trajectories is defined as the Büchi automaton intersection:
+$$\mathcal{L}_{\text{infinite\_bad}} = \mathcal{L}(\mathcal{A}_{\text{realizable}}) \cap \mathcal{L}(\mathcal{A}_{\text{non-descent}}) \cap \mathcal{L}(\mathcal{A}_{\text{critical\_scc}})$$
+If $\mathcal{L}_{\text{infinite\_bad}} = \varnothing$ (empty language), the SCC is provably terminating (`buchi_emptiness_scc_v1`).
+
+### 10.4 Non-Semilinear Integrality Boundary Guardrail
+> **Architectural Separation:** Regular/omega-regular language automata and Presburger arithmetic cannot capture the non-semilinear 2-adic divisibility predicates that separate ghost cycles $x^* \in \mathbb{Z}_2$ from genuine positive integer cycles $n^* \in \mathbb{N}^+$.
+> Therefore, Phase 7 uses a strict 2-layer architecture:
+> 1. **Layer 1:** Omega-regular Büchi automata and Size-Change closure over valuation words.
+> 2. **Layer 2:** Exact non-linear rational replay & 2-adic/3-adic integrality checks over $\mathbb{Q}$.
+
+
 
 
 

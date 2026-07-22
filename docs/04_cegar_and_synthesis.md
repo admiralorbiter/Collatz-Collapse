@@ -143,3 +143,45 @@ Single-step residue abstraction modulo 16 contains a false infinite self-loop $1
 * **Edge Count:** 36 legal transitions.
 * **Deterministic SHA-256 Digest Function:** `compute_canonical_relational_graph_hash`.
 
+---
+
+## 6. Phase 6D Automatic Fixed-Point Synthesizer & Phase 7 SCC Engine
+
+### 6.1 Gated Pipeline Architecture
+The `FixedPointSynthesizer` in `collatz-cegar` processes candidate valuation words $w$ and residue classes $r_0 \pmod{2^m}$ through a strict 5-stage pipeline:
+
+```text
+Original Candidate (w, r_0 mod 2^m)
+         │
+  1. One-Lap Concretization Gate (positivity guards n_i >= 1)
+        ├─ fails ─> InfeasibleAbstractCycle
+        └─ succeeds
+             │
+  2. Return-State Congruence Gate ((2^A - 3^k)r_0 - c_w == 0 mod 2^m)
+        ├─ fails ─> NonReturningWord
+        └─ succeeds
+             │
+  3. Exact Rational Fixed-Point Replay Gate (over Q)
+        ├─ fails ─> FixedPointWordMismatch
+        └─ succeeds
+             │
+  4. Primitive & Cyclic Canonicalization (w -> w_prim)
+             │
+  5. Root Classification (Trivial 1->1 vs Positive Candidate vs Finite Fuel)
+```
+
+### 6.2 Bounded Corpus Deduplication (Alphabet {1,2,3}, k <= 3)
+- **Raw Word Candidates:** 312 candidates (64 expanding, 248 contracting).
+- **Deduplicated Orbit Classes:** 14 unique primitive cyclic classes (1 trivial positive class $1 \mapsto 1$, 13 nontrivial finite-fuel classes, 0 nontrivial positive candidates).
+
+### 6.3 Phase 7 Typed SCC Invariant Synthesis
+For multi-word trajectories alternating within abstract SCCs, Phase 7 synthesizes 7 typed outcomes:
+1. `infeasible_scc`: Unsat core proves no positive integer realization.
+2. `finite_language`: Bounded path enumeration proves finite word sequence language.
+3. `single_word_finite_fuel`: Reduces to Phase 6D periodic 2-adic fixed-point finite-fuel certificate.
+4. `multiphase_ranking`: Lexicographic valuation tuples decreasing strictly across all transitions.
+5. `path_complete_ranking`: Disjunctively well-founded ordering covering all outgoing edges.
+6. `positive_cycle_candidate`: Derived positive integer root candidate.
+7. `unresolved_scc`: Requires non-relational interval refinement.
+
+
