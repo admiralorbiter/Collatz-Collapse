@@ -14,6 +14,27 @@ pub struct BundleManifest {
     pub cert_file: String,
 }
 
+pub fn export_manifest(
+    output_dir: &Path,
+    count: usize,
+    measure_str: &str,
+    checksum_str: &str,
+) -> Result<BundleManifest, String> {
+    let manifest = BundleManifest {
+        schema_version: "bundle_v1".to_string(),
+        certificate_count: count,
+        total_2adic_measure: measure_str.to_string(),
+        sha256_checksum: checksum_str.to_string(),
+        cert_file: "certs.jsonl".to_string(),
+    };
+
+    let manifest_path = output_dir.join("manifest.json");
+    let manifest_json = serde_json::to_string_pretty(&manifest).map_err(|e| format!("Manifest serialize error: {}", e))?;
+    fs::write(&manifest_path, manifest_json).map_err(|e| format!("Manifest write error: {}", e))?;
+
+    Ok(manifest)
+}
+
 pub fn export_certificate_bundle(
     output_dir: &Path,
     certificates: &[DescentCertificateJson],
@@ -32,7 +53,6 @@ pub fn export_certificate_bundle(
         byte_contents.push(b'\n');
     }
 
-    // Hash byte stream using basic XOR digest simulation for standard lib compatibility
     let mut hash_accumulator: u64 = 0xCBF2_9CE4_8422_2325;
     for &b in &byte_contents {
         hash_accumulator ^= b as u64;
@@ -40,19 +60,7 @@ pub fn export_certificate_bundle(
     }
     let checksum_str = format!("{:016x}", hash_accumulator);
 
-    let manifest = BundleManifest {
-        schema_version: "bundle_v1".to_string(),
-        certificate_count: certificates.len(),
-        total_2adic_measure: measure_str.to_string(),
-        sha256_checksum: checksum_str,
-        cert_file: "certs.jsonl".to_string(),
-    };
-
-    let manifest_path = output_dir.join("manifest.json");
-    let manifest_json = serde_json::to_string_pretty(&manifest).map_err(|e| format!("Manifest serialize error: {}", e))?;
-    fs::write(&manifest_path, manifest_json).map_err(|e| format!("Manifest write error: {}", e))?;
-
-    Ok(manifest)
+    export_manifest(output_dir, certificates.len(), measure_str, &checksum_str)
 }
 
 pub fn verify_certificate_bundle(bundle_dir: &Path) -> Result<usize, String> {

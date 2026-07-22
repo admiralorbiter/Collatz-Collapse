@@ -3,7 +3,7 @@ pub mod descent;
 pub mod schema;
 pub mod verify;
 
-pub use batch::{export_certificate_bundle, verify_certificate_bundle, BundleManifest};
+pub use batch::{export_certificate_bundle, export_manifest, verify_certificate_bundle, BundleManifest};
 pub use descent::generate_descent_certificate;
 pub use schema::{
     CycleCertificateJson, DescentCertificateJson, InfeasibleAlgebraicCertificateJson,

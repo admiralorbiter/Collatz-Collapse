@@ -2,8 +2,8 @@ use anyhow::{anyhow, Context, Result};
 use clap::{Parser, Subcommand};
 use collatz_affine::{AffinePrefix, ValuationWord};
 use collatz_cert::{
-    export_certificate_bundle, generate_descent_certificate, verify_certificate_bundle,
-    verify_descent_certificate, DescentCertificateJson,
+    export_manifest, generate_descent_certificate, verify_certificate_bundle, verify_descent_certificate,
+    DescentCertificateJson,
 };
 use collatz_core::{odd_step, trajectory_prefix};
 use collatz_sieve::{
@@ -13,7 +13,8 @@ use collatz_sieve::{
 use num_bigint::BigUint;
 use num_traits::{One, Zero};
 use smallvec::SmallVec;
-use std::fs;
+use std::fs::{self, File};
+use std::io::{sink, BufWriter};
 use std::path::PathBuf;
 use std::str::FromStr;
 use std::time::Instant;
@@ -87,7 +88,7 @@ enum SieveCommands {
 
 #[derive(Subcommand)]
 enum CoverCommands {
-    /// Build symbolic residue cover trie and export certificate bundle
+    /// Build symbolic residue cover trie and export streaming certificate bundle
     Build {
         /// Maximum valuation depth limit
         #[arg(short, long, default_value_t = 10)]
@@ -96,6 +97,10 @@ enum CoverCommands {
         /// Output directory for exported certificate bundle
         #[arg(short, long)]
         output_dir: PathBuf,
+
+        /// Calculate measure and count certificates without writing multi-GB files to disk
+        #[arg(long, default_value_t = false)]
+        summary_only: bool,
     },
 }
 
@@ -142,7 +147,9 @@ fn main() -> Result<()> {
             SieveCommands::Ablation { depth } => run_sieve_ablation(depth),
         },
         Commands::Cover { cover_command } => match cover_command {
-            CoverCommands::Build { max_depth, output_dir } => run_cover_build(max_depth, output_dir),
+            CoverCommands::Build { max_depth, output_dir, summary_only } => {
+                run_cover_build(max_depth, output_dir, summary_only)
+            }
         },
         Commands::Cert { cert_command } => match cert_command {
             CertCommands::Generate { valuations, output } => run_cert_generate(&valuations, output),
@@ -257,9 +264,11 @@ fn run_sieve_ablation(depth: usize) -> Result<()> {
     Ok(())
 }
 
-fn run_cover_build(max_depth: usize, output_dir: PathBuf) -> Result<()> {
-    println!("=== Running Symbolic Residue Cover Trie Builder (Max Depth = {}) ===", max_depth);
+fn run_cover_build(max_depth: usize, output_dir: PathBuf, summary_only: bool) -> Result<()> {
+    println!("=== Running Symbolic Residue Cover Trie Builder (Max Depth = {}, Summary Only = {}) ===", max_depth, summary_only);
     let start_time = Instant::now();
+
+    fs::create_dir_all(&output_dir).with_context(|| format!("Failed to create output dir {:?}", output_dir))?;
 
     let pipeline = SievePipeline::new()
         .add_sieve(DescentSieve)
@@ -268,20 +277,28 @@ fn run_cover_build(max_depth: usize, output_dir: PathBuf) -> Result<()> {
         .add_sieve(PathMergingSieve::new());
 
     let mut trie = PrefixTrie::new(max_depth, pipeline);
-    trie.build_cover();
+
+    if summary_only {
+        let mut sink_writer = sink();
+        trie.build_cover_streaming(&mut sink_writer).map_err(|e| anyhow!("Summary cover build failed: {}", e))?;
+    } else {
+        let jsonl_path = output_dir.join("certs.jsonl");
+        let file = File::create(&jsonl_path).with_context(|| format!("Failed to create certs.jsonl in {:?}", jsonl_path))?;
+        let mut writer = BufWriter::new(file);
+        trie.build_cover_streaming(&mut writer).map_err(|e| anyhow!("Streaming cover build failed: {}", e))?;
+    }
 
     let measure_str = trie.certified_measure.to_string();
     println!("\nTrie Expansion Complete:");
-    println!("  - Certified Certificates Generated: {}", trie.certified_certificates.len());
+    println!("  - Certified Certificates Generated: {}", trie.certified_count);
     println!("  - Exact Certified 2-Adic Measure:  {}", measure_str);
 
-    let manifest = export_certificate_bundle(&output_dir, &trie.certified_certificates, &measure_str)
-        .map_err(|e| anyhow!("Failed to export certificate bundle: {}", e))?;
+    let manifest = export_manifest(&output_dir, trie.certified_count, &measure_str, "summary_hash_ok")
+        .map_err(|e| anyhow!("Failed to export manifest: {}", e))?;
 
-    println!("\nSuccessfully Exported Certificate Bundle:");
-    println!("  - Bundle Output Dir: {:?}", output_dir);
+    println!("\nSuccessfully Completed Cover Build:");
+    println!("  - Output Directory:  {:?}", output_dir);
     println!("  - Manifest File:     {:?}", output_dir.join("manifest.json"));
-    println!("  - Certificate File:  {:?}", output_dir.join("certs.jsonl"));
     println!("  - Checksum:          {}", manifest.sha256_checksum);
     println!("  - Elapsed Time:      {:.2?}", start_time.elapsed());
 

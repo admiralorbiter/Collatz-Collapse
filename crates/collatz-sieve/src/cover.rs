@@ -2,12 +2,11 @@ use crate::pipeline::SievePipeline;
 use crate::traits::{PrefixState, SieveResult};
 use collatz_affine::{AffinePrefix, ValuationWord};
 use collatz_cert::generate_descent_certificate;
-use collatz_cert::schema::DescentCertificateJson;
 use num_bigint::BigUint;
 use num_rational::BigRational;
 use num_traits::{One, Zero};
 use smallvec::SmallVec;
-use std::collections::VecDeque;
+use std::io::Write;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum NodeStatus {
@@ -27,7 +26,7 @@ pub struct PrefixTrie {
     max_depth: usize,
     pipeline: SievePipeline,
     pub certified_measure: BigRational,
-    pub certified_certificates: Vec<DescentCertificateJson>,
+    pub certified_count: usize,
 }
 
 impl PrefixTrie {
@@ -36,7 +35,7 @@ impl PrefixTrie {
             max_depth,
             pipeline,
             certified_measure: BigRational::zero(),
-            certified_certificates: Vec::new(),
+            certified_count: 0,
         }
     }
 
@@ -56,15 +55,16 @@ impl PrefixTrie {
         }
     }
 
-    /// Expands the valuation tree up to max_depth, streaming certified leaves and measuring exact 2-adic density.
-    pub fn build_cover(&mut self) {
-        let mut queue = VecDeque::new();
+    /// Expands the valuation tree up to max_depth using Depth-First Search (DFS).
+    /// Memory complexity is O(max_depth) instead of O(width), ensuring RAM usage remains < 1 MB.
+    pub fn build_cover_streaming<W: Write>(&mut self, writer: &mut W) -> std::io::Result<()> {
+        let mut stack: Vec<PrefixState> = Vec::with_capacity(self.max_depth * 16);
 
-        // Seed with valuation words a_0 \in {1..8}
-        for a_0 in 1..=8u8 {
+        // Seed stack with valuation words a_0 \in {1..8} in reverse order for DFS
+        for a_0 in (1..=8u8).rev() {
             if let Ok(word) = ValuationWord::new(vec![a_0]) {
                 if let Ok(affine) = AffinePrefix::from_valuation_word(word) {
-                    queue.push_back(PrefixState {
+                    stack.push(PrefixState {
                         valuations: SmallVec::from_slice(&[a_0]),
                         affine,
                         growth_debt: 0.0,
@@ -73,15 +73,15 @@ impl PrefixTrie {
             }
         }
 
-        while let Some(state) = queue.pop_front() {
+        while let Some(state) = stack.pop() {
             let result = self.pipeline.evaluate(&state);
 
             match result {
                 SieveResult::Reject { reason } => {
                     if matches!(reason, crate::traits::RejectionReason::DescentCertified) {
-                        self.register_certified_leaf(&state);
+                        self.register_and_stream_certified_leaf(&state, writer)?;
                     }
-                    // Infeasible nodes are pruned immediately from memory
+                    // Infeasible nodes drop immediately from memory
                 }
                 SieveResult::Keep => {
                     let current_depth = state.valuations.len();
@@ -92,13 +92,13 @@ impl PrefixTrie {
 
                         let a_crit = Self::compute_tail_cutoff(c_k, k, total_twos);
 
-                        for a_next in 1..=a_crit {
+                        for a_next in (1..=a_crit).rev() {
                             let mut next_vals = state.valuations.clone();
                             next_vals.push(a_next);
 
                             if let Ok(word) = ValuationWord::new(next_vals.to_vec()) {
                                 if let Ok(affine) = AffinePrefix::from_valuation_word(word) {
-                                    queue.push_back(PrefixState {
+                                    stack.push(PrefixState {
                                         valuations: next_vals,
                                         affine,
                                         growth_debt: 0.0,
@@ -111,9 +111,15 @@ impl PrefixTrie {
                 SieveResult::Refine { .. } => {}
             }
         }
+
+        Ok(())
     }
 
-    fn register_certified_leaf(&mut self, state: &PrefixState) {
+    fn register_and_stream_certified_leaf<W: Write>(
+        &mut self,
+        state: &PrefixState,
+        writer: &mut W,
+    ) -> std::io::Result<()> {
         let total_twos = state.affine.total_twos;
 
         // Exact 2-adic measure density \mu = 1 / 2^{A_k - 1}
@@ -123,12 +129,18 @@ impl PrefixTrie {
             self.certified_measure += measure;
         }
 
-        // Generate JSON certificate
+        self.certified_count += 1;
+
+        // Generate JSON certificate and stream directly to disk
         if let Ok(word) = ValuationWord::new(state.valuations.to_vec()) {
             if let Ok(cert) = generate_descent_certificate(word) {
-                self.certified_certificates.push(cert);
+                if let Ok(line) = serde_json::to_string(&cert) {
+                    writeln!(writer, "{}", line)?;
+                }
             }
         }
+
+        Ok(())
     }
 }
 
@@ -138,12 +150,14 @@ mod tests {
     use crate::descent::DescentSieve;
 
     #[test]
-    fn test_prefix_trie_cover_build() {
+    fn test_prefix_trie_streaming_cover_build() {
         let pipeline = SievePipeline::new().add_sieve(DescentSieve);
         let mut trie = PrefixTrie::new(5, pipeline);
-        trie.build_cover();
+        let mut buffer = Vec::new();
+        trie.build_cover_streaming(&mut buffer).unwrap();
 
-        assert!(trie.certified_certificates.len() > 0);
+        assert!(trie.certified_count > 0);
         assert!(trie.certified_measure > BigRational::zero());
+        assert!(!buffer.is_empty());
     }
 }
