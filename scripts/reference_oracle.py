@@ -98,6 +98,61 @@ def verify_descent_certificate(cert):
     assert verify_direct_concrete_enumeration(cert), "Route B direct concrete enumeration failed"
     return True
 
+def reconstruct_complete_residue_transitions_python(modulus_exponent):
+    """Reconstructs 100% of legal residue transitions modulo 2^m in Python."""
+    modulus = 1 << modulus_exponent
+    transitions = []
+    
+    for r in range(1, modulus, 2):
+        val_r = (3 * r + 1).bit_length() - 1 - ((3 * r + 1) ^ ((3 * r + 1) - 1)).bit_length() + 1
+        # Calculate exact trailing zeros
+        val_r = (3 * r + 1) & -(3 * r + 1)
+        val_r = val_r.bit_length() - 1
+        
+        if val_r >= modulus_exponent:
+            for dst in range(1, modulus, 2):
+                transitions.append((r, dst, val_r))
+        else:
+            num_targets = 1 << val_r
+            step = 1 << (modulus_exponent - val_r)
+            base_dst = ((3 * r + 1) >> val_r) % modulus
+            for j in range(num_targets):
+                target_r = (base_dst + j * step) % modulus
+                transitions.append((r, target_r, val_r))
+                
+    return transitions
+
+def verify_scalar_lyapunov_certificate(cert):
+    """Independently verifies scalar_lyapunov_v1 certificate in Python over complete 100% reconstructed relation."""
+    assert cert.get("schema_version") == "scalar_lyapunov_v1", "Invalid schema version"
+    assert cert.get("strict_margin", 0) > 0, "Strict margin must be > 0"
+    assert cert.get("non_negative_weights") is True, "non_negative_weights must be true"
+    
+    m = cert["modulus_exponent"]
+    q = cert["global_scale_q"]
+    margin = cert["strict_margin"]
+    weights = {int(k): int(v) for k, v in cert["residue_weights"].items()}
+    
+    # 1. Assert all weights are >= 0
+    for r, w in weights.items():
+        assert w >= 0, f"Negative weight for residue {r}: {w}"
+        
+    # 2. Reconstruct complete transition relation
+    complete_transitions = reconstruct_complete_residue_transitions_python(m)
+    
+    # 3. Verify nonterminal transitions (r_src != 1) satisfy w_dst - w_src <= -margin - q*(2 - a)
+    for r_src, r_dst, val in complete_transitions:
+        if r_src == 1:
+            continue
+            
+        w_src = weights[r_src]
+        w_dst = weights[r_dst]
+        diff = w_dst - w_src
+        target = -margin - q * (2 - val)
+        assert diff <= target, f"Lyapunov inequality violated for {r_src}->{r_dst} (val={val}): diff={diff} > target={target}"
+        
+    return True
+
 
 def main():
     print("=== Collatz Independent Python Reference Oracle (Phase 5.5) ===")

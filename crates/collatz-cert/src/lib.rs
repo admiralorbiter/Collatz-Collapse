@@ -2,8 +2,10 @@ pub mod batch;
 pub mod descent;
 pub mod graph_contraction;
 pub mod lean_export;
+pub mod scalar_lyapunov;
 pub mod schema;
 pub mod tail;
+pub mod valuation_countdown;
 pub mod verify;
 
 pub use batch::{export_certificate_bundle, export_manifest, verify_certificate_bundle, BundleManifest};
@@ -13,12 +15,21 @@ pub use graph_contraction::{
     GraphEdge, ObstructionCycleJson, RationalRatioJson,
 };
 pub use lean_export::export_lean4_theorem;
+pub use scalar_lyapunov::{
+    verify_scalar_lyapunov_certificate, ScalarLyapunovCertificateJson, ScalarLyapunovError,
+    ScalarTransition, ValuationConstraint,
+};
 pub use schema::{
     CycleCertificateJson, DescentCertificateJson, InfeasibleAlgebraicCertificateJson,
     InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson, TailDescentCertificateJson,
 };
 pub use tail::{compute_a_crit, generate_tail_descent_certificate};
+pub use valuation_countdown::{
+    verify_valuation_countdown_certificate, ValuationCountdownCertificateJson, ValuationCountdownError,
+};
 pub use verify::{verify_descent_certificate, verify_tail_descent_certificate};
+
+
 
 
 
