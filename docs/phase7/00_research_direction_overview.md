@@ -1,182 +1,74 @@
-# Phase 7X Research Direction Overview
-## Affine Interaction and Ultrametric Fuel
+# Phase 7.3 Research Direction Overview
+## Affine Interaction, Ultrametric Fuel, and Symbolic Return Dynamics
 
 ## 1. Why this direction exists
 
-Milestones 7.1 and 7.2 exposed a repeated structural failure:
+Phase 7.2 completed with a major discovery: destination-aware refinement successfully produced a **sound noncommuting guarded-branching target** at state $Q_1$ with based closed walks:
+- $u = [1,1,2]$
+- $v = w_1 w_2 = [1,1,2,1,2,2]$
 
-1. A coarse residue graph appears to contain a recurrent cycle.
-2. Destination-aware refinement reveals that the edge depends on quotient bits discarded by the source state.
-3. A composite valuation word remains arithmetically valid.
-4. The composite word has a correct Phase 6D finite-fuel certificate.
-5. The original recurrent graph claim does not survive exact path-cylinder validation.
+Both $uv$ and $vu$ possess exact positive-integer path cylinders, confirming genuine noncommuting branching ($uv \neq vu$).
 
-This pattern suggests that the main obstacle is not merely insufficient implementation precision. It is that each macrostep consumes a predictable number of 2-adic bits, while static residue states forget the exact information later divisions expose.
+However, raw residue states do not yet provide a compact switching invariant. Each macrostep consumes 2-adic bits, while static residue partitions forget information later divisions expose.
 
-The new direction studies that information loss directly.
+Phase 7.3 merges the ultrametric affine interaction machinery to serve as the mathematical, symbolic, and verification engine for this verified $(u, v)$ branching target.
 
 ## 2. Primary research question
 
-> Can multi-word Collatz behavior be represented by a finite or finitely parameterized switching system whose state records precision debt, affine interaction, and 2-adic cancellation depth, rather than relying primarily on ever-deeper raw residue partitions?
+> Can the switching behavior of the verified $(u, v)$ branching core be represented by a compact, switching-sensitive ultrametric invariant (or affine register machine) that tracks 2-adic cancellation depth and symbolic return dynamics, rather than relying on ever-deeper raw residue partitions?
 
 ## 3. Secondary research questions
 
-1. Can exact destination precision be expressed as a theorem of information consumption?
-2. Can the interaction of two macrosteps be summarized by one affine commutator constant?
-3. Can exact-word source cylinders be recovered as cancellation conditions in a fixed-point coordinate?
-4. Do families of macrosteps sharing one rational fixed point admit arbitrary-switching finite-fuel theorems?
-5. Do pairs with large \(v_2(\Delta)\) identify the genuinely difficult low-bit branching targets?
-6. Can a cancellation automaton be smaller and more stable than a destination-refined residue graph?
-7. Can path cylinders be generated and verified before graph construction, eliminating spurious SCCs by design?
+1. **Symbolic Return Dynamics**: Can the switching language $s \in \{u,v\}^*$ be modeled as an induced return language to $Q_1$?
+2. **Finite Return Language**: Does every word $s \in \{u,v\}^*$ have a nonempty positive-integer cylinder returning to $Q_1$ at block boundaries?
+3. **Graph Lyapunov Rankings**: Can a state-indexed or path-complete graph Lyapunov function (`path_complete_ranking_v1`) certify stability over accepted words?
+4. **Disjunctive Transition Invariants**: Can a finite union of well-founded relations (`disjunctive_transition_invariant_v1`) cover the transitive closure of the switching relation?
+5. **Feature CEGAR**: Is a single reference coordinate $L_u(n) = 11n + 19$ sufficient, or does feature CEGAR demand adding $L_v(n) = 217n + 881$?
+6. **Language Entropy**: What are the growth rate, spectral radius, and topological entropy of the admissible $u/v$ switching language?
 
-## 4. The proposed mathematical objects
+## 4. Mathematical Objects & Benchmark Parameters
 
-For a nonempty valuation word \(p\), define:
+### Benchmark Switching Pair $(u, v)$ at $Q_1$
+- $u = [1,1,2]$: $a_u = 27, b_u = 16, c_u = 19, d_u = -11$. Linear form $L_u(n) = 11n + 19$.
+- $v = [1,1,2,1,2,2]$: $a_v = 729, b_v = 512, c_v = 881, d_v = -217$. Linear form $L_v(n) = 217n + 881$.
 
-\[
-F_p(n)=\frac{a_pn+c_p}{b_p},
-\qquad
-a_p=3^{k_p},
-\qquad
-b_p=2^{A_p},
-\]
+### Commutator Data
+$$\Delta_{u,v} = d_u c_v - d_v c_u = (-11)(881) - (-217)(19) = -5568 = -2^6 \cdot 87, \qquad \kappa_{u,v} = v_2(\Delta_{u,v}) = 6$$
 
-\[
-d_p=b_p-a_p,
-\qquad
-H_p(n)=d_pn-c_p.
-\]
+### Affine Commutator Identity
+$$b_u b_v \big(F_{uv}(n) - F_{vu}(n)\big) = 8192 \left(-\frac{5568}{8192}\right) = -5568$$
 
-The rational fixed point is:
+### Concrete Switching Coordinate & Cancellation Gate
+Let $x = v_2(L_u(n))$:
+- **$u$-transition**: $x \mapsto x - 4$.
+- **$v$-transition**: Supported on resonance layer $x = 6$, $L_u(n) = 2^6 U$ ($U$ odd, $U \equiv 1 \pmod{16}$):
+  $$x' = v_2(729 U + 87) - 3$$
 
-\[
-x_p^*=\frac{c_p}{d_p}.
-\]
+---
 
-For two words \(p,q\), define the affine interaction constant:
+## 5. Established versus Proposed Results
 
-\[
-\Delta_{p,q}=d_pc_q-d_qc_p.
-\]
+### Established Algebraic Identities (Lean 4 Formalization Target)
+1. **Destination Precision**: $M \ge A + q_t$ is necessary and sufficient for full source cylinder determinism modulo $2^{q_t}$.
+2. **Same-Form Eigenidentity**: $b_p H_p(F_p(n)) = a_p H_p(n)$.
+3. **Cross-Form Identity**: $b_q H_p(F_q(n)) = a_q H_p(n) + \Delta_{p,q}$.
+4. **Affine Commutator Identity**: $b_p b_q (F_{q,p}(n) - F_{p,q}(n)) = \Delta_{p,q}$.
+5. **Common-Center Criterion**: $\Delta_{p,q} = 0 \iff x_p^* = x_q^*$.
 
-Define the interaction depth:
+### Competing Proof Architectures (Phase 7.3D)
+1. **Path-Complete Graph Lyapunov Rankings** (`path_complete_ranking_v1`)
+2. **Disjunctive Transition Invariants** (`disjunctive_transition_invariant_v1`)
+3. **Lexicographic & Multiphase Rankings**
+4. **Size-Change Termination (SCT)**
 
-\[
-\kappa_{p,q}=
-\begin{cases}
-v_2(\Delta_{p,q}), & \Delta_{p,q}\ne0,\\
-\infty, & \Delta_{p,q}=0.
-\end{cases}
-\]
+---
 
-Define destination precision debt for a source state of exponent \(M\), a macrostep of total valuation \(A\), and requested target exponent \(q_t\):
+## 6. Phase 7.3 Sub-Phase Roadmap
 
-\[
-D_{\mathrm{prec}}=A+q_t-M.
-\]
-
-The required extra bits are:
-
-\[
-h_{\mathrm{add}}=\max(0,D_{\mathrm{prec}}).
-\]
-
-## 5. Established versus proposed results
-
-### Established algebraic identities
-
-The following are exact identities and should be formalized generically:
-
-1. Destination precision:
-   \[
-   M\ge A+q_t
-   \]
-   is necessary and sufficient for a full source cylinder \(R\bmod2^M\) to have one deterministic image modulo \(2^{q_t}\).
-
-2. Same-form eigenidentity:
-   \[
-   b_pH_p(F_p(n))=a_pH_p(n).
-   \]
-
-3. Cross-form identity:
-   \[
-   b_qH_p(F_q(n))
-   =
-   a_qH_p(n)+\Delta_{p,q}.
-   \]
-
-4. Affine commutator identity:
-   \[
-   b_pb_q\big(F_q(F_p(n))-F_p(F_q(n))\big)
-   =
-   \Delta_{p,q}.
-   \]
-
-5. Common-center criterion:
-   \[
-   \Delta_{p,q}=0
-   \]
-   if and only if \(p\) and \(q\) have the same rational fixed point.
-
-### Proposed research directions
-
-These are not yet theorems of the project:
-
-- finite-state ultrametric cancellation abstraction;
-- arbitrary-switching termination for common-center families;
-- near-commuting pair selection by large \(v_2(\Delta)\);
-- symbolic transducer states replacing deep residue partitions;
-- finite classification of all recurrent components under a bounded word library.
-
-## 6. Potentially important accidental insight
-
-The broad and exact source cylinders of one macrostep can be represented as cancellation conditions in the fixed-point form of another macrostep.
-
-For nonempty \(p,q\), because \(d_p\) and \(c_p\) are odd:
-
-\[
-2^{A_q}\mid a_qH_p(n)+\Delta_{p,q}
-\]
-
-is equivalent to the prescribed \(q\)-macrostep being integral, and
-
-\[
-2^{A_q+1}\mid a_qH_p(n)+\Delta_{p,q}
-\]
-
-is equivalent to the resulting prescribed quotient being odd, hence to the exact valuation word \(q\).
-
-This reframes exact valuation cylinders as ultrametric resonance conditions.
-
-## 7. Why this may be more powerful than raw SCT
-
-SCT needs sound transition relations over well-founded features. Earlier attempts guessed cross-feature inequalities and then rejected them with counterexamples.
-
-The cross-form identity provides the exact transition law first. The valuation relation is then derived from:
-
-\[
-v_2\!\left(a_qH_p(n)+\Delta_{p,q}\right),
-\]
-
-rather than guessed.
-
-This may produce:
-
-- exact piecewise transition relations;
-- a small cancellation control state;
-- bounded-reset or multiphase rankings;
-- or a principled proof that the chosen feature family is insufficient.
-
-## 8. Valid negative outcomes
-
-Phase 7X is successful if it produces any of the following:
-
-1. A verified common-center arbitrary-switching theorem.
-2. A verified cancellation automaton smaller than the residue graph.
-3. A proof that cancellation states still require unbounded precision.
-4. A ranked list of near-commuting target pairs.
-5. A verified path-first graph construction.
-6. A counterexample showing that the proposed ultrametric feature set is incomplete.
-7. A bounded result showing all surviving components collapse to Phase 6D.
-
-The milestone must not require a branching SCT certificate to exist.
+```text
+Phase 7.3A: Generic Affine Interaction & Symbolic Theorem Kernel
+Phase 7.3B: Minimal Single-Coordinate Ultrametric Register Machine (L_u(n) = 11n+19)
+Phase 7.3C: Symbolic Return-Language & Entropy Probe (s ∈ {u,v}^≤12)
+Phase 7.3D: Four Competing Proof Architectures on Target A (u/v core)
+Phase 7.3E: Target Expansion (Minimal Core -> Target B -> Target C)
+```

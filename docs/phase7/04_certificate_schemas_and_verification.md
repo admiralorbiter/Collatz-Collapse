@@ -215,7 +215,89 @@ Allowed outcomes:
 - `NO_RECURRENT_COMPONENT`
 - `REFINEMENT_LIMIT`
 
-## 10. Independent validity layers
+## 12. New Phase 7.3 Proof Schemas
+
+### `based_switching_core_v1`
+```json
+{
+  "schema_version": "based_switching_core_v1",
+  "base_state": "Q1",
+  "left_closed_walk": [1, 1, 2],
+  "right_closed_walk": [1, 1, 2, 1, 2, 2],
+  "left_affine_data": {
+    "k": 3, "A": 4, "a": "27", "b": "16", "c": "19", "d": "-11"
+  },
+  "right_affine_data": {
+    "k": 6, "A": 9, "a": "729", "b": "512", "c": "881", "d": "-217"
+  },
+  "delta": "-5568",
+  "delta_v2": 6,
+  "noncommuting": true,
+  "uv_path_cylinder": "1959 mod 16384"
+}
+```
+
+### `finite_switching_language_v1`
+```json
+{
+  "schema_version": "finite_switching_language_v1",
+  "alphabet": ["u", "v"],
+  "maximum_switch_length": 10,
+  "all_paths_checked": 2046,
+  "nonempty_path_cylinders": 2046,
+  "failed_paths": [],
+  "claim_status": "BOUNDED_VERIFIED"
+}
+```
+
+### `path_complete_ranking_v1`
+```json
+{
+  "schema_version": "path_complete_ranking_v1",
+  "control_nodes": ["Q1", "Q2"],
+  "ranking_functions": {
+    "Q1": ["v2(L_u(n))"],
+    "Q2": ["v2(L_v(n))"]
+  },
+  "guarded_inequalities": [
+    {
+      "edge": "Q1 -> Q2 via u",
+      "inequality": "V_Q2(F_u(n)) < V_Q1(n)",
+      "exact_source_guard": "7 mod 32"
+    }
+  ],
+  "covered_switching_language": "full_binary_switching"
+}
+```
+
+### `disjunctive_transition_invariant_v1`
+```json
+{
+  "schema_version": "disjunctive_transition_invariant_v1",
+  "accepted_path_language": "{u,v}*",
+  "relations": [
+    {"name": "R_u", "domain": "x > 6"},
+    {"name": "R_v", "domain": "x = 6"}
+  ],
+  "transitive_closure_coverage": true,
+  "well_foundedness_proof": "valuation_drop_to_zero"
+}
+```
+
+### `language_growth_report_v1`
+```json
+{
+  "schema_version": "language_growth_report_v1",
+  "alphabet": ["u", "v"],
+  "max_depth": 12,
+  "word_counts": {"10": 1024, "12": 4096},
+  "spectral_radius": "2.000",
+  "topological_entropy": "0.6931",
+  "branching_ratio": "1.000"
+}
+```
+
+## 13. Independent validity layers
 
 Every final report must show:
 
@@ -236,7 +318,7 @@ Each layer returns:
 - `UNRESOLVED`
 - `NOT_APPLICABLE`
 
-## 11. Lean trust boundary
+## 14. Lean trust boundary
 
 Lean should prove generic identities and selected quantified instances.
 
@@ -249,3 +331,4 @@ Rust and Python should remain responsible for:
 - certificate routing.
 
 The final theorem must disclose exactly which parts were checked by Lean and which were checked by independent executable verifiers.
+

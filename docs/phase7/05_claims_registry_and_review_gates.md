@@ -121,74 +121,42 @@ A finite family with pairwise \(\Delta=0\) admits a common fixed-point form whos
 
 Do not mark verified until the zero case, positive-integer fixed point, and domain semantics are fully handled.
 
-## 3. Review gates
+## 3. Phase 7.3 Sub-Phase Review Gates
 
-### Gate A — Algebra
-
+### Gate 7.3A — Generic Affine Identity Kernel
 Pass if:
+- Same-form, cross-form, and affine commutator identities hold symbolically;
+- $\Delta_{u,v} = -5568, b_u b_v = 8192, v_2(\Delta_{u,v}) = 6$ recomputed independently;
+- Broad and exact resonance recovery matches direct modular inversion;
+- Identity verifiers PASS across Rust, Python oracle, and Lean 4 formal proofs.
 
-- all macrostep data are recomputed;
-- identities hold symbolically;
-- sign conventions are consistent;
-- no formula strings are trusted.
-
-### Gate B — Cylinder semantics
-
+### Gate 7.3B — Sound Register Machine Abstraction
 Pass if:
+- Single-coordinate $L_u(n) = 11n + 19$ state machine $(x, \text{res})$ has precise concretizations;
+- Cancellation gate $x=6, U \equiv 1 \pmod{16}$ universally validated;
+- Feature CEGAR adds $L_v(n)$ or extra $U$-bits only upon concrete counterexample.
 
-- broad and exact cylinders agree with direct inversion;
-- parity forcing is explicit;
-- zero cases are separated;
-- all congruences are universal.
-
-### Gate C — Path semantics
-
+### Gate 7.3C — Symbolic Return Language & Entropy Classification
 Pass if:
+- All words $s \in \{u,v\}^{\le 12}$ enumerated with exact path cylinders;
+- All block-boundary $Q_1$-return conditions verified;
+- Spectral radius, topological entropy, and language growth reported.
 
-- complete path maps are recomputed;
-- exact path cylinders are nonempty;
-- intermediate guards are universal;
-- final canonical states are correct.
+### Gate 7.3D — Termination Proof System Evaluation (Target A)
+Pass if Target A ($u/v$ core) is classified under one of the 4 competing proof architectures:
+- `TERMINATED_PATH_COMPLETE_RANKING` (`path_complete_ranking_v1`)
+- `TERMINATED_DISJUNCTIVE_INVARIANT` (`disjunctive_transition_invariant_v1`)
+- `TERMINATED_LEXICOGRAPHIC`
+- `TERMINATED_MULTIPHASE`
+- `TERMINATED_SCT`
+- `SOUND_UNRANKED`
 
-### Gate D — Abstraction
-
+### Gate 7.3E — Staged Target Expansion
 Pass if:
+- Target A ($u/v$ core) fully classified before Target B ($Q_2$ loop) expansion;
+- Target B fully classified before Target C (full 3-state SCC) expansion;
+- Word library expansion delayed until Phase 7.4.
 
-- every abstract state has a concrete meaning;
-- merges preserve outgoing semantics;
-- cancellation residues are sufficient;
-- precision debt is not hidden in history strings.
-
-### Gate E — Recurrence
-
-Pass if:
-
-- SCCs are computed from the actual verified graph;
-- every cycle has a path certificate;
-- abstract branching and finite path compatibility are separated;
-- cycle rank is computed correctly.
-
-### Gate F — Termination
-
-Pass if one exact proof system succeeds:
-
-- Phase 6D finite fuel;
-- common-center fuel;
-- lexicographic ranking;
-- multiphase ranking;
-- SCT idempotent criterion;
-- another explicitly defined well-founded relation.
-
-### Gate G — Scope
-
-Pass if the claim states:
-
-- alphabet bounds;
-- path bounds;
-- precision bounds;
-- control-state bounds;
-- unresolved branches;
-- what was not proved.
 
 ## 4. Breakthrough language policy
 

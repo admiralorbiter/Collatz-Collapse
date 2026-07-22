@@ -1,20 +1,18 @@
-# Phase 7X Implementation and Experiment Plan
+# Phase 7.3 Implementation and Experiment Plan
 
-## 1. Milestone title
+## 1. Milestone Title
 
-**Phase 7X — Affine Interaction and Ultrametric Fuel Pilot**
+**Phase 7.3 — Affine Interaction, Ultrametric Register Machine, and Symbolic Return Invariants**
 
-## 2. Primary objective
+## 2. Primary Objective
 
-Build and compare three sound abstractions over a bounded macrostep library:
+Build and verify a compact, switching-sensitive ultrametric invariant for the verified Phase 7.2 noncommuting branching core at state $Q_1$:
+- $u = [1,1,2]$
+- $v = w_1 w_2 = [1,1,2,1,2,2]$
 
-1. destination-aware raw residue refinement;
-2. cross-form ultrametric cancellation refinement;
-3. path-first symbolic transducer refinement.
+Evaluate four competing proof systems to classify whether the $(u, v)$ switching language admits a verified termination invariant.
 
-Measure which representation best suppresses spurious SCCs while preserving machine-verifiable path semantics.
-
-## 3. Proposed Rust modules
+## 3. Staged Implementation Architecture (Phase 7.3A through 7.3E)
 
 ```text
 crates/collatz-affine/src/
@@ -24,365 +22,103 @@ crates/collatz-affine/src/
 
 crates/collatz-abstract/src/
     precision_debt.rs
-    ultrametric_state.rs
-    cancellation_refinement.rs
-    interaction_graph.rs
+    cancellation_register_machine.rs
+    feature_cegar.rs
+    symbolic_return_language.rs
 
 crates/collatz-cegar/src/
-    phase7x_discovery.rs
-    path_first_graph.rs
-    near_commuting_search.rs
-    common_center_clusters.rs
+    graph_lyapunov_synthesis.rs
+    disjunctive_invariant_synthesis.rs
+    lexicographic_ranking_synthesis.rs
+    sct_closure.rs
 
 crates/collatz-cert/src/
-    phase7x_schemas.rs
+    phase73_schemas.rs
 
 crates/collatz-verify/src/
-    verify_affine_interaction.rs
-    verify_cross_form_transition.rs
-    verify_common_center_family.rs
-    verify_path_cylinder.rs
+    verify_based_switching_core.rs
+    verify_finite_switching_language.rs
+    verify_path_complete_ranking.rs
+    verify_disjunctive_transition_invariant.rs
+    verify_language_growth.rs
 ```
 
-## 4. Core data structures
-
-```rust
-pub struct MacrostepData {
-    pub valuation_word: Vec<u32>,
-    pub odd_steps_k: u32,
-    pub total_valuation_a: u32,
-    pub multiplier_a: BigUint,   // 3^k
-    pub divisor_b: BigUint,      // 2^A
-    pub affine_constant_c: BigInt,
-    pub fixed_form_d: BigInt,    // b - a
-}
-```
-
-```rust
-pub struct AffineInteraction {
-    pub left_word_id: String,
-    pub right_word_id: String,
-    pub delta: BigInt,
-    pub delta_v2: Option<u32>,   // None means delta = 0
-    pub common_fixed_point: bool,
-}
-```
-
-```rust
-pub struct CancellationGuard {
-    pub reference_word_id: String,
-    pub transition_word_id: String,
-    pub kappa: u32,
-    pub required_total_v2: u32,
-    pub normalized_residue: BigUint,
-    pub normalized_modulus_exponent: u32,
-}
-```
-
-## 5. Experiment 7X.1 — Generic identity verification
+## 4. Experiment 7.3A — Generic Affine Identity Kernel
 
 ### Goal
+Implement and independently verify generic affine macrostep data, cross-form identities, commutator constants, and exact broad/exact resonance recovery across Rust, Python oracle, and Lean 4.
 
-Verify the generic algebra on every pair in a bounded word library.
-
-### Checks
-
-For each \(p,q\):
-
-- recompute \(a,b,c,d\);
-- recompute \(\Delta\);
-- verify the commutator identity on symbolic coefficients;
-- verify the cross-form identity;
-- verify \(\Delta=0\) exactly matches equality of reduced fixed points.
-
-### Output
-
-```text
-affine_interaction_matrix.json
-```
-
-### Success criterion
-
-Rust verifier and Python oracle independently agree on every pair.
+### Instantiation
+- $u = [1,1,2]$ ($a_u=27, b_u=16, c_u=19, d_u=-11$)
+- $v = [1,1,2,1,2,2]$ ($a_v=729, b_v=512, c_v=881, d_v=-217$)
+- Denominator: $b_u b_v = 16 \cdot 512 = 8192$
+- Multiplier: $a_u a_v = 27 \cdot 729 = 19683$
+- Interaction constant: $\Delta_{u,v} = (-11)(881) - (-217)(19) = -5568 = -2^6 \cdot 87$, $v_2(\Delta_{u,v}) = 6$
+- Order defect: $F_{uv}(n) - F_{vu}(n) = \frac{-5568}{8192} = -\frac{87}{128}$
 
 ---
 
-## 6. Experiment 7X.2 — Cross-form cylinder recovery
+## 5. Experiment 7.3B — Minimal Single-Coordinate Ultrametric Register Machine
 
 ### Goal
+Construct a deterministic cancellation register machine for Target A ($u/v$ core) starting with a single reference coordinate:
+$$L_u(n) = 11n + 19, \qquad x = v_2(L_u(n))$$
 
-Recover broad and exact source cylinders for \(q\) using a reference form \(H_p\).
-
-### Procedure
-
-For each ordered pair \(p\ne q\):
-
-1. Compute:
-   \[
-   a_qH_p(n)+\Delta_{p,q}.
-   \]
-2. Solve:
-   \[
-   v_2(\cdot)\ge A_q
-   \]
-   for the broad cylinder.
-3. Solve:
-   \[
-   v_2(\cdot)\ge A_q+1
-   \]
-   for the exact cylinder.
-4. Compare to direct modular inversion.
-
-### Success criterion
-
-The two methods produce the same canonical residues for every ordered pair.
-
-### Benchmark expectation
-
-For \(w_1,w_2\), recover:
-
-\[
-w_2\text{ broad}: 11\bmod32,
-\qquad
-w_2\text{ exact}: 43\bmod64.
-\]
+### Feature CEGAR Protocol
+- **Initial Register State**: $(x, \text{res})$, $x \in \{<6, 6, >6\}$.
+- **Resonance Layer ($x=6$)**: $L_u(n) = 2^6 U$ ($U$ odd, $U \equiv 1 \pmod{16}$).
+- **Transition Laws**:
+  - $u$: $x \mapsto x - 4$.
+  - $v$: Requires $x=6, U \equiv 1 \pmod{16}$, yields $x' = v_2(729U + 87) - 3$.
+- **Refinement Trigger**: Add $L_v(n) = 217n + 881$ or deeper $U$-bits only if a concrete counterexample proves single-coordinate state is insufficient.
 
 ---
 
-## 7. Experiment 7X.3 — Interaction spectrum
+## 6. Experiment 7.3C — Symbolic Return-Language & Entropy Probe
 
 ### Goal
+Enumerate all binary switching words $s \in \{u,v\}^{\le L}$ for $L = 10 \dots 12$ to analyze the induced return language at $Q_1$.
 
-Identify structurally interesting word pairs.
-
-### Library parameters
-
-Freeze:
-
-- maximum word length \(K_{\max}\);
-- maximum individual valuation \(V_{\max}\);
-- optional total valuation bound \(A_{\max}\);
-- primitive-word policy;
-- exact generation predicate.
-
-### Metrics
-
-For every pair:
-
-- \(|\Delta|\);
-- \(v_2(\Delta)\);
-- shared fixed point;
-- expansion/contracting kind;
-- exact cylinder overlap;
-- finite path compatibility.
-
-### Reports
-
-- common-center clusters;
-- top near-commuting pairs;
-- strongly separated pairs;
-- pairs with large cancellation-depth variance.
+### Measurements
+- Number of admissible switching words of length $r$.
+- Number of words with nonempty positive-integer return cylinders.
+- Spectral radius of adjacency matrix and topological entropy.
+- Fraction of prefixes allowing both $u$ and $v$ extensions.
 
 ---
 
-## 8. Experiment 7X.4 — Common-center arbitrary switching
+## 7. Experiment 7.3D — Four Competing Proof Systems on Target A
 
-### Goal
+Attempt to prove or disprove switching termination using four proof architectures in order:
+1. **State-Indexed / Path-Complete Graph Lyapunov Rankings** (`path_complete_ranking_v1`)
+2. **Disjunctive Transition Invariants** (`disjunctive_transition_invariant_v1`)
+3. **Lexicographic & Multiphase Rankings**
+4. **Size-Change Termination (SCT)**
 
-Search for nontrivial families with:
-
-\[
-\Delta_{p,q}=0
-\]
-
-for all pairs.
-
-### For each cluster
-
-1. Reduce the common fixed point to \(C/D\).
-2. Construct:
-   \[
-   H(n)=Dn-C.
-   \]
-3. Verify:
-   \[
-   b_pH(F_p(n))=a_pH(n)
-   \]
-   for every family member.
-4. Classify the zero case.
-5. Generate arbitrary-switching finite-fuel claims where sound.
-
-### Negative outcome
-
-If all clusters are trivial rotations, powers, or equivalent segmentations, report that classification explicitly.
-
----
-
-## 9. Experiment 7X.5 — Ultrametric abstraction benchmark
-
-### Goal
-
-Compare state explosion and precision requirements.
-
-### Run A: Raw residue CEGAR
-
-Use destination-aware refinement only.
-
-### Run B: Cancellation abstraction
-
-Use:
-
-- valuation regions relative to \(\kappa\);
-- normalized odd residue on resonance surfaces;
-- minimal concrete cylinder witness.
-
-### Run C: Hybrid transducer
-
-Use:
-
-- control state;
-- precision debt;
-- carry/cancellation register;
-- path-first validation.
-
-### Metrics
-
-| Metric | Run A | Run B | Run C |
-|---|---:|---:|---:|
-| States | | | |
-| Edges | | | |
-| Max residue exponent | | | |
-| Refinement rounds | | | |
-| Spurious SCCs | | | |
-| Verified path cylinders | | | |
-| Phase 6D collapses | | | |
-| Unresolved components | | | |
-
----
-
-## 10. Experiment 7X.6 — Path-first graph construction
-
-### Goal
-
-Prevent edgewise-valid but path-incompatible SCCs.
-
-### Algorithm
-
-1. Enumerate bounded path words.
-2. Compose the affine map exactly.
-3. Compute exact path cylinder.
-4. Check intermediate guards.
-5. Canonicalize source and target states.
-6. Insert a summarized graph edge only after validation.
-
-### Compare against
-
-The ordinary edge-first graph over the same library and bounds.
-
-### Success criterion
-
-Every reported closed walk has a nonempty path certificate.
-
----
-
-## 11. Experiment 7X.7 — Ranking synthesis
-
-For each verified recurrent component:
-
-1. Test Phase 6D composite reduction.
-2. Test common-center fuel.
-3. Generate exact cross-form transitions.
-4. Attempt lexicographic ranking.
-5. Attempt cancellation countdown.
-6. Attempt multiphase ranking.
-7. Attempt SCT only after universal relations are certified.
-
-### Required result statuses
-
-- `TERMINATED_PHASE6D`
-- `TERMINATED_COMMON_CENTER`
+### Result Statuses
+- `TERMINATED_PATH_COMPLETE_RANKING`
+- `TERMINATED_DISJUNCTIVE_INVARIANT`
 - `TERMINATED_LEXICOGRAPHIC`
 - `TERMINATED_MULTIPHASE`
+- `TERMINATED_SCT`
 - `SOUND_UNRANKED`
-- `PATH_INCOMPATIBLE`
 - `REFINEMENT_LIMIT`
-- `NO_RECURRENT_COMPONENT`
 
 ---
 
-## 12. Python oracle
+## 8. Experiment 7.3E — Target Expansion (A $\to$ B $\to$ C)
 
-Extend the independent oracle to recompute:
+Only after Target A is fully classified:
+1. **Target B**: Add $Q_2$ self-loop.
+2. **Target C**: Add $Q_3$ and complete 3-state SCC.
 
-- macrostep affine data;
-- \(\Delta\);
-- \(v_2(\Delta)\);
-- fixed-point equality;
-- broad and exact resonance cylinders;
-- path compositions;
-- path-cylinder congruences;
-- common-center family identities;
-- ranking relations.
+---
 
-The oracle must not import Rust-generated derived fields as trusted facts.
+## 9. Lean 4 Formalization (`lean/Phase73.lean`)
 
-## 13. Lean 4 plan
-
-Suggested file:
-
-```text
-lean/Phase7XAffineInteraction.lean
-```
-
-Formalize in this order:
-
-1. macrostep affine definitions;
-2. oddness of \(d_p\) and \(c_p\);
-3. same-form identity;
-4. cross-form identity;
-5. commutator identity;
-6. broad divisibility equivalence;
-7. exact-word parity equivalence;
-8. common-center family theorem;
-9. selected benchmark instantiations.
-
-Ranking theorems should be added only after a concrete verified component exists.
-
-## 14. Mutation tests
-
-Reject at least:
-
-- wrong sign in \(\Delta\);
-- reversed composition order;
-- using sign-normalized \(L\) without transforming \(\Delta\);
-- claiming \(\Delta=0\) for unequal reduced fixed points;
-- replacing \(A_q+1\) with \(A_q\) for exact-word forcing;
-- treating \(v_2(0)\) as zero;
-- dropping the resonance equality case;
-- accepting a bounded test as a universal relation;
-- merging states with different cancellation residues;
-- constructing an SCC from edgewise validity alone;
-- alphabet manifest omissions;
-- hardcoded oracle statuses.
-
-## 15. Deliverables
-
-```text
-docs/phase7x/
-    README.md
-    affine_interaction_theory.md
-    ultrametric_abstraction.md
-    experiment_report.md
-
-certificates/phase7x/
-    alphabet_manifest.json
-    affine_interaction_matrix.json
-    common_center_clusters.json
-    near_commuting_pairs.json
-    discovery_outcome.json
-
-reports/phase7x/
-    abstraction_comparison.md
-    path_first_vs_edge_first.md
-    claims_summary.md
-```
+1. Macrostep affine definitions and oddness of $d_p, c_p$.
+2. Same-form eigenidentity: $b_p H_p(F_p(n)) = a_p H_p(n)$.
+3. Cross-form identity: $b_q H_p(F_q(n)) = a_q H_p(n) + \Delta_{p,q}$.
+4. Affine commutator identity: $b_p b_q (F_{q,p}(n) - F_{p,q}(n)) = \Delta_{p,q}$.
+5. Common-center criterion: $\Delta_{p,q} = 0 \iff x_p^* = x_q^*$.
+6. Instantiated $(u,v)$ arithmetic proofs over exact cylinders.

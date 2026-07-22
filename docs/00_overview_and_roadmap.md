@@ -89,11 +89,14 @@ Phase 6: Macrocycle Invariant Synthesis & 2-Adic Fixed-Point Dichotomy [COMPLETE
    └── Phase 6D: Periodic 2-Adic Fixed-Point & Finite-Fuel Dichotomy Invariants
         │
 Phase 7: Full 2-Adic Language Invariant Synthesis & System-Level Integration [IN PROGRESS]
-   ├── Phase 7A: Infinite-Language Semantics & Büchi/Omega-Regular Model Checking
-   ├── Phase 7B: Size-Change Termination (SCT) & Ramsey Closure Synthesis (size_change_scc_v1)
-   ├── Phase 7C: Multidimensional Energy Games & Progress Measure Computation
-   ├── Phase 7D: History-Sensitive Trace Partitioning (Memory Depth 0 -> 1 -> 2 -> 3)
-   └── Phase 7E: Non-Semilinear Integrality Boundary & 2-Layer Architecture
+   ├── Phase 7.1: Bounded Semantic Refinement & Invalid Target Audit [COMPLETE]
+   ├── Phase 7.2: Guarded Benchmark Graph & Noncommuting Branching Discovery [COMPLETE]
+   ├── Phase 7.3A: Generic Affine Interaction & Symbolic Theorem Kernel
+   ├── Phase 7.3B: Minimal Single-Coordinate Ultrametric Register Machine
+   ├── Phase 7.3C: Symbolic Return-Language & Entropy Probe
+   ├── Phase 7.3D: Competing Proof Systems (Graph Lyapunov, Disjunctive Invariants, Lexicographic, SCT)
+   ├── Phase 7.3E: Target Expansion (Minimal u/v Core -> Target B -> Target C)
+   └── Phase 7.4: Expanded Word Libraries & Interaction Spectrum at Scale
         │
 Phase 8: Diophantine Cycle Bounds & SAT/LRAT Proof Production
    ├── collatz-diophantine (Simons & de Weger linear forms in logarithms)
