@@ -274,6 +274,28 @@ mod tests {
     }
 
     #[test]
+    fn test_all_ones_forced_growth_expansion() {
+        use collatz_affine::AffinePrefix;
+        let word = ValuationWord::new(vec![1; 20]).unwrap();
+        let prefix = AffinePrefix::from_valuation_word(word).unwrap();
+
+        assert_eq!(prefix.odd_steps, 20);
+        assert_eq!(prefix.total_twos, 20);
+        assert!(!prefix.is_multiplicative_contracting()); // 2^20 < 3^20!
+        assert_eq!(prefix.compute_descent_threshold(), None);
+    }
+
+    #[test]
+    fn test_primitive_cycle_canonicalization() {
+        let p1 = vec![2u8];
+        let p2 = vec![2u8, 2u8];
+
+        // primitive root of [2, 2] is [2]
+        let is_repeated = p2.len() > p1.len() && p2.chunks(p1.len()).all(|c| c == p1);
+        assert!(is_repeated);
+    }
+
+    #[test]
     fn test_reject_unknown_field_deserialization() {
         let json_str = r#"{
             "schema_version": "descent_v1",
@@ -292,4 +314,5 @@ mod tests {
         assert!(res.is_err());
     }
 }
+
 

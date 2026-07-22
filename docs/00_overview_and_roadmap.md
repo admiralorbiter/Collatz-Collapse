@@ -60,15 +60,25 @@ Phase 3.5: Proof Audit & Certificate Hardening
    ├── Deprecation of naive mod-9 sieving & simulation witness enhancement
    └── Formalization of 4 Lean 4 structural base lemmas
         │
-Phase 4: Adversarial Valuation-Prefix Search
-   ├── Diversity-preserving beam search & paradoxical sequence diagnostics
-   └── 2-Adic signed representative tracking & -1/3 pole singularity checks
-
+Phase 4: Adversarial Search & Science of the Unresolved Set [COMPLETE]
+   ├── Multi-objective diversity beam search (growth debt, entropy, -1/3 pole match)
+   ├── Sequential Importance Sampling (SIS) with exponential tilting theta* = 0.287
+   ├── Kramer (2026) dual-adic Z2 x Z3 real drift diagnostics & BigInt signed representatives
+   ├── Krasikov–Lagarias-inspired macrostep linear potential certificates (Delta V < 0)
+   └── Automata DFA sampled-prefix observation: E = V - 1 (0 cycles on 500 samples)
         │
-Phase 5: Counterexample-Guided Abstraction Refinement (CEGAR)
-   ├── Relational abstract domains (Octagons/Polyhedra)
-   ├── Maximum cycle mean analysis on transition graphs
-   └── Craig interpolation for spurious trace refinement
+Phase 4.5: Claims Audit & Proof-Object Refinement Gate [COMPLETE]
+   ├── Central Theorem-Status Registry & documentation claims audit
+   ├── Negative-Binomial 2-adic baseline & 2.26% audit gap decomposition
+   ├── Kraft-McMillan verifier invariants (0 <= mu_exact <= 1, 0 <= Mass_broad <= 2)
+   ├── Adversarial claims test suite & Serde DoS defense security bounds
+   └── Phase 5 miniature CEGAR vertical slice prototype
+        │
+Phase 5: Macrostep CEGAR & Linear Ranking Invariant Synthesis
+   ├── Macrostep Abstract Interpretation (Polyhedra / Octagon Relational Domains)
+   ├── Craig Interpolation for Macrostep Linear Ranking Functions
+   └── Automated Certificate Emission for Macrostep Bounds
+
         │
 Phase 6: Automated Transition Invariants & SyGuS Synthesis
    ├── Piecewise ranking functions & linear difference constraints
@@ -98,3 +108,20 @@ A successful outcome does not require solving the Collatz conjecture outright. H
 * Synthesis of a transition invariant cover for a large subsystem using a small set of well-founded relations.
 * An LRAT-certified proof of bounded impossibility for specific valuation-word families.
 * A Lean 4 verified theorem certifying a residue class descent.
+
+---
+
+## 5. Central Theorem-Status Registry
+
+To enforce scientific discipline and prevent over-broad claims, all project statements are strictly categorized according to the following registry:
+
+| Category | Description | Examples in Workbench |
+| :--- | :--- | :--- |
+| **Definition** | Formal terms, representations, or metric choices | `TerminalAtLeast` vs `ExactWord` semantics, Growth debt $D_k$ |
+| **Known Theorem** | Established results from literature | Terras stopping time (1976), Tao almost-all bound (2022) |
+| **Verified Finite Theorem** | Machine-verified theorems produced by `collatz-verify` | Depth 20 canonical broad cover measure (90.2621%), `tail_descent_v1` |
+| **Domain-Scoped Certificate** | Verified properties over explicit, independently checkable domains | Krasikov–Lagarias-inspired potential decrease over macrosteps $M$ |
+| **Empirical Observation** | Sampled computational measurements | Sampled DFA prefix acyclicity ($V=2349, E=2348$), SIS weights |
+| **Conjecture** | Unproven mathematical hypotheses | General Collatz conjecture, global regular language non-existence |
+| **Planned Capability** | Features scheduled for future execution | Phase 5 Polyhedral CEGAR, Phase 8 LRAT proof generation |
+

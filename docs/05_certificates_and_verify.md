@@ -24,9 +24,13 @@ The verification layer enforces strict separation between search heuristics and 
 
 ## 2. JSON Certificate Schemas
 
-### 2.1 JSON Schema Rules
-1. **Strict Structural Typing:** All schemas enforce `#[serde(deny_unknown_fields)]` to reject malformed or extra fields, preventing memory exhaustion (DoS) attacks.
-2. **String-Encoded BigInts & Digit Bounds:** All arbitrary-precision integers (`c_k`, `r_k`, `threshold`) are serialized as base-10 strings with length limits (`MAX_DIGITS = 4096`).
+### 2.1 JSON Schema Rules & Security Bounds
+1. **Strict Structural Schema Matching:** All schemas enforce `#[serde(deny_unknown_fields)]` to reject malformed or extra unexpected fields.
+2. **True DoS Defense Bounds:** Denial-of-Service (DoS) protection is enforced by explicit runtime bounds:
+   - Maximum input file size limit (e.g. 10 MB).
+   - Maximum arbitrary-precision string length (`MAX_DIGITS = 4096`).
+   - Maximum valuation word length limits (`MAX_WORD_LEN = 1024`).
+   - Hard iteration ceiling on exception loops (`MAX_EXCEPTIONS_CHECKED = 100_000`).
 3. **Informational Field Stripping:** Fields like `growth_debt_float` or `heuristic_score` are excluded from proof validation.
 
 ### 2.2 Descent Certificate Schema (`descent_v1.json`)
@@ -81,9 +85,9 @@ Exports the exact disjoint antichain of binary cylinders forming the certified u
 ```json
 {
   "schema_version": "cover_v1",
-  "total_leaves": 2,
+  "total_leaves": 1,
   "max_modulus_exponent": 2,
-  "total_scaled_measure": "4",
+  "total_scaled_measure": "1",
   "is_exact_cover": true,
   "merkle_root_hash": "4a8b1c9d8e7f6a5b",
   "leaves": [
@@ -156,18 +160,21 @@ If all 6 steps pass using checked arbitrary-precision arithmetic, `collatz-verif
 
 ---
 
-## 4. Lean 4 Structural Base Lemmas
+## 4. Lean 4 Structural Base Lemmas (Multiplicative `Nat` Form)
 
-Rather than relying on `decide` to discharge universal natural-number statements, Lean 4 formalization relies on **4 core structural base lemmas**:
+Rather than relying on `decide` to discharge universal natural-number statements, Lean 4 formalization avoids real/rational division leakage by expressing all lemmas in pure multiplicative `Nat` arithmetic:
 
 1. **Affine Recurrence Lemma (`affine_step_correctness`)**:
    $$\forall n_0, \quad 2^{A_k} S^k(n_0) = 3^k n_0 + c_k$$
 2. **Residue Valuation Forcing Lemma (`residue_forces_valuation`)**:
    $$n_0 \equiv -c_k (3^k)^{-1} \pmod{2^{A_k}} \implies 2^{A_k} \mid (3^k n_0 + c_k)$$
 3. **Multiplicative Contraction Lemma (`contraction_forces_descent`)**:
-   $$2^{A_k} > 3^k \implies \lim_{n_0 \to \infty} \frac{S^k(n_0)}{n_0} < 1$$
+   $$(2^{A_k} - 3^k) \cdot (n_0 - 1) \ge c_k \implies S^k(n_0) < n_0$$
 4. **Floor Threshold Soundness Lemma (`exact_threshold_soundness`)**:
    $$n_0 \ge \left\lfloor \frac{c_k}{2^{A_k} - 3^k} \right\rfloor + 1 \implies S^k(n_0) < n_0$$
+
+Concrete JSON certificates then only discharge closed arithmetic equality checks against these formal Lean 4 lemmas.
+
 
 Concrete JSON certificates then only discharge closed arithmetic equality checks against these formal Lean lemmas.
 
