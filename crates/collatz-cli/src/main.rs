@@ -106,12 +106,24 @@ enum Commands {
         depth: u64,
     },
 
+    /// Phase 5 Counterexample-Guided Abstraction Refinement Engine
+    Cegar {
+        /// Maximum valuation depth for cycle checking (default 20)
+        #[arg(short, long, default_value_t = 20)]
+        max_depth: usize,
+
+        /// Maximum CEGAR refinement iterations (default 100)
+        #[arg(short, long, default_value_t = 100)]
+        iterations: usize,
+    },
+
     /// Diagnostic test subcommands
     Test {
         #[command(subcommand)]
         test_command: TestCommands,
     },
 }
+
 
 
 
@@ -215,12 +227,55 @@ fn main() -> Result<()> {
         Commands::Potential { valuations } => run_potential(&valuations),
         Commands::Dfa { samples } => run_dfa(samples),
         Commands::Baseline { depth } => run_baseline(depth),
+        Commands::Cegar { max_depth, iterations } => run_cegar(max_depth, iterations),
         Commands::Test { test_command } => match test_command {
             TestCommands::Core => run_test_core(),
             TestCommands::Differential { max_modulus } => run_test_differential(max_modulus),
         },
     }
 }
+
+fn run_cegar(max_depth: usize, iterations: usize) -> Result<()> {
+    use collatz_cegar::{CegarEngine, CegarEngineConfig};
+
+    println!("=== Running Phase 5 Counterexample-Guided Abstraction Refinement (CEGAR) Engine ===");
+    println!("Max Cycle Depth: {}", max_depth);
+    println!("Max Iterations: {}", iterations);
+    let start_time = Instant::now();
+
+    let config = CegarEngineConfig {
+        max_depth,
+        max_iterations: iterations,
+        max_states: 100_000,
+    };
+
+    let mut engine = CegarEngine::new(config);
+    println!("\nInitializing Relational Abstract State Graph (Modulus 2^4 = 16)...");
+    engine.build_abstract_graph(4);
+
+    println!("Executing CEGAR Loop & Karp Cycle Refinement...");
+    let report = engine.run_cegar_loop();
+
+    println!("\n=== CEGAR Engine Report ===");
+    println!("  - Abstract States Tracked:       {}", report.total_states);
+    println!("  - Abstract Edges Remaining:      {}", report.total_edges);
+    println!("  - Dangerous Abstract Cycles Found: {}", report.dangerous_cycles_found);
+    println!("  - Verified Certificates Emitted: {}", report.certificates_generated.len());
+
+    if let Some(lemma) = report.negative_refinement_lemma {
+        println!("\n[Emitted Negative Refinement Lemma]");
+        println!("  - Schema: {}", lemma.schema_version);
+        println!("  - Depth Reached: {}", lemma.max_depth_reached);
+        println!("  - Iterations: {}", lemma.total_iterations);
+        println!("  - Unresolved SCCs: {}", lemma.remaining_unresolved_sccs);
+    } else {
+        println!("\n[Soundness Status]: Abstract state graph is fully refined!");
+    }
+
+    println!("\nCEGAR Engine Execution Completed in {:.2?}", start_time.elapsed());
+    Ok(())
+}
+
 
 fn run_baseline(depth: u64) -> Result<()> {
     use collatz_sieve::NegativeBinomialBaseline;

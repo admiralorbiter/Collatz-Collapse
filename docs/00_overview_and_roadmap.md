@@ -74,15 +74,18 @@ Phase 4.5: Claims Audit & Proof-Object Refinement Gate [COMPLETE]
    ├── Adversarial claims test suite & Serde DoS defense security bounds
    └── Phase 5 miniature CEGAR vertical slice prototype
         │
-Phase 5: Macrostep CEGAR & Linear Ranking Invariant Synthesis
-   ├── Macrostep Abstract Interpretation (Polyhedra / Octagon Relational Domains)
-   ├── Craig Interpolation for Macrostep Linear Ranking Functions
-   └── Automated Certificate Emission for Macrostep Bounds
-
+Phase 5: Macrostep CEGAR & Linear Ranking Invariant Synthesis [COMPLETE]
+   ├── Relational Abstract Domains (ResidueDomain(2^m) + Interval[N_min, N_max])
+   ├── Staged Relational Widening (nabla) holding congruence modulus fixed
+   ├── Exact Symbolic Integer Karp Cycle Mean Engine (3^|C| >= 2^A <=> lambda* >= 0)
+   ├── Explicit Positivity Guards (n_i >= 1) rejecting 2-adic attractors (-1/3)
+   ├── Automated Certificate Emission (descent_v1, tail_descent_v1, infeasible_subsumption_v1)
+   └── collatz-cegar crate & NegativeRefinementLemmaJson cutoff artifacts
         │
 Phase 6: Automated Transition Invariants & SyGuS Synthesis
    ├── Piecewise ranking functions & linear difference constraints
    └── Well-foundedness bounds & path-complete Lyapunov graph covers
+
         │
 Phase 7: Word-Based Automata & Equality Saturation
    ├── LSB-first binary transducers & regular residue languages

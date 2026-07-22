@@ -27,15 +27,21 @@ To maintain precision, `collatz-abstract` uses **Relational Abstract Domains** (
 ### 2.1 Transition Graph Construction
 Transitions in the abstract state graph represent candidate macrosteps. When an abstract state does not uniquely specify the next valuation $a$, edges are added for all arithmetically admissible valuations.
 
-### 2.2 Critical Cycle Extraction (Karp's Algorithm)
-Each edge $e = (u, v)$ with valuation $a$ is assigned weight:
-$$w(e) = \log_2 3 - a$$
+### 2.2 Critical Cycle Extraction (Exact Integer Karp's Algorithm)
+Each edge $e = (u, v)$ with valuation $a$ is assigned weight $w(e) = \log_2 3 - a$.
 
-A **dangerous abstract strongly connected component (SCC)** is one containing a cycle with non-negative average weight ($\text{mean} \ge 0$). We extract critical cycles using Karp's Maximum Cycle Mean algorithm:
-$$\lambda^* = \max_C \frac{\sum_{e \in C} w(e)}{|C|}$$
+To eliminate 100% of floating-point rounding risks near critical boundaries ($\lambda^* \approx 0$), the workbench translates Karp's Maximum Cycle Mean condition ($\text{mean} \ge 0$) into a purely symbolic, exact integer comparison:
+$$3^{|C|} \ge 2^{\sum_{e \in C} a_i} \iff \lambda^* \ge 0$$
 
-* If $\lambda^* < 0$: Every abstract cycle is strictly contracting.
-* If $\lambda^* \ge 0$: The cycle represents a potential counterexample candidate or a spurious abstract loop.
+* If $3^{|C|} < 2^{\sum a_i}$ ($\lambda^* < 0$): Every abstract cycle is strictly contracting.
+* If $3^{|C|} \ge 2^{\sum a_i}$ ($\lambda^* \ge 0$): The cycle represents a potential counterexample candidate or a spurious abstract loop.
+
+### 2.3 Explicit Intermediate Positivity Guards
+To isolate positive integer trajectories ($\mathbb{N}^+$) from full 2-adic extensions (such as the 2-adic fixed point $-1/3$), concretization enforces explicit intermediate step positivity constraints:
+$$n_i \ge 1 \qquad \forall i \in \{0, 1, \ldots, k\}$$
+
+Spurious abstract loops violating positivity guards are immediately pruned, and a verified certificate is emitted.
+
 
 ---
 

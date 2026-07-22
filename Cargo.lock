@@ -167,6 +167,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "collatz-cegar"
+version = "0.1.0"
+dependencies = [
+ "collatz-affine",
+ "collatz-cert",
+ "collatz-core",
+ "collatz-sieve",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "collatz-cert"
 version = "0.1.0"
 dependencies = [
@@ -188,6 +204,7 @@ dependencies = [
  "anyhow",
  "clap",
  "collatz-affine",
+ "collatz-cegar",
  "collatz-cert",
  "collatz-core",
  "collatz-search",

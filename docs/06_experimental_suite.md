@@ -149,3 +149,13 @@ reports/experiment_run_2026_07_21/
   "reason": null
 }
 ```
+
+---
+
+## 4. Phase 5 CEGAR Experimental Suite
+
+### Experiment 5.1: Macrostep Relational CEGAR Engine Benchmark
+* **Goal:** Execute the full CEGAR loop on relational abstract state graphs (modulo $2^m$), extracting critical cycles via exact integer comparison $3^{|C|} \ge 2^A$, enforcing positivity guards $n_i \ge 1$, pruning abstract edges, and emitting verified JSON certificates.
+* **CLI Command:** `collatz cegar --max-depth 20 --iterations 100`
+* **Output Artifacts:** `reports/phase5_cegar_synthesis.md`, `NegativeRefinementLemmaJson` artifacts.
+
