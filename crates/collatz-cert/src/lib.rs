@@ -1,15 +1,17 @@
 pub mod batch;
 pub mod descent;
 pub mod schema;
+pub mod tail;
 pub mod verify;
 
 pub use batch::{export_certificate_bundle, export_manifest, verify_certificate_bundle, BundleManifest};
 pub use descent::generate_descent_certificate;
 pub use schema::{
     CycleCertificateJson, DescentCertificateJson, InfeasibleAlgebraicCertificateJson,
-    InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson,
+    InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson, TailDescentCertificateJson,
 };
-pub use verify::verify_descent_certificate;
+pub use tail::{compute_a_crit, generate_tail_descent_certificate};
+pub use verify::{verify_descent_certificate, verify_tail_descent_certificate};
 
 use thiserror::Error;
 
@@ -44,4 +46,11 @@ pub enum VerificationError {
 
     #[error("BigInt parse error: {0}")]
     ParseBigIntError(String),
+
+    #[error("Digit count exceeded limit ({limit}): string length {length}")]
+    MaxDigitsExceeded { length: usize, limit: usize },
+
+    #[error("Subsumption verification failed: {0}")]
+    SubsumptionVerificationFailed(String),
 }
+

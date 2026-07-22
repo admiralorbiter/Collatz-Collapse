@@ -7,9 +7,10 @@ use collatz_cert::{
 };
 use collatz_core::{odd_step, trajectory_prefix};
 use collatz_sieve::{
-    DescentSieve, MinimalCounterexampleSieve, Mod9PreimageSieve, PathMergingSieve, PrefixSieve, PrefixState,
+    DescentSieve, MinimalCounterexampleSieve, PathMergingSieve, PrefixSieve, PrefixState,
     PrefixTrie, SievePipeline, SieveResult, TwoAdicImpostorDiagnostic,
 };
+
 use num_bigint::BigUint;
 use num_traits::{One, ToPrimitive, Zero};
 use smallvec::SmallVec;
@@ -204,7 +205,6 @@ fn run_sieve_scan(depth: usize) -> Result<()> {
     let pipeline = SievePipeline::new()
         .add_sieve(DescentSieve)
         .add_sieve(MinimalCounterexampleSieve)
-        .add_sieve(Mod9PreimageSieve::default())
         .add_sieve(PathMergingSieve::new())
         .add_sieve(TwoAdicImpostorDiagnostic);
 
@@ -231,7 +231,6 @@ fn run_sieve_ablation(depth: usize) -> Result<()> {
     let sieves: Vec<Box<dyn PrefixSieve>> = vec![
         Box::new(DescentSieve),
         Box::new(MinimalCounterexampleSieve),
-        Box::new(Mod9PreimageSieve::default()),
         Box::new(PathMergingSieve::new()),
         Box::new(TwoAdicImpostorDiagnostic),
     ];
@@ -279,8 +278,8 @@ fn run_cover_build(max_depth: usize, output_dir: PathBuf, summary_only: bool) ->
     let pipeline = SievePipeline::new()
         .add_sieve(DescentSieve)
         .add_sieve(MinimalCounterexampleSieve)
-        .add_sieve(Mod9PreimageSieve::default())
         .add_sieve(PathMergingSieve::new());
+
 
     let mut trie = PrefixTrie::new(max_depth, pipeline);
 

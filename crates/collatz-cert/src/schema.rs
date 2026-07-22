@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 /// Descent Certificate Schema v1 (descent_v1)
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct DescentCertificateJson {
     pub schema_version: String,
     pub valuation_word: Vec<u32>,
@@ -16,8 +17,22 @@ pub struct DescentCertificateJson {
     pub valuation_semantics: Option<String>,
 }
 
+/// Tail Descent Certificate Schema v1 (tail_descent_v1)
+/// Certifies infinite child valuations a_k >= a_crit analytically (descent threshold B <= 1).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TailDescentCertificateJson {
+    pub schema_version: String,
+    pub prefix_word: Vec<u32>,
+    pub prefix_total_twos: u64,
+    pub prefix_constant: String,
+    pub minimum_child_valuation: u32,
+    pub proof_bound: String,
+}
+
 /// Cycle Certificate Schema v1 (cycle_v1)
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct CycleCertificateJson {
     pub schema_version: String,
     pub valuation_word: Vec<u32>,
@@ -30,6 +45,7 @@ pub struct CycleCertificateJson {
 
 /// Minimality Infeasible Certificate Schema (infeasible_minimality_v1)
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct InfeasibleMinimalityCertificateJson {
     pub schema_version: String,
     pub valuation_word: Vec<u32>,
@@ -44,6 +60,7 @@ pub struct InfeasibleMinimalityCertificateJson {
 
 /// Algebraic Empty Intersection Certificate Schema (infeasible_algebraic_v1)
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct InfeasibleAlgebraicCertificateJson {
     pub schema_version: String,
     pub valuation_word: Vec<u32>,
@@ -58,11 +75,18 @@ pub struct InfeasibleAlgebraicCertificateJson {
 
 /// Subsumption Path Merging Certificate Schema (infeasible_subsumption_v1)
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct InfeasibleSubsumptionCertificateJson {
     pub schema_version: String,
     pub valuation_word: Vec<u32>,
     pub total_twos: u64,
     pub odd_steps: usize,
     pub target_valuation_word: Vec<u32>,
+    pub target_total_twos: u64,
+    pub source_constant: String,
+    pub target_constant: String,
+    pub residue_offset: String,
+    pub step_offset: usize,
     pub subsumption_reason: String,
 }
+

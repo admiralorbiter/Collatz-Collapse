@@ -140,9 +140,46 @@ impl AffineDiagnostics {
     }
 }
 
+/// u128 Fast-Path Safety Guard:
+/// Promotes to BigUint if k > 80 or total_valuation > 126.
+/// Computes c_k using checked operations on u128.
+pub fn compute_affine_constant_u128(word: &ValuationWord) -> Option<u128> {
+    let k = word.len();
+    let total_a = word.total_valuation();
+    if k > 80 || total_a > 126 {
+        return None;
+    }
+
+    let mut c_k = 0u128;
+    let mut partial_sum = 0u32;
+    for &a_i in word.as_slice() {
+        let term = 1u128.checked_shl(partial_sum)?;
+        c_k = c_k.checked_mul(3)?.checked_add(term)?;
+        partial_sum = partial_sum.checked_add(a_i as u32)?;
+    }
+
+    Some(c_k)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_compute_affine_constant_u128_safe() {
+        let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).unwrap();
+        let c_k_u128 = compute_affine_constant_u128(&word);
+        assert_eq!(c_k_u128, Some(251u128));
+    }
+
+    #[test]
+    fn test_compute_affine_constant_u128_overflow_promotes() {
+        // Valuation requiring total_valuation > 126 promotes to BigUint (returns None for u128 fast path)
+        let vals = vec![10u8; 13]; // 130 twos total
+        let word = ValuationWord::new(vals).unwrap();
+        assert_eq!(compute_affine_constant_u128(&word), None);
+    }
+
 
     #[test]
     fn test_affine_prefix_creation() {
@@ -158,15 +195,9 @@ mod tests {
 
     #[test]
     fn test_apply_affine() {
-        // n_0 = 3, word (1, 1). 3 -> 5 -> 1.
-        // n_2 = (9(3) + 5) / 4 = 32 / 4 = 8? Wait, 3*3+1=10->5; 3*5+1=16->1.
-        // Wait, n_2 in odd steps: n_0=3 -> n_1=5 -> n_2=1.
-        // Formula: n_2 = (3^2 * 3 + 5)/4 = (27 + 5)/4 = 32/4 = 8.
-        // Ah! Notice valuation for 3: 3*3+1=10 (v2=1) -> 5. valuation for 5: 3*5+1=16 (v2=4) -> 1.
-        // Word for 3 is actually (1, 4)! Total twos = 5.
         let word = ValuationWord::new(vec![1, 4]).unwrap();
         let prefix = AffinePrefix::from_valuation_word(word).unwrap();
-        // n_2 = (9(3) + c_2)/32 = (27 + 5)/32 = 1. Correct!
         assert_eq!(prefix.apply(&BigUint::from(3u32)).unwrap(), BigUint::from(1u32));
     }
 }
+

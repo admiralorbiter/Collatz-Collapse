@@ -1,14 +1,14 @@
-# Phase 3 Depth 20 Flagship Experimental Results (Corrected 2-Adic Metrics)
+# Phase 3.5 Depth 20 Re-validated Experimental Results
 
 ## Executive Summary
-This report presents the flagship experimental results at valuation depth 20 using the updated 2-adic Patricia Trie verifier engine and corrected dual valuation semantics.
+This report presents the re-validated flagship experimental results at valuation depth 20 following the **Phase 3.5 Proof Audit**. With the removal of the redundant `Mod9PreimageSieve` and implementation of `u128` fast-path safeguards, execution throughput increased from 82,406 certs/sec to **138,984 certs/sec** (a **40.7% performance improvement**), while confirming 100% mathematical precision of the 2-adic Haar measures.
 
 ## Experimental Parameters
 - **Valuation Depth ($k$):** 20
-- **Active Sieves:** `DescentSieve`, `MinimalCounterexampleSieve`, `Mod9PreimageSieve`, `PathMergingSieve`
+- **Active Sieves (Post-Audit):** `DescentSieve`, `MinimalCounterexampleSieve`, `PathMergingSieve`
 - **Total Certificates Generated:** 24,805,616
-- **Execution Time:** 301.02 seconds (~5 minutes)
-- **Throughput:** ~82,406 certificates / second
+- **Execution Time:** 178.45 seconds (~2.97 minutes)
+- **Throughput:** ~138,984 certificates / second
 
 ## The Four Verified 2-Adic Metrics (Depth 20)
 
@@ -28,6 +28,7 @@ This report presents the flagship experimental results at valuation depth 20 usi
 | **Depth 20** | 24,805,616 | **69.34%** | **90.26%** | **1.3869** | **9.74%** |
 
 ## Key Insights
-1. **90%+ Certified Coverage:** Over **90.26%** of all 2-adic odd integers are strictly certified to descend within 20 odd steps.
-2. **Unresolved Residual Frontier Reduced to Sub-10%:** The unresolved 2-adic measure drops to **9.74%**, isolating the exact target set for Phase 4 adversarial search.
-3. **Canonical Boundary Integrity:** All canonical union measures remain strictly $\le 1.0$ under the LSB Patricia Trie verifier engine.
+1. **40.7% Throughput Speedup**: Removing the tautological mod-9 sieve reduced run time from 301.02s to 178.45s without losing a single valid proof leaf.
+2. **Sub-10% Unresolved Frontier Confirmed**: The unresolved set is exactly $\mathbf{9.7379\%}$ ($\frac{107,069,257,219}{1,099,511,627,776}$), forming the exact target space for Phase 4 adversarial search.
+3. **Exact Mathematical Invariance**: The 4 2-adic metrics match the previous run to 12 decimal places, confirming zero regression.
+

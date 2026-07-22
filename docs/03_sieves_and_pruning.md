@@ -2,29 +2,32 @@
 
 ## 1. The Four-Category Sieve Taxonomy
 
-To avoid conflating algebraic impossibilities in $\mathbb{Z}_2$, state subsumption, and minimal counterexample bounds, all sieves in the workbench are classified into a rigorous 4-category taxonomy:
+To avoid conflating algebraic constraints, state subsumption, and minimal counterexample bounds, all sieves in the workbench are classified into a rigorous 4-category taxonomy:
 
 ```text
-                               ┌─────────────────────────┐
-                               │     Prefix Sieve        │
-                               └────────────┬────────────┘
-                                            │
+                                ┌─────────────────────────┐
+                                │     Prefix Sieve        │
+                                └────────────┬────────────┘
+                                             │
      ┌──────────────────────┬───────────────┴───────────────┬──────────────────────┐
      ▼                      ▼                               ▼                      ▼
 ┌──────────────┐   ┌─────────────────┐             ┌──────────────────┐   ┌──────────────────┐
 │ Category 1:  │   │   Category 2:   │             │   Category 3:    │   │   Category 4:    │
-│ Semantic     │   │ Subsumption &   │             │ Minimal Counter- │   │ Search           │
-│ Emptiness    │   │ Deduplication   │             │ example Exclusion│   │ Diagnostics      │
+│ Transition   │   │ Subsumption &   │             │ Minimal Counter- │   │ Search           │
+│ Infeasibility│   │ Deduplication   │             │ example Exclusion│   │ Diagnostics      │
 ├──────────────┤   ├─────────────────┤             ├──────────────────┤   ├──────────────────┤
-│ Integer set  │   │ State already   │             │ Valid path in Z2 │   │ Heuristic        │
-│ is empty     │   │ covered/subsumed│             │ but cannot be in │   │ prioritization   │
-│ in N+.       │   │ in DAG.         │             │ least N+ counter-│   │ score.           │
-│              │   │ Examples:       │             │ example.         │   │ Example:         │
-│              │   │ - Mod9Preimage  │             │ Examples:        │   │ - TwoAdic        │
-│              │   │ - PathMerging   │             │ - DescentSieve   │   │   Impostor       │
-│              │   │ - OddEvenEven   │             │ - MinimalCounter │   │                  │
+│ Modulo/edge  │   │ State already   │             │ Valid path in Z2 │   │ Heuristic        │
+│ constraints  │   │ covered/subsumed│             │ but cannot be in │   │ prioritization   │
+│ incompatible │   │ in search DAG.  │             │ least N+ counter-│   │ score.           │
+│ with state.  │   │ Examples:       │             │ example.         │   │ Example:         │
+│              │   │ - PathMerging   │             │ Examples:        │   │ - TwoAdic        │
+│              │   │ - OddEvenEven   │             │ - DescentSieve   │   │   Impostor       │
+│              │   │                 │             │ - MinimalCounter │   │                  │
 └──────────────┘   └─────────────────┘             └──────────────────┘   └──────────────────┘
 ```
+
+> [!NOTE]
+> **Semantic Emptiness Clarification**: No finite valuation word, by itself, is semantically empty over positive integers $\mathbb{N}^+$, because every finite valuation word yields a non-empty residue class modulo $2^{A_k+1}$ containing infinitely many positive odd integers. Category 1 applies strictly to transition/edge constraints incompatible with full source/target state configurations.
 
 ---
 
@@ -55,21 +58,20 @@ pub trait PrefixSieve: Send + Sync {
 
 ## 3. Sieve Descriptions & Mechanics
 
-### 3.1 Kinematic Sieves (Algebraic Impossibilities in $\mathbb{Z}_2$)
+### 3.1 Subsumption & Transition Constraint Sieves
 
-#### Mod-9 Preimage Sieve (`Mod9PreimageSieve`)
-* **Principle:** Inspects the residue class $n_0 \pmod 9$ alongside $n_0 \pmod{2^{A_k}}$.
-* **Mechanism:** $3n+1 \pmod 9$ takes values strictly in $\{1, 4, 7\}$. This constrains how valuation transitions interact with ternary residues.
-* **Certificate:** Returns an algebraic proof showing no starting value in the modular intersection can yield the proposed valuation step.
+#### Mod-9 Preimage Sieve Deprecation Note
+> [!WARNING]
+> **Deprecated in Phase 3.5**: The naive `Mod9PreimageSieve` testing residue mod 9 against LSB-first residue representatives $r \pmod{2^{A_k}}$ has been removed. Because $\gcd(2^{A_k}, 9) = 1$, the CRT guarantees that integers $n_0 \equiv r \pmod{2^{A_k}}$ cover all residues modulo 9 uniformly. Mod-9 exclusion is valid strictly under predecessor subsumption or minimal-counterexample logic (e.g. Angeltveit 2026).
 
 #### Path-Merging Sieve (`PathMergingSieve`)
-* **Principle:** Detects when two distinct valuation prefixes merge into identical abstract residue states modulo $2^m$ and $3^j$.
-* **Mechanism:** Maintains thread-local LRU caches flushing to a global concurrent table to prevent lock contention across Rayon threads. Emits `infeasible_subsumption_v1` certificates containing the target valuation word to form a Directed Acyclic Graph (DAG) of certificates.
+* **Principle:** Detects when two distinct valuation prefixes merge into identical abstract residue states.
+* **Mechanism:** Maintains thread-local LRU caches flushing to a global concurrent table to prevent lock contention across Rayon threads. Emits `infeasible_subsumption_v1` certificates containing explicit simulation witnesses (source/target affine states $(A_k, c_k)$, residue inclusion offset $m$, and trajectory step alignment offset $j$).
 * **Concurrency:** Uses lock-free lookup to avoid mutex bottlenecks in `rayon::iter::ParallelIterator` loops.
 
 #### Odd-Even-Even Sieve (`OddEvenEvenSieve`)
 * **Principle:** Analyzes valuation word patterns containing isolated or recurring valuation configurations.
-* **Mechanism:** Leverages structural congruence relations to eliminate valuation sub-words that force contradictory modular equations.
+* **Mechanism:** Leverages structural congruence relations to eliminate valuation sub-words that force contradictory modular equations under state bounds.
 
 ---
 
@@ -94,6 +96,27 @@ pub trait PrefixSieve: Send + Sync {
 For tracking residue class exclusions and precomputed admissibility tables across large powers of two ($2^{20}$ to $2^{32}$):
 * Standard `HashSet<u64>` suffers from severe memory overhead and pointer indirection.
 * Plain `Vec<u64>` bitsets become unwieldy for high modular powers.
+* **Roaring Bitmaps (`roaring` crate):** Uses hybrid uncompressed bitsets, run-length encoding (RLE), and sparse arrays. It drastically compresses sparse modular exclusion bitsets while accelerating set operations (`union`, `intersection`) via SIMD vectorization.
+
+---
+
+## 5. Experiment A: Sieve Ablation Protocol
+
+To quantify the exact efficacy of each sieve, **Experiment A (Sieve Ablation Study)** executes search benchmarks with sieves enabled individually and in combination.
+
+### Measured Metrics
+```text
+Sieve Combination
+├── Nodes Explored
+├── Nodes Eliminated
+├── Memory Footprint (MB)
+├── Execution Time (s)
+├── Unique Eliminations (nodes caught ONLY by this sieve)
+└── Certificate Output Volume
+```
+
+The output of Experiment A produces an empirical ranking of sieves, determining the optimal pipeline order for deep adversarial searches.
+ high modular powers.
 * **Roaring Bitmaps (`roaring` crate):** Uses hybrid uncompressed bitsets, run-length encoding (RLE), and sparse arrays. It drastically compresses sparse modular exclusion bitsets while accelerating set operations (`union`, `intersection`) via SIMD vectorization.
 
 ---

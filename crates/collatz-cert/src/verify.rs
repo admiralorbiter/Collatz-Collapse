@@ -1,4 +1,5 @@
-use crate::schema::DescentCertificateJson;
+use crate::schema::{DescentCertificateJson, TailDescentCertificateJson};
+use crate::tail::compute_a_crit;
 use crate::VerificationError;
 use collatz_affine::{
     solve_starting_residue_broad, solve_starting_residue_exact, ValuationSemantics, ValuationWord,
@@ -8,8 +9,21 @@ use num_bigint::BigUint;
 use num_traits::{One, Zero};
 use std::str::FromStr;
 
+pub const MAX_DIGITS: usize = 4096;
+pub const MAX_EXCEPTIONS_CHECKED: usize = 100_000;
+
+fn parse_bounded_biguint(s: &str) -> Result<BigUint, VerificationError> {
+    if s.len() > MAX_DIGITS {
+        return Err(VerificationError::MaxDigitsExceeded {
+            length: s.len(),
+            limit: MAX_DIGITS,
+        });
+    }
+    BigUint::from_str(s).map_err(|_| VerificationError::ParseBigIntError(s.to_string()))
+}
+
 /// Pure-Rust independent verifier function for DescentCertificateJson.
-/// Implements 6 strict invariant checks with zero solver dependencies.
+/// Implements strict invariant checks with zero solver dependencies.
 pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), VerificationError> {
     // Step 0: Valuation Domain & Schema Constraints
     if cert.schema_version != "descent_v1" {
@@ -72,8 +86,7 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         partial_sum += a_i as u64;
     }
 
-    let declared_c_k = BigUint::from_str(&cert.constant)
-        .map_err(|_| VerificationError::ParseBigIntError(cert.constant.clone()))?;
+    let declared_c_k = parse_bounded_biguint(&cert.constant)?;
 
     if c_k != declared_c_k {
         return Err(VerificationError::ConstantMismatch {
@@ -88,8 +101,7 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         ValuationSemantics::ExactWord => solve_starting_residue_exact(&c_k, k, computed_a_k),
     }.map_err(|e| VerificationError::ResidueMismatch { declared: cert.starting_residue.clone(), computed: e.to_string() })?;
 
-    let declared_residue = BigUint::from_str(&cert.starting_residue)
-        .map_err(|_| VerificationError::ParseBigIntError(cert.starting_residue.clone()))?;
+    let declared_residue = parse_bounded_biguint(&cert.starting_residue)?;
 
     if computed_residue != declared_residue {
         return Err(VerificationError::ResidueMismatch {
@@ -112,8 +124,7 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
     // Step 5: Verify Exact Integer Threshold B = floor(c_k / (2^A_k - 3^k)) + 1
     let diff = &pow2_a - &pow3_k;
     let computed_threshold = (&c_k / diff) + 1u32;
-    let declared_threshold = BigUint::from_str(&cert.descent_threshold)
-        .map_err(|_| VerificationError::ParseBigIntError(cert.descent_threshold.clone()))?;
+    let declared_threshold = parse_bounded_biguint(&cert.descent_threshold)?;
 
     if computed_threshold != declared_threshold {
         return Err(VerificationError::ThresholdMismatch {
@@ -130,7 +141,15 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         e += &modulus;
     }
 
+    let mut iterations = 0;
     while e < computed_threshold {
+        iterations += 1;
+        if iterations > MAX_EXCEPTIONS_CHECKED {
+            return Err(VerificationError::ExceptionVerificationFailed {
+                integer: format!("Exception check count exceeded safety limit of {}", MAX_EXCEPTIONS_CHECKED),
+            });
+        }
+
         let mut val = e.clone();
         let mut descended = false;
 
@@ -154,15 +173,73 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
     Ok(())
 }
 
+/// Pure-Rust independent verifier function for TailDescentCertificateJson.
+pub fn verify_tail_descent_certificate(cert: &TailDescentCertificateJson) -> Result<(), VerificationError> {
+    if cert.schema_version != "tail_descent_v1" {
+        return Err(VerificationError::SchemaMismatch {
+            expected: "tail_descent_v1".to_string(),
+            found: cert.schema_version.clone(),
+        });
+    }
+
+    if cert.prefix_word.is_empty() {
+        return Err(VerificationError::InvalidValuationWord("Prefix valuation word cannot be empty".to_string()));
+    }
+
+    let word = ValuationWord::from_u32_slice(&cert.prefix_word)
+        .map_err(|e| VerificationError::InvalidValuationWord(e.to_string()))?;
+
+    let computed_a_k = word.total_valuation();
+    if computed_a_k != cert.prefix_total_twos {
+        return Err(VerificationError::TotalTwosMismatch {
+            declared: cert.prefix_total_twos,
+            computed: computed_a_k,
+        });
+    }
+
+    // Recompute c_k
+    let mut c_k = BigUint::zero();
+    let mut partial_sum = 0u64;
+    for &a_i in word.as_slice() {
+        c_k = (&c_k * 3u32) + (BigUint::one() << partial_sum);
+        partial_sum += a_i as u64;
+    }
+
+    let declared_c_k = parse_bounded_biguint(&cert.prefix_constant)?;
+    if c_k != declared_c_k {
+        return Err(VerificationError::ConstantMismatch {
+            declared: cert.prefix_constant.clone(),
+            computed: c_k.to_string(),
+        });
+    }
+
+    // Recompute analytical critical child valuation a_crit
+    let computed_a_crit = compute_a_crit(&word);
+    if computed_a_crit != cert.minimum_child_valuation {
+        return Err(VerificationError::ThresholdMismatch {
+            declared: cert.minimum_child_valuation.to_string(),
+            computed: computed_a_crit.to_string(),
+        });
+    }
+
+    if cert.proof_bound != "1" {
+        return Err(VerificationError::ThresholdMismatch {
+            declared: cert.proof_bound.clone(),
+            computed: "1".to_string(),
+        });
+    }
+
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::descent::generate_descent_certificate;
+    use crate::tail::generate_tail_descent_certificate;
 
     #[test]
     fn test_verify_valid_descent_certificate() {
-        // Valuation word (1, 1, 2, 1, 3) -> k=5, A_k=8.
-        // 3^5 = 243, 2^8 = 256. 256 > 243 -> Multiplicative contraction!
         let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).unwrap();
         let cert = generate_descent_certificate(word).unwrap();
         assert!(verify_descent_certificate(&cert).is_ok());
@@ -182,10 +259,37 @@ mod tests {
     }
 
     #[test]
+    fn test_verify_tail_descent_certificate_valid() {
+        let word = ValuationWord::new(vec![1, 1, 2]).unwrap();
+        let cert = generate_tail_descent_certificate(word).unwrap();
+        assert!(verify_tail_descent_certificate(&cert).is_ok());
+    }
+
+    #[test]
     fn test_reject_corrupted_threshold() {
         let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).unwrap();
         let mut cert = generate_descent_certificate(word).unwrap();
         cert.descent_threshold = "999999".to_string(); // Corrupt threshold
         assert!(verify_descent_certificate(&cert).is_err());
     }
+
+    #[test]
+    fn test_reject_unknown_field_deserialization() {
+        let json_str = r#"{
+            "schema_version": "descent_v1",
+            "valuation_word": [1, 1, 2, 1, 3],
+            "total_twos": 8,
+            "odd_steps": 5,
+            "starting_residue": "39",
+            "modulus_exponent": 8,
+            "constant": "251",
+            "descent_threshold": "20",
+            "checked_exceptions": [],
+            "malicious_extra_field": "attack"
+        }"#;
+
+        let res: Result<DescentCertificateJson, _> = serde_json::from_str(json_str);
+        assert!(res.is_err());
+    }
 }
+

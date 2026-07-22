@@ -25,8 +25,9 @@ The verification layer enforces strict separation between search heuristics and 
 ## 2. JSON Certificate Schemas
 
 ### 2.1 JSON Schema Rules
-1. **String-Encoded BigInts:** All arbitrary-precision integers (`c_k`, `r_k`, `threshold`, `exceptions`) must be serialized as base-10 strings (e.g., `"12345678901234567890"`). Floating-point or numeric JSON representations are strictly prohibited to prevent IEEE-754 rounding errors.
-2. **Informational Field Stripping:** Fields like `growth_debt_float` or `heuristic_score` may exist for reporting, but `collatz-verify` ignores them completely.
+1. **Strict Structural Typing:** All schemas enforce `#[serde(deny_unknown_fields)]` to reject malformed or extra fields, preventing memory exhaustion (DoS) attacks.
+2. **String-Encoded BigInts & Digit Bounds:** All arbitrary-precision integers (`c_k`, `r_k`, `threshold`) are serialized as base-10 strings with length limits (`MAX_DIGITS = 4096`).
+3. **Informational Field Stripping:** Fields like `growth_debt_float` or `heuristic_score` are excluded from proof validation.
 
 ### 2.2 Descent Certificate Schema (`descent_v1.json`)
 
@@ -62,52 +63,42 @@ The verification layer enforces strict separation between search heuristics and 
 }
 ```
 
-### 2.3 Cycle Certificate Schema (`cycle_v1.json`)
+### 2.3 Tail Descent Certificate Schema (`tail_descent_v1.json`)
+Certifies all infinite child valuations $a_k \ge a_{\text{crit}}$ in a single quantified analytical step:
 ```json
 {
-  "schema_version": "cycle_v1",
-  "valuation_word": [2, 2],
-  "total_twos": 4,
-  "odd_steps": 2,
-  "starting_integer": "1",
-  "intermediate_values": ["1", "1"],
-  "is_nontrivial": false
+  "schema_version": "tail_descent_v1",
+  "prefix_word": [1, 1, 2],
+  "prefix_total_twos": 4,
+  "prefix_constant": "13",
+  "minimum_child_valuation": 3,
+  "proof_bound": "1"
 }
 ```
 
-### 2.4 Polymorphic Infeasible Certificate Schemas
-
-#### Minimality Infeasible Certificate Schema (`infeasible_minimality_v1`)
+### 2.4 Canonical Cover Manifest Schema (`cover_v1.json`)
+Exports the exact disjoint antichain of binary cylinders forming the certified union:
 ```json
 {
-  "schema_version": "infeasible_minimality_v1",
-  "valuation_word": [1, 1, 1, 1, 1, 1],
-  "total_twos": 6,
-  "odd_steps": 6,
-  "starting_residue": "63",
-  "modulus_exponent": 6,
-  "constant": "364",
-  "intermediate_step_index": 4,
-  "bound_threshold": "12"
+  "schema_version": "cover_v1",
+  "total_leaves": 2,
+  "max_modulus_exponent": 2,
+  "total_scaled_measure": "4",
+  "is_exact_cover": true,
+  "merkle_root_hash": "4a8b1c9d8e7f6a5b",
+  "leaves": [
+    {
+      "valuation_word": [1, 1],
+      "total_twos": 2,
+      "starting_residue": "3",
+      "modulus_exponent": 2,
+      "valuation_semantics": "terminal_at_least"
+    }
+  ]
 }
 ```
 
-#### Algebraic Empty Intersection Certificate Schema (`infeasible_algebraic_v1`)
-```json
-{
-  "schema_version": "infeasible_algebraic_v1",
-  "valuation_word": [1, 2, 1, 1],
-  "total_twos": 5,
-  "odd_steps": 4,
-  "starting_residue": "15",
-  "modulus_exponent": 5,
-  "modulus_secondary": 9,
-  "residue_secondary": 2,
-  "crt_empty_intersection_proof": "no_odd_integer_satisfies_modulo_intersection"
-}
-```
-
-#### Subsumption Path Merging Certificate Schema (`infeasible_subsumption_v1`)
+### 2.5 Subsumption Certificate Schema with Simulation Witness (`infeasible_subsumption_v1`)
 ```json
 {
   "schema_version": "infeasible_subsumption_v1",
@@ -115,6 +106,11 @@ The verification layer enforces strict separation between search heuristics and 
   "total_twos": 5,
   "odd_steps": 3,
   "target_valuation_word": [2, 1, 2],
+  "target_total_twos": 5,
+  "source_constant": "23",
+  "target_constant": "25",
+  "residue_offset": "0",
+  "step_offset": 2,
   "subsumption_reason": "state_signature_subsumed_in_dag"
 }
 ```
@@ -123,32 +119,36 @@ The verification layer enforces strict separation between search heuristics and 
 
 ## 3. Verifier Invariants (`collatz-verify`)
 
-When `collatz-verify` inspects a `descent_v1` certificate, it executes the following **6 exact invariant checks**:
+When `collatz-verify` inspects a `descent_v1` certificate, it executes **6 exact invariant checks**:
 
 ```text
-Step 1: Recompute Total Valuation
+Step 1: Recompute Total Valuation & Verify Valuation Semantics Exponent
         A_k = sum(valuation_word)
-        Assert A_k == total_twos and 2^{A_k} == 2^{modulus_exponent}
+        If valuation_semantics == "exact_word":
+            Assert modulus_exponent == A_k + 1
+        Else ("terminal_at_least"):
+            Assert modulus_exponent == A_k
 
 Step 2: Recompute Affine Constant c_k
         c_0 = 0
         c_{i+1} = 3 * c_i + 2^{A_i}
-        Assert computed c_k == parse_bigint(constant)
+        Assert computed c_k == parse_bounded_biguint(constant)
 
 Step 3: Verify Closed-Form Starting Residue
-        Compute inverse = (3^k)^{-1} mod 2^{A_k}
-        Assert parse_bigint(starting_residue) == (-c_k * inverse) mod 2^{A_k}
+        If "exact_word":
+            Assert starting_residue == (2^{A_k} - c_k) * (3^k)^{-1} mod 2^{A_k + 1}
+        Else ("terminal_at_least"):
+            Assert starting_residue == -c_k * (3^k)^{-1} mod 2^{A_k}
 
 Step 4: Verify Multiplicative Contraction
         Assert 2^{A_k} > 3^k
 
 Step 5: Verify Exact Integer Threshold B
-        Assert parse_bigint(descent_threshold) == floor(c_k / (2^{A_k} - 3^k)) + 1
+        Assert descent_threshold == floor(c_k / (2^{A_k} - 3^k)) + 1
 
-Step 6: Verify Checked Exceptions
-        For each e in checked_exceptions:
-            Assert e < B
-            Assert e mod 2^{A_k} == starting_residue
+Step 6: Independent Exhaustive Exception Verification
+        Independently construct E = { n : 0 < n < B, n ≡ starting_residue (mod 2^m), n odd }
+        For each e in E (up to MAX_EXCEPTIONS_CHECKED = 100,000):
             Run concrete odd_step(e) for k steps and assert result < e or reaches 1
 ```
 
@@ -156,57 +156,18 @@ If all 6 steps pass using checked arbitrary-precision arithmetic, `collatz-verif
 
 ---
 
-## 4. SAT Bit-Blasting & LRAT Proof Logging
+## 4. Lean 4 Structural Base Lemmas
 
-For bounded impossibility results (e.g., proving no minimal-counterexample-feasible valuation word of length $k$ exists within a search space):
+Rather than relying on `decide` to discharge universal natural-number statements, Lean 4 formalization relies on **4 core structural base lemmas**:
 
-```text
-┌────────────────────────────────────────┐
-│ collatz-sat (CNF Encoder)              │
-│ - Encodes valuation choice & arithmetic│
-└───────────────────┬────────────────────┘
-                    │ Emits CNF Formula
-                    ▼
-┌────────────────────────────────────────┐
-│ External SAT Solver (e.g., CaDiCaL)    │
-└───────────────────┬────────────────────┘
-                    │ Emits LRAT Proof File
-                    ▼
-┌────────────────────────────────────────┐
-│ Independent LRAT Checker (drat-trim)   │
-│ - Verifies boolean UNSAT proof         │
-└────────────────────────────────────────┘
-```
+1. **Affine Recurrence Lemma (`affine_step_correctness`)**:
+   $$\forall n_0, \quad 2^{A_k} S^k(n_0) = 3^k n_0 + c_k$$
+2. **Residue Valuation Forcing Lemma (`residue_forces_valuation`)**:
+   $$n_0 \equiv -c_k (3^k)^{-1} \pmod{2^{A_k}} \implies 2^{A_k} \mid (3^k n_0 + c_k)$$
+3. **Multiplicative Contraction Lemma (`contraction_forces_descent`)**:
+   $$2^{A_k} > 3^k \implies \lim_{n_0 \to \infty} \frac{S^k(n_0)}{n_0} < 1$$
+4. **Floor Threshold Soundness Lemma (`exact_threshold_soundness`)**:
+   $$n_0 \ge \left\lfloor \frac{c_k}{2^{A_k} - 3^k} \right\rfloor + 1 \implies S^k(n_0) < n_0$$
 
-> **Trust Boundary Requirement:** An LRAT proof guarantees that the boolean CNF formula is UNSAT. However, it does not guarantee that the CNF encoding accurately represents Collatz arithmetic. Therefore, every SAT proof bundle must contain:
-> 1. `formula.cnf` (Dimacs format)
-> 2. `proof.lrat` (LRAT proof file)
-> 3. `encoding_spec.md` (Formal description mapping boolean variables to bit-vector arithmetic)
-> 4. `problem_metadata.json`
+Concrete JSON certificates then only discharge closed arithmetic equality checks against these formal Lean lemmas.
 
----
-
-## 5. Uncertified SMT Policy
-
-SMT solvers (e.g., Z3) are immensely useful for candidate generation and abstract domain concretization. However, because SMT proof logging formats (Alethe/CVC5) are non-standard across solvers:
-* **Uncertified SMT Policy:** No raw output from an SMT solver may be classified as a "Certificate".
-* An SMT solver result is treated purely as a search heuristic until its output model is translated into an exact `collatz-cert` JSON certificate or verified by `collatz-verify`.
-
----
-
-## 6. Lean 4 Formalization Bridge
-
-To provide the ultimate level of mathematical certainty, certificates generated by `collatz-cert` can be imported into the Lean 4 interactive theorem prover:
-
-1. **Lean Certificate Parser Macro:** Parses `descent_v1.json` strings directly into Lean 4 terms.
-2. **Lean Standard Theorem:**
-```lean
-theorem descent_certificate_holds 
-  (val_word : List Nat) (A_k k : Nat) (r c B : Nat)
-  (h_inv : (3^k * r + c) % 2^A_k = 0)
-  (h_contract : 2^A_k > 3^k)
-  (h_thresh : B = c / (2^A_k - 3^k) + 1) :
-  ∀ (n : Nat), n % 2^A_k = r ∧ n ≥ B → odd_collatz_map_k val_word n < n := by
-  decide
-```
-3. Only key high-value certificates are exported to Lean 4, keeping formal proof maintenance minimal and focused.

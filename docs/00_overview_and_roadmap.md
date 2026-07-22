@@ -53,9 +53,17 @@ Phase 3: Symbolic Residue Cover & Certificate Engine
    ├── Exact descent threshold B computation & finite exception checking
    └── Automated JSON certificate generation & verification
         │
+Phase 3.5: Proof Audit & Certificate Hardening
+   ├── Strict schema validation (deny_unknown_fields) & DoS parsing guards
+   ├── Quantified tail descent certificates (tail_descent_v1)
+   ├── Canonical disjoint cover manifest export (cover_v1)
+   ├── Deprecation of naive mod-9 sieving & simulation witness enhancement
+   └── Formalization of 4 Lean 4 structural base lemmas
+        │
 Phase 4: Adversarial Valuation-Prefix Search
    ├── Diversity-preserving beam search & paradoxical sequence diagnostics
    └── 2-Adic signed representative tracking & -1/3 pole singularity checks
+
         │
 Phase 5: Counterexample-Guided Abstraction Refinement (CEGAR)
    ├── Relational abstract domains (Octagons/Polyhedra)
