@@ -1,0 +1,28 @@
+[package]
+name = "collatz-sieve"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[features]
+default = []
+benchmark = []
+
+[dependencies]
+collatz-core.workspace = true
+collatz-affine.workspace = true
+collatz-cert.workspace = true
+num-bigint.workspace = true
+num-traits.workspace = true
+roaring.workspace = true
+smallvec.workspace = true
+dashmap.workspace = true
+lru.workspace = true
+rayon.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true

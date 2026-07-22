@@ -56,19 +56,47 @@ The verification layer enforces strict separation between search heuristics and 
 }
 ```
 
-### 2.4 Infeasible Prefix Certificate Schema (`infeasible_v1.json`)
+### 2.4 Polymorphic Infeasible Certificate Schemas
+
+#### Minimality Infeasible Certificate Schema (`infeasible_minimality_v1`)
 ```json
 {
-  "schema_version": "infeasible_v1",
+  "schema_version": "infeasible_minimality_v1",
   "valuation_word": [1, 1, 1, 1, 1, 1],
   "total_twos": 6,
   "odd_steps": 6,
   "starting_residue": "63",
   "modulus_exponent": 6,
   "constant": "364",
-  "rejection_reason": "exceeds_minimal_counterexample_bound",
   "intermediate_step_index": 4,
   "bound_threshold": "12"
+}
+```
+
+#### Algebraic Empty Intersection Certificate Schema (`infeasible_algebraic_v1`)
+```json
+{
+  "schema_version": "infeasible_algebraic_v1",
+  "valuation_word": [1, 2, 1, 1],
+  "total_twos": 5,
+  "odd_steps": 4,
+  "starting_residue": "15",
+  "modulus_exponent": 5,
+  "modulus_secondary": 9,
+  "residue_secondary": 2,
+  "crt_empty_intersection_proof": "no_odd_integer_satisfies_modulo_intersection"
+}
+```
+
+#### Subsumption Path Merging Certificate Schema (`infeasible_subsumption_v1`)
+```json
+{
+  "schema_version": "infeasible_subsumption_v1",
+  "valuation_word": [1, 1, 3],
+  "total_twos": 5,
+  "odd_steps": 3,
+  "target_valuation_word": [2, 1, 2],
+  "subsumption_reason": "state_signature_subsumed_in_dag"
 }
 ```
 

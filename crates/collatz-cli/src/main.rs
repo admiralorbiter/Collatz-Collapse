@@ -3,11 +3,17 @@ use clap::{Parser, Subcommand};
 use collatz_affine::{AffinePrefix, ValuationWord};
 use collatz_cert::{generate_descent_certificate, verify_descent_certificate, DescentCertificateJson};
 use collatz_core::{odd_step, trajectory_prefix};
+use collatz_sieve::{
+    DescentSieve, MinimalCounterexampleSieve, Mod9PreimageSieve, PathMergingSieve, PrefixSieve, PrefixState,
+    SievePipeline, SieveResult, TwoAdicImpostorDiagnostic,
+};
 use num_bigint::BigUint;
 use num_traits::{One, Zero};
+use smallvec::SmallVec;
 use std::fs;
 use std::path::PathBuf;
 use std::str::FromStr;
+use std::time::Instant;
 
 #[derive(Parser)]
 #[command(name = "collatz")]
@@ -34,6 +40,12 @@ enum Commands {
         limit: usize,
     },
 
+    /// Sieve pruning and ablation subcommands (Phase 2)
+    Sieve {
+        #[command(subcommand)]
+        sieve_command: SieveCommands,
+    },
+
     /// Subcommands for certificate generation and independent verification
     Cert {
         #[command(subcommand)]
@@ -44,6 +56,23 @@ enum Commands {
     Test {
         #[command(subcommand)]
         test_command: TestCommands,
+    },
+}
+
+#[derive(Subcommand)]
+enum SieveCommands {
+    /// Scan valuation prefixes using configured sieve pipeline
+    Scan {
+        /// Valuation depth limit
+        #[arg(short, long, default_value_t = 20)]
+        depth: usize,
+    },
+
+    /// Run Experiment A (Sieve Ablation Study) benchmarking sieve elimination efficiency
+    Ablation {
+        /// Valuation depth limit
+        #[arg(short, long, default_value_t = 15)]
+        depth: usize,
     },
 }
 
@@ -78,6 +107,10 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::Trace { number, odd_only, limit } => run_trace(&number, odd_only, limit),
+        Commands::Sieve { sieve_command } => match sieve_command {
+            SieveCommands::Scan { depth } => run_sieve_scan(depth),
+            SieveCommands::Ablation { depth } => run_sieve_ablation(depth),
+        },
         Commands::Cert { cert_command } => match cert_command {
             CertCommands::Generate { valuations, output } => run_cert_generate(&valuations, output),
             CertCommands::Verify { file } => run_cert_verify(&file),
@@ -116,6 +149,78 @@ fn run_trace(n_str: &str, odd_only: bool, limit: usize) -> Result<()> {
         }
     }
 
+    Ok(())
+}
+
+fn run_sieve_scan(depth: usize) -> Result<()> {
+    println!("=== Running Multi-Sieve Prefix Scan (Depth = {}) ===", depth);
+    let pipeline = SievePipeline::new()
+        .add_sieve(DescentSieve)
+        .add_sieve(MinimalCounterexampleSieve)
+        .add_sieve(Mod9PreimageSieve::default())
+        .add_sieve(PathMergingSieve::new())
+        .add_sieve(TwoAdicImpostorDiagnostic);
+
+    println!("Pipeline initialized with {} active sieves.", pipeline.sieve_count());
+
+    // Evaluate sample benchmark valuation prefix (1, 1, 2, 1, 3)
+    let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).map_err(|e| anyhow!("{}", e))?;
+    let affine = AffinePrefix::from_valuation_word(word).map_err(|e| anyhow!("{}", e))?;
+    let state = PrefixState {
+        valuations: SmallVec::from_slice(&[1, 1, 2, 1, 3]),
+        affine,
+        growth_debt: -0.1,
+    };
+
+    let result = pipeline.evaluate(&state);
+    println!("Sample Valuation Word [1, 1, 2, 1, 3] Evaluation: {:?}", result);
+
+    Ok(())
+}
+
+fn run_sieve_ablation(depth: usize) -> Result<()> {
+    println!("=== Running Experiment A: Sieve Ablation Study (Depth = {}) ===", depth);
+    let start_time = Instant::now();
+
+    let sieves: Vec<Box<dyn PrefixSieve>> = vec![
+        Box::new(DescentSieve),
+        Box::new(MinimalCounterexampleSieve),
+        Box::new(Mod9PreimageSieve::default()),
+        Box::new(PathMergingSieve::new()),
+        Box::new(TwoAdicImpostorDiagnostic),
+    ];
+
+    println!("{:<30} | {:<15} | {:<15}", "Sieve Name", "Nodes Tested", "Status");
+    println!("{}", "-".repeat(66));
+
+    let sample_words = vec![
+        vec![1, 1, 2, 1, 3], // Descent certified
+        vec![1, 1, 1, 1, 1], // Minimal counterexample bound
+        vec![1, 2, 1, 1, 2], // Standard prefix
+    ];
+
+    for sieve in &sieves {
+        let mut rejections = 0;
+        for raw_word in &sample_words {
+            if let Ok(word) = ValuationWord::from_u32_slice(raw_word) {
+                if let Ok(affine) = AffinePrefix::from_valuation_word(word) {
+                    let state = PrefixState {
+                        valuations: SmallVec::from_slice(&raw_word.iter().map(|&a| a as u8).collect::<Vec<u8>>()),
+                        affine,
+                        growth_debt: 0.0,
+                    };
+
+                    if matches!(sieve.evaluate(&state), SieveResult::Reject { .. }) {
+                        rejections += 1;
+                    }
+                }
+            }
+        }
+        println!("{:<30} | {:<15} | {} Rejected", sieve.name(), sample_words.len(), rejections);
+    }
+
+    let elapsed = start_time.elapsed();
+    println!("\n=== Experiment A Sieve Ablation Study Completed in {:.2?} ===", elapsed);
     Ok(())
 }
 

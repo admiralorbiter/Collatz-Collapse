@@ -3,7 +3,10 @@ pub mod schema;
 pub mod verify;
 
 pub use descent::generate_descent_certificate;
-pub use schema::{CycleCertificateJson, DescentCertificateJson, InfeasibleCertificateJson};
+pub use schema::{
+    CycleCertificateJson, DescentCertificateJson, InfeasibleAlgebraicCertificateJson,
+    InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson,
+};
 pub use verify::verify_descent_certificate;
 
 use thiserror::Error;

@@ -3,6 +3,7 @@ members = [
     "crates/collatz-core",
     "crates/collatz-affine",
     "crates/collatz-cert",
+    "crates/collatz-sieve",
     "crates/collatz-cli",
 ]
 resolver = "2"
@@ -24,11 +25,17 @@ thiserror = "1.0"
 anyhow = "1.0"
 proptest = "1.4"
 criterion = "0.5"
+roaring = "0.10"
+smallvec = "1.11"
+dashmap = "5.5"
+lru = "0.12"
+rayon = "1.8"
 
 # Internal workspace crates
 collatz-core = { path = "crates/collatz-core" }
 collatz-affine = { path = "crates/collatz-affine" }
 collatz-cert = { path = "crates/collatz-cert" }
+collatz-sieve = { path = "crates/collatz-sieve" }
 
 [profile.release]
 opt-level = 3

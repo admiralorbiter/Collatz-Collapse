@@ -62,8 +62,9 @@ pub trait PrefixSieve: Send + Sync {
 * **Certificate:** Returns an algebraic proof showing no starting value in the modular intersection can yield the proposed valuation step.
 
 #### Path-Merging Sieve (`PathMergingSieve`)
-* **Principle:** Detects when two distinct valuation prefixes converge to identical affine residues modulo $2^m$ and $3^j$.
-* **Mechanism:** Maintains a concurrent lookup table of active state signatures. If a prefix arrives at a state known to have been explored or certified by another branch, it is pruned immediately.
+* **Principle:** Detects when two distinct valuation prefixes merge into identical abstract residue states modulo $2^m$ and $3^j$.
+* **Mechanism:** Maintains thread-local LRU caches flushing to a global concurrent table to prevent lock contention across Rayon threads. Emits `infeasible_subsumption_v1` certificates containing the target valuation word to form a Directed Acyclic Graph (DAG) of certificates.
+* **Concurrency:** Uses lock-free lookup to avoid mutex bottlenecks in `rayon::iter::ParallelIterator` loops.
 
 #### Odd-Even-Even Sieve (`OddEvenEvenSieve`)
 * **Principle:** Analyzes valuation word patterns containing isolated or recurring valuation configurations.
@@ -75,15 +76,15 @@ pub trait PrefixSieve: Send + Sync {
 
 #### Descent Sieve (`DescentSieve`)
 * **Principle:** Evaluates whether $2^{A_k} > 3^k$.
-* **Mechanism:** If $2^{A_k} > 3^k$, computes threshold $B = \lfloor \frac{c_k}{2^{A_k} - 3^k} \rfloor + 1$. If the smallest positive representative $r_k \ge B$, the prefix is certified as descending and pruned from further expansion.
+* **Mechanism:** If $2^{A_k} > 3^k$, computes threshold $B = \lfloor \frac{c_k}{2^{A_k} - 3^k} \rfloor + 1$. If the smallest positive representative $r_k \ge B$, the prefix is certified as descending and pruned from further expansion. Emits `descent_v1` certificate.
 
 #### Minimal-Counterexample Sieve (`MinimalCounterexampleSieve`)
 * **Principle:** Applies intermediate step lower bounds $n_j \ge n_0$.
-* **Mechanism:** For each intermediate step $j$ where $2^{A_j} > 3^j$, enforces $n_0 \le \frac{c_j}{2^{A_j} - 3^j}$. If $r_k > \frac{c_j}{2^{A_j} - 3^j}$, the prefix cannot belong to a minimal counterexample and is rejected.
+* **Mechanism:** For each intermediate step $j$ where $2^{A_j} > 3^j$, enforces $n_0 \le \frac{c_j}{2^{A_j} - 3^j}$. If $r_k > \frac{c_j}{2^{A_j} - 3^j}$, the prefix cannot belong to a minimal counterexample and is rejected. Emits `infeasible_minimality_v1` certificate.
 
-#### 2-Adic Impostor Sieve (`TwoAdicImpostorSieve`)
-* **Principle:** Identifies prefixes approaching the $-1/3$ singularity or negative 2-adic integers.
-* **Mechanism:** Tracks the nearest signed representative of $r_k \pmod{2^{A_k}}$ to zero. If the 2-adic limit forces a negative integer (e.g., $-1, -5/7$), the prefix is flagged as a 2-adic impostor.
+#### 2-Adic Impostor Search Diagnostic (`TwoAdicImpostorSieve`)
+* **Principle:** Identifies prefixes approaching the $-1/3$ singularity or negative 2-adic integers (e.g., $x \to -1$).
+* **Mathematical Boundary:** In $\mathbb{N}^+$, proximity to a negative 2-adic integer alone is not sufficient to prune a formal proof because $2^{A_k}-1$ is a valid positive integer. Therefore, this sieve acts as a **Search Scoring Diagnostic** in Experiment 1, or triggers formal pruning strictly when the positive representative $2^{A_k}-1$ exceeds the minimal counterexample bound.
 
 ---
 
