@@ -4,6 +4,7 @@ members = [
     "crates/collatz-affine",
     "crates/collatz-cert",
     "crates/collatz-sieve",
+    "crates/collatz-search",
     "crates/collatz-cli",
 ]
 resolver = "2"
@@ -37,6 +38,8 @@ collatz-core = { path = "crates/collatz-core" }
 collatz-affine = { path = "crates/collatz-affine" }
 collatz-cert = { path = "crates/collatz-cert" }
 collatz-sieve = { path = "crates/collatz-sieve" }
+collatz-search = { path = "crates/collatz-search" }
+
 
 [profile.release]
 opt-level = 3

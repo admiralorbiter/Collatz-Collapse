@@ -1,5 +1,5 @@
 [package]
-name = "collatz-cli"
+name = "collatz-search"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -10,17 +10,12 @@ collatz-core.workspace = true
 collatz-affine.workspace = true
 collatz-cert.workspace = true
 collatz-sieve.workspace = true
-collatz-search.workspace = true
-smallvec.workspace = true
 
-clap.workspace = true
-anyhow.workspace = true
-serde_json.workspace = true
 num-bigint.workspace = true
-num-rational.workspace = true
 num-traits.workspace = true
-
-
-[[bin]]
-name = "collatz"
-path = "src/main.rs"
+num-rational.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+smallvec.workspace = true
+thiserror.workspace = true
+rayon.workspace = true

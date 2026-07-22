@@ -63,12 +63,51 @@ enum Commands {
         cert_command: CertCommands,
     },
 
+    /// Phase 4 Adversarial Beam Search
+    Search {
+        /// Beam width (number of candidates preserved per step)
+        #[arg(short, long, default_value_t = 100)]
+        beam_width: usize,
+
+        /// Maximum valuation depth limit
+        #[arg(short, long, default_value_t = 20)]
+        max_depth: usize,
+    },
+
+    /// Phase 4 Sequential Importance Sampling (SIS) with Exponential Tilting
+    Sis {
+        /// Number of importance-weighted valuation samples
+        #[arg(short, long, default_value_t = 1000)]
+        samples: usize,
+
+        /// Target valuation word length
+        #[arg(short, long, default_value_t = 15)]
+        length: usize,
+    },
+
+    /// Phase 4 Krasikov-Lagarias Linear Potential Analysis
+    Potential {
+        /// Comma-separated valuation word integers, e.g. "2,3,3,2,1,3,1,4,1,4"
+        #[arg(short, long)]
+        valuations: String,
+    },
+
+    /// Phase 4 Automata Grammar Extraction & Pumpable Cycle Detection
+    Dfa {
+        /// Number of valuation words to sample for DFA extraction
+        #[arg(short, long, default_value_t = 100)]
+        samples: usize,
+    },
+
     /// Diagnostic test subcommands
     Test {
         #[command(subcommand)]
         test_command: TestCommands,
     },
 }
+
+
+
 
 #[derive(Subcommand)]
 enum SieveCommands {
@@ -162,12 +201,147 @@ fn main() -> Result<()> {
             CertCommands::Verify { file } => run_cert_verify(&file),
             CertCommands::VerifyAll { cert_dir } => run_cert_verify_all(&cert_dir),
         },
+        Commands::Search { beam_width, max_depth } => run_search(beam_width, max_depth),
+        Commands::Sis { samples, length } => run_sis(samples, length),
+        Commands::Potential { valuations } => run_potential(&valuations),
+        Commands::Dfa { samples } => run_dfa(samples),
         Commands::Test { test_command } => match test_command {
             TestCommands::Core => run_test_core(),
             TestCommands::Differential { max_modulus } => run_test_differential(max_modulus),
         },
     }
 }
+
+fn run_dfa(num_samples: usize) -> Result<()> {
+    use collatz_search::SequentialImportanceSampler;
+    use collatz_sieve::UnresolvedAutomaton;
+
+    println!("=== Running Phase 4 Automata Grammar Extraction & Cycle Analysis ===");
+    println!("Sampling {} valuation words for minimal DFA construction...", num_samples);
+    let start_time = Instant::now();
+
+    let sampler = SequentialImportanceSampler::new(10, num_samples);
+    let samples = sampler.sample();
+    let words: Vec<ValuationWord> = samples.into_iter().map(|s| s.word).collect();
+
+    let dfa = UnresolvedAutomaton::build_from_words(&words);
+    println!("\nDFA Extraction Complete in {:.2?}:", start_time.elapsed());
+    println!("  - Total States: {}", dfa.num_states);
+    println!("  - Transitions: {}", dfa.transitions.len());
+    println!("  - Accepting States: {}", dfa.accepting_states.len());
+
+    let cycles = dfa.detect_pumpable_cycles();
+    println!("\nDetected {} Pumpable Regular Cycles in Automaton:", cycles.len());
+    println!("{:<5} | {:<25} | {:<10} | {:<15} | {:<12}", "ID", "Cycle Valuations", "Length", "Avg Valuation", "Type");
+    println!("{}", "-".repeat(75));
+
+    for (idx, cycle) in cycles.iter().take(15).enumerate() {
+        let cycle_type = if cycle.is_expansion_cycle { "EXPANSION (D>0)" } else { "CONTRACTING (D<0)" };
+        println!("{:<5} | {:<25?} | {:<10} | {:<15.4} | {}",
+            idx + 1,
+            cycle.valuation_cycle,
+            cycle.cycle_length,
+            cycle.average_valuation,
+            cycle_type,
+        );
+    }
+
+    Ok(())
+}
+
+
+fn run_potential(val_str: &str) -> Result<()> {
+    use collatz_sieve::LinearPotential;
+    use num_rational::Ratio;
+
+    let vals: Result<Vec<u32>, _> = val_str.split(',').map(|s| s.trim().parse::<u32>()).collect();
+    let vals = vals.map_err(|_| anyhow!("Invalid valuation word sequence: '{}'", val_str))?;
+    let word = ValuationWord::from_u32_slice(&vals).map_err(|e| anyhow!("{}", e))?;
+    let prefix = AffinePrefix::from_valuation_word(word).map_err(|e| anyhow!("{}", e))?;
+
+    println!("=== Running Krasikov-Lagarias Linear Potential Analysis ===");
+    println!("Valuation Word: {:?}", prefix.valuations.as_slice());
+    println!("Odd Steps (k): {}", prefix.odd_steps);
+    println!("Total Valuation (A_k): {}", prefix.total_twos);
+    println!("Additive Constant (c_k): {}", prefix.constant);
+    println!("Multiplicative Contracting (2^A > 3^k): {}", prefix.is_multiplicative_contracting());
+
+    let identity_pot = LinearPotential::new(1, 1, 0, 1);
+    let sample_n0 = 39i64;
+
+    if let Some(diff) = identity_pot.compute_difference(&prefix, sample_n0) {
+        println!("\nIdentity Linear Potential V(n) = n:");
+        println!("  - Sample Input n_0: {}", sample_n0);
+        println!("  - Potential Difference Delta V: {}", diff);
+        println!("  - Rational Value: {:.6}", diff.to_f64().unwrap_or(0.0));
+        if diff < Ratio::from_integer(0) {
+            println!("  - [RESULT] CONTRACTING: Strict rational decrease V(n_k) < V(n_0)!");
+        } else {
+            println!("  - [RESULT] EXPANDING: Trajectory increases potential over this macrostep.");
+        }
+    } else {
+        println!("  - Integer overflow encountered during macrostep evaluation.");
+    }
+
+    Ok(())
+}
+
+
+fn run_search(beam_width: usize, max_depth: usize) -> Result<()> {
+    use collatz_search::DiversityBeamSearch;
+    println!("=== Running Phase 4 Multi-Objective Diversity Beam Search ===");
+    println!("Parameters: Beam Width = {}, Max Depth = {}", beam_width, max_depth);
+    let start_time = Instant::now();
+
+    let searcher = DiversityBeamSearch::new(beam_width, max_depth);
+    let initial_word = ValuationWord::new(vec![1]).map_err(|e| anyhow!("{}", e))?;
+    let candidates = searcher.search(initial_word);
+
+    println!("\nSearch Completed in {:.2?}. Retained {} adversarial candidates:", start_time.elapsed(), candidates.len());
+    println!("{:<5} | {:<25} | {:<12} | {:<12} | {:<12}", "Rank", "Valuation Word", "Growth Debt", "Score", "Pole Match");
+    println!("{}", "-".repeat(75));
+
+    for (idx, cand) in candidates.iter().take(15).enumerate() {
+        println!("{:<5} | {:<25?} | {:<12.4} | {:<12.4} | {} bits",
+            idx + 1,
+            cand.word.as_slice(),
+            cand.growth_debt,
+            cand.combined_score,
+            cand.pole_distance_bits,
+        );
+    }
+
+    Ok(())
+}
+
+fn run_sis(samples: usize, length: usize) -> Result<()> {
+    use collatz_search::SequentialImportanceSampler;
+    println!("=== Running Phase 4 Sequential Importance Sampling (SIS) with Exponential Tilting ===");
+    println!("Parameters: Samples = {}, Target Length = {}, theta* = 0.287", samples, length);
+    let start_time = Instant::now();
+
+    let sampler = SequentialImportanceSampler::new(length, samples);
+    let results = sampler.sample();
+
+    println!("\nImportance Sampling Completed in {:.2?}. Sampled {} rare-event trajectories:", start_time.elapsed(), results.len());
+    println!("{:<5} | {:<30} | {:<15} | {:<15}", "Rank", "Valuation Word", "Log Weight", "Norm Weight");
+    println!("{}", "-".repeat(75));
+
+    let mut sorted_results = results;
+    sorted_results.sort_by(|a, b| b.normalized_weight.partial_cmp(&a.normalized_weight).unwrap_or(std::cmp::Ordering::Equal));
+
+    for (idx, sample) in sorted_results.iter().take(15).enumerate() {
+        println!("{:<5} | {:<30?} | {:<15.4} | {:.6}",
+            idx + 1,
+            sample.word.as_slice(),
+            sample.log_likelihood_weight,
+            sample.normalized_weight,
+        );
+    }
+
+    Ok(())
+}
+
 
 fn run_trace(n_str: &str, odd_only: bool, limit: usize) -> Result<()> {
     let n = BigUint::from_str(n_str).map_err(|_| anyhow!("Invalid positive integer N: '{}'", n_str))?;

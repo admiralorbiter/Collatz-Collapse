@@ -190,8 +190,10 @@ dependencies = [
  "collatz-affine",
  "collatz-cert",
  "collatz-core",
+ "collatz-search",
  "collatz-sieve",
  "num-bigint",
+ "num-rational",
  "num-traits",
  "serde_json",
  "smallvec",
@@ -205,6 +207,24 @@ dependencies = [
  "num-traits",
  "proptest",
  "rug",
+ "thiserror",
+]
+
+[[package]]
+name = "collatz-search"
+version = "0.1.0"
+dependencies = [
+ "collatz-affine",
+ "collatz-cert",
+ "collatz-core",
+ "collatz-sieve",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rayon",
+ "serde",
+ "serde_json",
+ "smallvec",
  "thiserror",
 ]
 
