@@ -2,6 +2,8 @@ pub mod batch;
 pub mod descent;
 pub mod graph_contraction;
 pub mod lean_export;
+pub mod macrocycle_theorem;
+pub mod minus_one_countdown;
 pub mod scalar_lyapunov;
 pub mod schema;
 pub mod tail;
@@ -15,6 +17,12 @@ pub use graph_contraction::{
     GraphEdge, ObstructionCycleJson, RationalRatioJson,
 };
 pub use lean_export::export_lean4_theorem;
+pub use macrocycle_theorem::{
+    verify_finite_fuel_macrocycle_certificate, FiniteFuelMacrocycleCertificateJson,
+};
+pub use minus_one_countdown::{
+    verify_minus_one_countdown_certificate, MinusOneCountdownCertificateJson, MinusOneCountdownError,
+};
 pub use scalar_lyapunov::{
     verify_scalar_lyapunov_certificate, ScalarLyapunovCertificateJson, ScalarLyapunovError,
     ScalarTransition, ValuationConstraint,
@@ -27,6 +35,7 @@ pub use tail::{compute_a_crit, generate_tail_descent_certificate};
 pub use valuation_countdown::{
     verify_valuation_countdown_certificate, ValuationCountdownCertificateJson, ValuationCountdownError,
 };
+
 pub use verify::{verify_descent_certificate, verify_tail_descent_certificate};
 
 

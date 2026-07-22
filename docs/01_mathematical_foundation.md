@@ -193,4 +193,31 @@ For all 20-step macrosteps in the unresolved language $\mathcal{L}_{\text{unreso
 $$\Delta V = V(n_{20}) - V(n_0) \le -\varepsilon < 0$$
 proving that all oscillatory "breathing" trajectories strictly decrease potential across macrosteps.
 
+---
+
+## 9. Phase 6 Relational Countdown Theorems & 2-Adic Fixed-Point Invariants
+
+### 9.1 The Minus-One Residue Exit Theorem ($v_2(n+1)$ Invariant)
+For any $m \ge 2$ and odd integer $n \equiv 2^m - 1 \pmod{2^m}$:
+1. Since $n \equiv 3 \pmod{4}$, the odd Collatz step $S(n) = \frac{3n+1}{2}$ has exact 2-adic valuation $a = 1$.
+2. **Valuation Decrement Identity:**
+   $$v_2(S(n) + 1) = v_2(n+1) - 1$$
+3. Defining the guarded countdown $\tau_m(n) = v_2(n+1) - m \ge 0$ for $r = 2^m - 1 \pmod{2^m}$:
+   - **Loop Rule ($\tau_m(n) > 0$):** $S(n) \equiv 2^m - 1 \pmod{2^m}$, with $\tau_m(S(n)) = \tau_m(n) - 1$.
+   - **Exit Rule ($\tau_m(n) = 0$):** $S(n) \equiv 2^{m-1} - 1 \pmod{2^m}$ (exits the self-loop to residue $2^{m-1} - 1$).
+   - For $m = 4$ ($r = 15 \pmod{16}$): $(15, \tau=0) \xrightarrow{a=1} 7 \pmod{16}$ (exits to residue 7!).
+
+### 9.2 Macrocycle Countdown Invariant ($v_2(11n+19)$) & 2-Adic Fixed Point
+For the macrocycle $7 \to 11 \to 9 \to 7$ under valuation word $w = (1, 1, 2)$, the composed macrostep is:
+$$F(n) = \frac{27n+19}{16}$$
+
+**Theorem (Macrocycle Countdown Invariant):**
+1. **2-Adic Fixed Point:** $F(x) = x \iff 16x = 27x + 19 \iff x = -\frac{19}{11} \in \mathbb{Z}_2$. The 2-adic point $x = -\frac{19}{11}$ has the unique periodic valuation word $(1, 1, 2)^\infty$.
+2. **Exact Invariant Identity:**
+   $$11 F(n) + 19 = \frac{27(11n+19)}{16} \implies v_2(11 F(n) + 19) = v_2(11n+19) - 4$$
+3. **Normalized Macrocycle Fuel:** Under the guard $\text{ExactWord}(1, 1, 2)$, $\sigma(n) = \left\lfloor \frac{v_2(11n+19) - 4}{4} \right\rfloor$ decreases by **exactly 1** per lap.
+4. **Universal Arbitrary Finite Repetition:** For every $L \ge 1$, $n \equiv -\frac{19}{11} \pmod{2^{4L+4}}$ forces $L$ complete laps of the macrocycle $(7 \to 11 \to 9 \to 7)^L$.
+5. **No Infinite Positive Realization:** Since $-\frac{19}{11}$ is not a positive integer, $v_2(11n+19)$ is strictly finite for all $n \in \mathbb{N}^+$. Thus, **no positive integer can realize the macrocycle infinitely** (`infinite_positive_realization: ruled_out`).
+
+
 

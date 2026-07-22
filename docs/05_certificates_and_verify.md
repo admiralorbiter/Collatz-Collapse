@@ -183,7 +183,56 @@ Rather than relying on `decide` to discharge universal natural-number statements
 
 Concrete JSON certificates then only discharge closed arithmetic equality checks against these formal Lean 4 lemmas.
 
+---
 
+## 5. Relational Countdown Certificate Schemas
 
-Concrete JSON certificates then only discharge closed arithmetic equality checks against these formal Lean lemmas.
+### 5.1 Minus-One Countdown Certificate (`minus_one_countdown_v1.json`)
+Operates as a **Kernel-Supported Symbolic Theorem Schema**:
+```json
+{
+  "schema_version": "minus_one_countdown_v1",
+  "modulus_exponent": 4
+}
+```
+* **Verifier Rule:** Verifies the 2-adic symbolic derivation $S(n) + 1 = 3 \cdot 2^{m+\tau-1} u$ for exponent $m \le 16$, validating the loop rule ($\tau \ge 1 \implies S(n) \equiv 2^m - 1 \pmod{2^m}$) and exit rule ($\tau = 0 \implies S(n) \equiv 2^{m-1} - 1 \pmod{2^m}$).
 
+### 5.2 Macrocycle Obstruction Certificate (`obstruction_cycle_v1.json`)
+Documents verified non-contracting abstract cycles and their finite-fuel / infinite-realization status:
+```json
+{
+  "schema_version": "obstruction_cycle_v1",
+  "classification": "FiniteFuelMacrocycle",
+  "cycle_length": 3,
+  "vertex_sequence": ["7", "11", "9", "7"],
+  "valuation_word": [1, 1, 2],
+  "total_twos": 4,
+  "odd_steps": 3,
+  "constant": "19",
+  "edge_realizable": true,
+  "one_lap_realizable": true,
+  "one_lap_witness": "231",
+  "two_lap_witness": "743",
+  "three_lap_witness": "41703",
+  "verified_repetition_laps": 10,
+  "all_finite_repetitions_proved": true,
+  "finite_repetition_proof": {
+    "claim_id": "CLM-MACROCYCLE-112-FINITE-REPETITION-001",
+    "proof_artifact": "claims/verified/macrocycle_112_finite_repetition.json"
+  },
+  "infinite_positive_realization": "ruled_out",
+  "infinite_realization_proof": {
+    "claim_id": "CLM-MACROCYCLE-112-NO-POSITIVE-INFINITE-001",
+    "proof_artifact": "claims/verified/macrocycle_112_no_positive_infinite.json"
+  },
+  "macrocycle_countdown": {
+    "linear_coefficient": "11",
+    "linear_constant": "19",
+    "valuation_offset": 4,
+    "valuation_drop_per_lap": 4,
+    "normalized_decrement": 1,
+    "definition": "floor((v2(11n+19)-4)/4)"
+  },
+  "primary_obstruction": "FiniteFuelMacrocycle (Cycle 7->11->9->7: 1-lap witness n=231 mod 256, 2-lap witness n=743 mod 4096, 3-lap witness n=41703 mod 65536)"
+}
+```

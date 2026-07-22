@@ -123,3 +123,23 @@ For switched valuation dynamics, individual potential functions $V_i$ are connec
 $$V_j(S(n)) - V_i(n) \le -\varepsilon \qquad \forall (i, j) \in E(G_L)$$
 
 This certifies stability across all arithmetically legal valuation paths.
+
+---
+
+## 5. Symbolic Relational Control States & Macrocycle Countdown Refinement
+
+### 5.1 Elimination of False Infinite Self-Loops via Symbolic Control States
+Single-step residue abstraction modulo 16 contains a false infinite self-loop $15 \to 15$ under valuation $a = 1$. Rather than building an infinite explicit state graph $(15, 0), (15, 1) \ldots$, `collatz-cegar` uses **2 finite symbolic control states**:
+1. `MinusOneCountdownPositive(m)`: $r = 2^m - 1 \pmod{2^m}, \tau \ge 1$.
+2. `MinusOneCountdownZero(m)`: $r = 2^m - 1 \pmod{2^m}, \tau = 0$.
+
+#### Symbolic Transition Rules
+- `(15, tau >= 2)` $\xrightarrow{a=1}$ `(15, tau >= 1)` ($\Delta \tau = -1$)
+- `(15, tau = 1)` $\xrightarrow{a=1}$ `(15, tau = 0)` ($\Delta \tau = -1$)
+- `(15, tau = 0)` $\xrightarrow{a=1} 7 \pmod{16}$ (**Exits self-loop to residue 7!**)
+
+### 5.2 Relational Graph Manifest & Canonical SHA-256 Digest
+* **State Inventory (9 Control States):** `Residue(1)`, `Residue(3)`, `Residue(5)`, `Residue(7)`, `Residue(9)`, `Residue(11)`, `Residue(13)`, `MinusOnePositive` ($\tau \ge 1$), `MinusOneZero` ($\tau = 0$).
+* **Edge Count:** 36 legal transitions.
+* **Deterministic SHA-256 Digest Function:** `compute_canonical_relational_graph_hash`.
+
