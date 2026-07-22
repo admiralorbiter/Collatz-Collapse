@@ -82,17 +82,22 @@ $$B = \left\lfloor \frac{c_k}{2^{A_k} - 3^k} \right\rfloor + 1$$
 
 **Descent Theorem:** For any starting integer $n_0 \equiv r_k \pmod{2^{A_k}}$, if $n_0 \ge B$, then $S^k(n_0) < n_0$. The valuation prefix guarantees that $n_0$ descends below itself in $k$ odd steps.
 
-### 4.3 Minimal-Counterexample Feasibility Bound
-Let $n_0$ be the hypothetical smallest counterexample to the Collatz conjecture. By definition, its trajectory can never fall below $n_0$ at any intermediate step $j \le k$:
-$$n_j \ge n_0 \quad \forall j$$
+### 4.4 The Tail-Cutoff Lemma for Infinite Valuation Branching
+At any tree node with length $k$, additive constant $c_k$, and total valuation $A_k$, the child valuation $a_k$ can theoretically range from $1$ to $\infty$. However, as $a_k$ increases, $2^{A_k + a_k}$ grows exponentially relative to $3^{k+1}$, driving the descent threshold $B \to 1$.
 
-Using the exact affine relation for intermediate step $j$:
-$$\frac{3^j n_0 + c_j}{2^{A_j}} \ge n_0 \quad \implies \quad c_j \ge (2^{A_j} - 3^j) n_0$$
+Define the analytical cutoff threshold $a_{\text{crit}}$:
+$$a_{\text{crit}} = \left\lfloor \log_2(3c_k + 2^{A_k} + 3^{k+1}) - A_k \right\rfloor + 1$$
 
-When $2^{A_j} > 3^j$, this yields a strict upper bound on the minimal counterexample starting value:
-$$n_0 \le \frac{c_j}{2^{A_j} - 3^j}$$
+**Tail-Cutoff Theorem:** For all child valuations $a_k \ge a_{\text{crit}}$, the resulting macrostep satisfies $2^{A_k + a_k} > 3^{k+1}$ and descent threshold $B \le 1$. Because no positive odd integer is strictly less than 1, all branches $a_k \ge a_{\text{crit}}$ are **trivially certified with zero exceptions**.
 
-**Pruning Rule:** A valuation prefix is infeasible for a minimal counterexample if the smallest positive representative of $n_0 \equiv r_k \pmod{2^{A_k}}$ exceeds $\frac{c_j}{2^{A_j} - 3^j}$ for any intermediate step $j$ where $2^{A_j} > 3^j$.
+This enables the `PrefixTrie` to cover infinite child valuation branches $a_k \ge a_{\text{crit}}$ in a single exact analytical step without allocating infinite nodes in memory.
+
+### 4.5 Exact 2-Adic Measure Density Calculation
+In the measure space of odd integers $2\mathbb{N}+1$ (which has total 2-adic measure $1.0$), a certified leaf node $L$ of total valuation $A_k$ covers a 2-adic set of exact measure:
+$$\mu(L) = 2^{-(A_k - 1)}$$
+
+Because valuation prefixes form a strict prefix-free code over $\mathbb{Z}_2$, distinct certified leaves are 100% disjoint in 2-adic measure space. To prevent IEEE-754 floating-point mantissa cancellation when $A_k > 53$, the cumulative certified density $\mu_{\text{total}}$ is accumulated using exact rational numbers (`num-rational::BigRational`):
+$$\mu_{\text{total}} = \sum_{L \in \text{CertifiedLeaves}} \frac{1}{2^{A_k(L) - 1}}$$
 
 ---
 

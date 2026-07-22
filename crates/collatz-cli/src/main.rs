@@ -1,11 +1,14 @@
 use anyhow::{anyhow, Context, Result};
 use clap::{Parser, Subcommand};
 use collatz_affine::{AffinePrefix, ValuationWord};
-use collatz_cert::{generate_descent_certificate, verify_descent_certificate, DescentCertificateJson};
+use collatz_cert::{
+    export_certificate_bundle, generate_descent_certificate, verify_certificate_bundle,
+    verify_descent_certificate, DescentCertificateJson,
+};
 use collatz_core::{odd_step, trajectory_prefix};
 use collatz_sieve::{
     DescentSieve, MinimalCounterexampleSieve, Mod9PreimageSieve, PathMergingSieve, PrefixSieve, PrefixState,
-    SievePipeline, SieveResult, TwoAdicImpostorDiagnostic,
+    PrefixTrie, SievePipeline, SieveResult, TwoAdicImpostorDiagnostic,
 };
 use num_bigint::BigUint;
 use num_traits::{One, Zero};
@@ -46,6 +49,12 @@ enum Commands {
         sieve_command: SieveCommands,
     },
 
+    /// Symbolic Residue Cover Trie engine subcommands (Phase 3)
+    Cover {
+        #[command(subcommand)]
+        cover_command: CoverCommands,
+    },
+
     /// Subcommands for certificate generation and independent verification
     Cert {
         #[command(subcommand)]
@@ -77,6 +86,20 @@ enum SieveCommands {
 }
 
 #[derive(Subcommand)]
+enum CoverCommands {
+    /// Build symbolic residue cover trie and export certificate bundle
+    Build {
+        /// Maximum valuation depth limit
+        #[arg(short, long, default_value_t = 10)]
+        max_depth: usize,
+
+        /// Output directory for exported certificate bundle
+        #[arg(short, long)]
+        output_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
 enum CertCommands {
     /// Generate a residue-class descent certificate for a valuation word
     Generate {
@@ -89,10 +112,17 @@ enum CertCommands {
         output: Option<PathBuf>,
     },
 
-    /// Independently verify a JSON certificate file
+    /// Independently verify a single JSON certificate file
     Verify {
         /// Path to JSON certificate file
         file: PathBuf,
+    },
+
+    /// Batch verify an entire certificate bundle directory with manifest.json
+    VerifyAll {
+        /// Path to certificate bundle directory
+        #[arg(short, long)]
+        cert_dir: PathBuf,
     },
 }
 
@@ -111,9 +141,13 @@ fn main() -> Result<()> {
             SieveCommands::Scan { depth } => run_sieve_scan(depth),
             SieveCommands::Ablation { depth } => run_sieve_ablation(depth),
         },
+        Commands::Cover { cover_command } => match cover_command {
+            CoverCommands::Build { max_depth, output_dir } => run_cover_build(max_depth, output_dir),
+        },
         Commands::Cert { cert_command } => match cert_command {
             CertCommands::Generate { valuations, output } => run_cert_generate(&valuations, output),
             CertCommands::Verify { file } => run_cert_verify(&file),
+            CertCommands::VerifyAll { cert_dir } => run_cert_verify_all(&cert_dir),
         },
         Commands::Test { test_command } => match test_command {
             TestCommands::Core => run_test_core(),
@@ -163,7 +197,6 @@ fn run_sieve_scan(depth: usize) -> Result<()> {
 
     println!("Pipeline initialized with {} active sieves.", pipeline.sieve_count());
 
-    // Evaluate sample benchmark valuation prefix (1, 1, 2, 1, 3)
     let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).map_err(|e| anyhow!("{}", e))?;
     let affine = AffinePrefix::from_valuation_word(word).map_err(|e| anyhow!("{}", e))?;
     let state = PrefixState {
@@ -194,9 +227,9 @@ fn run_sieve_ablation(depth: usize) -> Result<()> {
     println!("{}", "-".repeat(66));
 
     let sample_words = vec![
-        vec![1, 1, 2, 1, 3], // Descent certified
-        vec![1, 1, 1, 1, 1], // Minimal counterexample bound
-        vec![1, 2, 1, 1, 2], // Standard prefix
+        vec![1, 1, 2, 1, 3],
+        vec![1, 1, 1, 1, 1],
+        vec![1, 2, 1, 1, 2],
     ];
 
     for sieve in &sieves {
@@ -221,6 +254,37 @@ fn run_sieve_ablation(depth: usize) -> Result<()> {
 
     let elapsed = start_time.elapsed();
     println!("\n=== Experiment A Sieve Ablation Study Completed in {:.2?} ===", elapsed);
+    Ok(())
+}
+
+fn run_cover_build(max_depth: usize, output_dir: PathBuf) -> Result<()> {
+    println!("=== Running Symbolic Residue Cover Trie Builder (Max Depth = {}) ===", max_depth);
+    let start_time = Instant::now();
+
+    let pipeline = SievePipeline::new()
+        .add_sieve(DescentSieve)
+        .add_sieve(MinimalCounterexampleSieve)
+        .add_sieve(Mod9PreimageSieve::default())
+        .add_sieve(PathMergingSieve::new());
+
+    let mut trie = PrefixTrie::new(max_depth, pipeline);
+    trie.build_cover();
+
+    let measure_str = trie.certified_measure.to_string();
+    println!("\nTrie Expansion Complete:");
+    println!("  - Certified Certificates Generated: {}", trie.certified_certificates.len());
+    println!("  - Exact Certified 2-Adic Measure:  {}", measure_str);
+
+    let manifest = export_certificate_bundle(&output_dir, &trie.certified_certificates, &measure_str)
+        .map_err(|e| anyhow!("Failed to export certificate bundle: {}", e))?;
+
+    println!("\nSuccessfully Exported Certificate Bundle:");
+    println!("  - Bundle Output Dir: {:?}", output_dir);
+    println!("  - Manifest File:     {:?}", output_dir.join("manifest.json"));
+    println!("  - Certificate File:  {:?}", output_dir.join("certs.jsonl"));
+    println!("  - Checksum:          {}", manifest.sha256_checksum);
+    println!("  - Elapsed Time:      {:.2?}", start_time.elapsed());
+
     Ok(())
 }
 
@@ -263,6 +327,17 @@ fn run_cert_verify(file_path: &PathBuf) -> Result<()> {
             Err(anyhow!("Verification error: {}", e))
         }
     }
+}
+
+fn run_cert_verify_all(cert_dir: &PathBuf) -> Result<()> {
+    println!("=== Running Batch Bundle Verifier for Dir: {:?} ===", cert_dir);
+    let start_time = Instant::now();
+
+    let verified_count = verify_certificate_bundle(cert_dir)
+        .map_err(|e| anyhow!("Batch bundle verification failed: {}", e))?;
+
+    println!("\n[RESULT] VALID BUNDLE: Successfully verified {} certificates in bundle in {:.2?}", verified_count, start_time.elapsed());
+    Ok(())
 }
 
 fn run_test_core() -> Result<()> {
