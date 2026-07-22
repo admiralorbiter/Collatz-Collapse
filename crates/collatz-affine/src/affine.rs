@@ -90,6 +90,15 @@ impl AffinePrefix {
         }
     }
 
+    /// Evaluates the Prescribed-Division Transform P_w(n_0) = (3^k * n_0 + c_k) / 2^{A_k}.
+    /// For broad valuation words (TerminalAtLeast), P_w(n_0) dominates the exact odd trajectory S^k(n_0) <= P_w(n_0).
+    pub fn prescribed_division_transform(&self, n_0: &BigUint) -> BigUint {
+        let pow3_k = BigUint::from(3u32).pow(self.odd_steps as u32);
+        let numerator = (pow3_k * n_0) + &self.constant;
+        numerator >> self.total_twos
+    }
+
+
     /// Checks if multiplicative contraction holds: 2^{A_k} > 3^k
     pub fn is_multiplicative_contracting(&self) -> bool {
         let pow3_k = BigUint::from(3u32).pow(self.odd_steps as u32);

@@ -5,6 +5,17 @@ use collatz_affine::ValuationSemantics;
 use serde::{Deserialize, Serialize};
 
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum ObstructionClassification {
+    TransitionInfeasible,
+    PositivityInfeasible,
+    MinimalityInfeasible,
+    TailContractingWithExceptions,
+    PositiveTransient,
+    ExactPositiveCycle,
+    UnresolvedAbstractionObstruction,
+}
+
 /// Negative Refinement Lemma artifact emitted when search limits are reached.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NegativeRefinementLemmaJson {
@@ -12,6 +23,7 @@ pub struct NegativeRefinementLemmaJson {
     pub max_depth_reached: usize,
     pub total_iterations: usize,
     pub remaining_unresolved_sccs: usize,
+    pub primary_obstruction: ObstructionClassification,
     pub minimal_refinement_predicates: Vec<String>,
 }
 
@@ -36,7 +48,6 @@ impl RefinementEngine {
         }
     }
 
-
     /// Emits a machine-readable Negative Refinement Lemma when iteration/state limits are reached.
     pub fn emit_negative_refinement_lemma(
         max_depth: usize,
@@ -48,6 +59,7 @@ impl RefinementEngine {
             max_depth_reached: max_depth,
             total_iterations: iterations,
             remaining_unresolved_sccs: unresolved_sccs,
+            primary_obstruction: ObstructionClassification::UnresolvedAbstractionObstruction,
             minimal_refinement_predicates: vec![
                 "congruence_lift_2_adic_impostor_pruned".to_string(),
                 "positivity_n_ge_1_invariant_satisfied".to_string(),
@@ -55,6 +67,7 @@ impl RefinementEngine {
         }
     }
 }
+
 
 #[cfg(test)]
 mod tests {

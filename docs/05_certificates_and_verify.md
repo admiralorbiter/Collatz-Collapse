@@ -86,16 +86,16 @@ Exports the exact disjoint antichain of binary cylinders forming the certified u
 {
   "schema_version": "cover_v1",
   "total_leaves": 1,
-  "max_modulus_exponent": 2,
+  "max_modulus_exponent": 4,
   "total_scaled_measure": "1",
   "is_exact_cover": true,
-  "merkle_root_hash": "4a8b1c9d8e7f6a5b",
+  "merkle_root_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "leaves": [
     {
-      "valuation_word": [1, 1],
-      "total_twos": 2,
-      "starting_residue": "3",
-      "modulus_exponent": 2,
+      "valuation_word": [2, 2],
+      "total_twos": 4,
+      "starting_residue": "1",
+      "modulus_exponent": 4,
       "valuation_semantics": "terminal_at_least"
     }
   ]
@@ -121,11 +121,17 @@ Exports the exact disjoint antichain of binary cylinders forming the certified u
 
 ---
 
-## 3. Verifier Invariants (`collatz-verify`)
+## 3. Verifier Invariants & Security Bounds (`collatz-verify`)
 
 When `collatz-verify` inspects a `descent_v1` certificate, it executes **6 exact invariant checks**:
 
 ```text
+Step 0: Explicit DoS Security Bounds
+        Assert modulus_exponent <= 4096
+        Assert sum(valuation_word) <= 4096
+        Assert for all a_i: 1 <= a_i <= 255
+        Assert string length <= MAX_DIGITS (4096)
+
 Step 1: Recompute Total Valuation & Verify Valuation Semantics Exponent
         A_k = sum(valuation_word)
         If valuation_semantics == "exact_word":
@@ -156,24 +162,27 @@ Step 6: Independent Exhaustive Exception Verification
             Run concrete odd_step(e) for k steps and assert result < e or reaches 1
 ```
 
-If all 6 steps pass using checked arbitrary-precision arithmetic, `collatz-verify` prints `VALID`.
+If all steps pass using checked arbitrary-precision arithmetic, `collatz-verify` prints `VALID`.
 
 ---
 
-## 4. Lean 4 Structural Base Lemmas (Multiplicative `Nat` Form)
+## 4. Lean 4 Structural Base Lemmas (Subtraction-Free `Nat` Form)
 
-Rather than relying on `decide` to discharge universal natural-number statements, Lean 4 formalization avoids real/rational division leakage by expressing all lemmas in pure multiplicative `Nat` arithmetic:
+Rather than relying on `decide` to discharge universal natural-number statements, Lean 4 formalization avoids saturated subtraction issues (`Nat.sub` saturating at 0) by expressing all lemmas in subtraction-free multiplicative `Nat` arithmetic:
 
 1. **Affine Recurrence Lemma (`affine_step_correctness`)**:
-   $$\forall n_0, \quad 2^{A_k} S^k(n_0) = 3^k n_0 + c_k$$
-2. **Residue Valuation Forcing Lemma (`residue_forces_valuation`)**:
+   $$\forall n_0, \quad 2^{A_k} P_w(n_0) = 3^k n_0 + c_k$$
+2. **Prescribed-Division Domination Lemma (`broad_domination_lemma`)**:
+   $$\forall n_0, \quad S^k(n_0) \le P_w(n_0)$$
+3. **Residue Valuation Forcing Lemma (`residue_forces_valuation`)**:
    $$n_0 \equiv -c_k (3^k)^{-1} \pmod{2^{A_k}} \implies 2^{A_k} \mid (3^k n_0 + c_k)$$
-3. **Multiplicative Contraction Lemma (`contraction_forces_descent`)**:
-   $$(2^{A_k} - 3^k) \cdot (n_0 - 1) \ge c_k \implies S^k(n_0) < n_0$$
-4. **Floor Threshold Soundness Lemma (`exact_threshold_soundness`)**:
-   $$n_0 \ge \left\lfloor \frac{c_k}{2^{A_k} - 3^k} \right\rfloor + 1 \implies S^k(n_0) < n_0$$
+4. **Subtraction-Free Contraction Lemma (`contraction_forces_descent`)**:
+   $$c_k + 3^k n_0 < 2^{A_k} n_0 \implies P_w(n_0) < n_0$$
+5. **Floor Threshold Soundness Lemma (`exact_threshold_soundness`)**:
+   $$n_0 \ge \left\lfloor \frac{c_k}{2^{A_k} - 3^k} \right\rfloor + 1 \implies c_k + 3^k n_0 < 2^{A_k} n_0$$
 
 Concrete JSON certificates then only discharge closed arithmetic equality checks against these formal Lean 4 lemmas.
+
 
 
 Concrete JSON certificates then only discharge closed arithmetic equality checks against these formal Lean lemmas.

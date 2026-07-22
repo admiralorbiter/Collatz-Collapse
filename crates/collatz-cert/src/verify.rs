@@ -11,6 +11,10 @@ use std::str::FromStr;
 
 pub const MAX_DIGITS: usize = 4096;
 pub const MAX_EXCEPTIONS_CHECKED: usize = 100_000;
+pub const MAX_VALUATION_STEP: u32 = 255;
+pub const MAX_TOTAL_TWOS: u64 = 4096;
+pub const MAX_MODULUS_EXPONENT: u64 = 4096;
+
 
 fn parse_bounded_biguint(s: &str) -> Result<BigUint, VerificationError> {
     if s.len() > MAX_DIGITS {
@@ -37,11 +41,19 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         return Err(VerificationError::InvalidValuationWord("Valuation word cannot be empty".to_string()));
     }
 
+    if cert.modulus_exponent > MAX_MODULUS_EXPONENT {
+        return Err(VerificationError::InvalidValuationWord(format!("Modulus exponent {} exceeds limit {}", cert.modulus_exponent, MAX_MODULUS_EXPONENT)));
+    }
+
     for &a_i in &cert.valuation_word {
         if a_i == 0 {
             return Err(VerificationError::InvalidValuationWord("Valuation a_i cannot be zero".to_string()));
         }
+        if a_i > MAX_VALUATION_STEP {
+            return Err(VerificationError::InvalidValuationWord(format!("Valuation step {} exceeds limit {}", a_i, MAX_VALUATION_STEP)));
+        }
     }
+
 
     let word = ValuationWord::from_u32_slice(&cert.valuation_word)
         .map_err(|e| VerificationError::InvalidValuationWord(e.to_string()))?;

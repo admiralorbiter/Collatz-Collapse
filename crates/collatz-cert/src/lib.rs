@@ -1,17 +1,26 @@
 pub mod batch;
 pub mod descent;
+pub mod graph_contraction;
+pub mod lean_export;
 pub mod schema;
 pub mod tail;
 pub mod verify;
 
 pub use batch::{export_certificate_bundle, export_manifest, verify_certificate_bundle, BundleManifest};
 pub use descent::generate_descent_certificate;
+pub use graph_contraction::{
+    verify_graph_contraction_certificate, GraphContractionCertificateJson, GraphContractionError,
+    GraphEdge, ObstructionCycleJson, RationalRatioJson,
+};
+pub use lean_export::export_lean4_theorem;
 pub use schema::{
     CycleCertificateJson, DescentCertificateJson, InfeasibleAlgebraicCertificateJson,
     InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson, TailDescentCertificateJson,
 };
 pub use tail::{compute_a_crit, generate_tail_descent_certificate};
 pub use verify::{verify_descent_certificate, verify_tail_descent_certificate};
+
+
 
 use thiserror::Error;
 
