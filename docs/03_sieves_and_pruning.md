@@ -116,24 +116,4 @@ Sieve Combination
 ```
 
 The output of Experiment A produces an empirical ranking of sieves, determining the optimal pipeline order for deep adversarial searches.
- high modular powers.
-* **Roaring Bitmaps (`roaring` crate):** Uses hybrid uncompressed bitsets, run-length encoding (RLE), and sparse arrays. It drastically compresses sparse modular exclusion bitsets while accelerating set operations (`union`, `intersection`) via SIMD vectorization.
 
----
-
-## 5. Experiment A: Sieve Ablation Protocol
-
-To quantify the exact efficacy of each sieve, **Experiment A (Sieve Ablation Study)** executes search benchmarks with sieves enabled individually and in combination.
-
-### Measured Metrics
-```text
-Sieve Combination
-├── Nodes Explored
-├── Nodes Eliminated
-├── Memory Footprint (MB)
-├── Execution Time (s)
-├── Unique Eliminations (nodes caught ONLY by this sieve)
-└── Certificate Output Volume
-```
-
-The output of Experiment A produces an empirical ranking of sieves, determining the optimal pipeline order for deep adversarial searches.

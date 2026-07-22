@@ -90,3 +90,70 @@ pub struct InfeasibleSubsumptionCertificateJson {
     pub subsumption_reason: String,
 }
 
+/// Size-Change Relation Kind (decrease, non_increase, reset)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SizeChangeRelationKind {
+    Decrease,
+    NonIncrease,
+    Reset,
+}
+
+/// Bipartite Size-Change Feature Relation Edge
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SizeChangeRelationJson {
+    pub src_feature: String,
+    pub relation: SizeChangeRelationKind,
+    pub dst_feature: String,
+}
+
+/// Transition Graph between Abstract State Vertices
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SizeChangeTransitionGraphJson {
+    pub source_node: String,
+    pub target_node: String,
+    pub valuation_word: Vec<u32>,
+    pub relations: Vec<SizeChangeRelationJson>,
+}
+
+/// Size-Change Termination Certificate Schema (size_change_scc_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SizeChangeCertificateJson {
+    pub schema_version: String,
+    pub scc_id: String,
+    pub feature_vector: Vec<String>,
+    pub vertices: Vec<String>,
+    pub transition_graphs: Vec<SizeChangeTransitionGraphJson>,
+    pub canonical_edge_ordering: Vec<String>,
+    pub verifier_recomputation_required: bool,
+}
+
+/// Büchi Automaton Transition
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BuchiTransitionJson {
+    pub src: String,
+    pub symbol: String,
+    pub dst: String,
+}
+
+/// Büchi Automaton Language Emptiness Certificate Schema (buchi_emptiness_scc_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BuchiEmptinessCertificateJson {
+    pub schema_version: String,
+    pub scc_id: String,
+    pub alphabet: Vec<String>,
+    pub states: Vec<String>,
+    pub initial_state: String,
+    pub accepting_states: Vec<String>,
+    pub transitions: Vec<BuchiTransitionJson>,
+    pub reachable_states: Vec<String>,
+    pub scc_decomposition: Vec<Vec<String>>,
+    pub verifier_recomputation_required: bool,
+}
+
+

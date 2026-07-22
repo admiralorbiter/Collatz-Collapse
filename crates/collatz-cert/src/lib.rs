@@ -28,8 +28,10 @@ pub use scalar_lyapunov::{
     ScalarTransition, ValuationConstraint,
 };
 pub use schema::{
-    CycleCertificateJson, DescentCertificateJson, InfeasibleAlgebraicCertificateJson,
-    InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson, TailDescentCertificateJson,
+    BuchiEmptinessCertificateJson, BuchiTransitionJson, CycleCertificateJson, DescentCertificateJson,
+    InfeasibleAlgebraicCertificateJson, InfeasibleMinimalityCertificateJson,
+    InfeasibleSubsumptionCertificateJson, SizeChangeCertificateJson, SizeChangeRelationJson,
+    SizeChangeRelationKind, SizeChangeTransitionGraphJson, TailDescentCertificateJson,
 };
 pub use tail::{compute_a_crit, generate_tail_descent_certificate};
 pub use valuation_countdown::{

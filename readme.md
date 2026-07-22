@@ -35,35 +35,40 @@ The detailed specifications, mathematical derivations, verification protocols, a
 
 | Document | Description |
 | :--- | :--- |
-| **[00_overview_and_roadmap.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/00_overview_and_roadmap.md)** | Mission statement, research philosophy, certificate separation, and 9-phase roadmap. |
-| **[01_mathematical_foundation.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/01_mathematical_foundation.md)** | Collatz maps, affine recurrences, modular inversion, 2-adic topology & $-1/3$ pole. |
-| **[02_architecture_and_crates.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/02_architecture_and_crates.md)** | Progressive 4-crate core rollout, crate dependency graph, and tiered arithmetic (`u128`/`num-bigint`/`rug`). |
-| **[03_sieves_and_pruning.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/03_sieves_and_pruning.md)** | Kinematic vs Minimality sieve taxonomy, `PrefixSieve` trait, and Roaring Bitmaps. |
-| **[04_cegar_and_synthesis.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/04_cegar_and_synthesis.md)** | Relational abstract domains, CEGAR loop with Craig interpolation, and SyGuS ranking functions. |
-| **[05_certificates_and_verify.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/05_certificates_and_verify.md)** | JSON BigInt string schemas, `collatz-verify` engine, LRAT proof logging & Lean 4 bridge. |
-| **[06_experimental_suite.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/06_experimental_suite.md)** | Specifications for Core Experiments 0–7 and Side Experiments A–G (Sieve Ablation, Grammar Inference). |
+| **[00_overview_and_roadmap.md](docs/00_overview_and_roadmap.md)** | Mission statement, research philosophy, certificate separation, and 9-phase roadmap. |
+| **[01_mathematical_foundation.md](docs/01_mathematical_foundation.md)** | Collatz maps, affine recurrences, modular inversion, 2-adic topology & $-1/3$ pole. |
+| **[02_architecture_and_crates.md](docs/02_architecture_and_crates.md)** | 7-crate modular architecture, crate dependency graph, and tiered arithmetic (`u128`/`num-bigint`/`rug`). |
+| **[03_sieves_and_pruning.md](docs/03_sieves_and_pruning.md)** | Kinematic vs Minimality sieve taxonomy, `PrefixSieve` trait, and Roaring Bitmaps. |
+| **[04_cegar_and_synthesis.md](docs/04_cegar_and_synthesis.md)** | Relational abstract domains, CEGAR loop with Craig interpolation, and SyGuS ranking functions. |
+| **[05_certificates_and_verify.md](docs/05_certificates_and_verify.md)** | JSON BigInt string schemas, `collatz-verify` engine, LRAT proof logging & Lean 4 bridge. |
+| **[06_experimental_suite.md](docs/06_experimental_suite.md)** | Specifications for Core Experiments 0–7 and Side Experiments A–G (Sieve Ablation, Grammar Inference). |
+| **[08_lean_vertical_slice.md](docs/08_lean_vertical_slice.md)** | Lean 4 formalization specification, subtraction-free `Nat` contraction lemmas, and export templates. |
 
 ---
 
-## Initial Workspace Structure (Phase 1: Progressive Core)
+## Workspace Structure (`Collatz-Collapse`)
 
 ```text
-collatz-lab/
+Collatz-Collapse/
 ├── Cargo.toml
 ├── README.md
-├── docs/
+├── docs/                      # Theoretical documentation and specifications
 │   ├── 00_overview_and_roadmap.md
 │   ├── 01_mathematical_foundation.md
 │   ├── 02_architecture_and_crates.md
 │   ├── 03_sieves_and_pruning.md
 │   ├── 04_cegar_and_synthesis.md
 │   ├── 05_certificates_and_verify.md
-│   └── 06_experimental_suite.md
-└── crates/
+│   ├── 06_experimental_suite.md
+│   └── 08_lean_vertical_slice.md
+└── crates/                    # Modular Rust workspace crates
     ├── collatz-core/          # Exact ordinary/odd steps, u128/BigUint arithmetic
     ├── collatz-affine/        # Affine prefix recurrences & closed-form modular inversion
-    ├── collatz-cert/          # JSON certificate schemas & collatz-verify verifier
-    └── collatz-cli/           # CLI binary for execution and certificate checks
+    ├── collatz-sieve/         # Parallel sieve taxonomy (PathMerging, Descent, Counterexample)
+    ├── collatz-cegar/         # Relational CEGAR loop, abstract domain graph, SMT interface
+    ├── collatz-search/        # Multi-objective beam search & parallel prefix trie engine
+    ├── collatz-cert/          # JSON certificate schemas & collatz-verify verifier engine
+    └── collatz-cli/           # CLI binary for execution, search, and certificate checks
 ```
 
 ---

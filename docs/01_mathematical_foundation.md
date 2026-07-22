@@ -177,13 +177,12 @@ The theoretical framework of the Collatz Research Workbench builds upon and conn
 
 ## 8. Phase 4 Theoretical Discoveries & Automata Theorems
 
-### 8.1 The Automata Acyclic DAG Theorem
-Let $\mathcal{A} = (Q, \Sigma, \delta, q_0, F)$ be the minimal Deterministic Finite Automaton (DFA) constructed over the unresolved valuation-word language $\mathcal{L}_{\text{unresolved}}$ at depth $k$.
+### 8.1 Automata DFA Sample Observations
+Let $\mathcal{A} = (Q, \Sigma, \delta, q_0, F)$ be the Deterministic Finite Automaton (DFA) constructed over a sample of 500 unresolved valuation-word prefixes $\mathcal{L}_{\text{sampled}}$ at depth $k$.
 
-**Theorem (Zero Pumpable Regular Cycles):**
-For all finite valuation depths $k$, the number of active state transitions $E = |\delta|$ and state vertices $V = |Q|$ satisfies the exact structural identity:
-$$E = V - 1$$
-Consequently, the state transition graph of $\mathcal{L}_{\text{unresolved}}$ is a **pure Acyclic Directed Acyclic Graph (DAG)** containing **zero pumpable regular cycles**. There exist no infinite self-sustaining periodic expansion languages in $\mathbb{Z}_2$.
+**Empirical Finding (Sampled Acyclic Structure):**
+In the sampled automaton with $V = |Q| = 2349$ state vertices and $E = |\delta| = 2348$ active state transitions, the graph satisfies $E = V - 1$.
+*Note:* This empirical observation confirms that no directed cycles were detected within the 500-sample prefix set. It is an empirical heuristic diagnostic, not a universal theorem over all finite depths or over the full unresolved language.
 
 ### 8.2 Macrostep Rational Potential Contraction
 Let $W = (a_0, a_1, \ldots, a_{k-1})$ be a $k$-step macrostep valuation prefix. Define the rational linear potential function $V_r(n) = q_r n + b_r$.
@@ -229,20 +228,25 @@ $$L_w(F_w(n)) = \frac{3^k}{2^A} L_w(n) \implies v_2(L_w(F_w(n))) = v_2(L_w(n)) -
 ## 10. Multi-Word Trajectories & Size-Change Termination (Phase 7 Framework)
 
 ### 10.1 Size-Change Feature Vectors & Monotonicity Graphs
-For trajectories switching among multiple valuation words $w_1, w_2, \ldots$ inside abstract SCCs, termination is analyzed over a multidimensional feature vector:
-$$\mathbf{v}(n) = \big(v_2(L_1(n)), v_2(L_2(n)), \ldots, v_2(L_d(n)), \text{bitlength}(n), \text{growth\_debt}, \text{control\_state}\big)$$
+For trajectories switching among multiple valuation words $w_1, w_2, \ldots$ inside abstract SCCs, termination is analyzed over a tuple of total well-founded natural-valued features on $\mathbb{N}$:
+$$\mathbf{v}(n) = \big(v_2(L_1(n)), v_2(L_2(n)), \ldots, v_2(L_d(n)), \text{bitlength}(n)\big) \quad \text{for } L_i(n) \neq 0$$
+
+> **Soundness Requirement:** All features in $\mathbf{v}(n)$ must take values in declared well-founded domains ($\mathbb{N}$). Floating-point diagnostics (e.g. `growth_debt`) and finite control states (`control_state`) are excluded from SCT feature vectors and managed separately via monotonicity-constraint systems and finite control state graphs.
 
 For each transition $e: u \to v$ under macrostep $F_w$, define a bipartite size-change monotonicity graph $G_e = (V_{\text{src}} \cup V_{\text{dst}}, E_e)$ with edge relations:
 * **Strict Decrease ($\downarrow$):** $v_j(F_w(n)) < v_i(n)$
 * **Non-Increase ($\le$):** $v_j(F_w(n)) \le v_i(n)$
-* **Reset ($\star$):** Component is reset to an arbitrary bounded value.
+* **Reset ($\star$):** Component is reset to a proven bounded value with explicit phase invariants.
 
 ### 10.2 Ramsey Transitive Closure & Idempotent Graph Criterion
 Form the transitive closure of size-change graphs under composition $\mathcal{G}^*$. 
 - **Theorem (Ben-Amram SCT & Podelski-Rybalchenko):** An abstract SCC terminates if and only if every idempotent graph $G \in \mathcal{G}^*$ (satisfying $G = G \circ G$) contains a strict descending self-edge $v_i \xrightarrow{\downarrow} v_i$.
 
 ### 10.3 Büchi Automata over Infinite Valuation Words
-Trajectories are represented as infinite words $w_0 w_1 w_2 \ldots \in \Sigma^\omega$.
+Trajectories are represented as infinite words $w_0 w_1 w_2 \ldots \in \Sigma^\omega$ over a **finite, certified macrostep library alphabet** $\Sigma = \{M_1, M_2, \ldots, M_m\}$.
+
+> **Finite Alphabet Construction:** Each symbol $M_j \in \Sigma$ corresponds to a sound macrostep transition with a bounded 2-adic shift $\Delta A \le A_{\text{max}}$. Valuation branches $a_k \ge a_{\text{crit}}(q)$ are grouped into guarded tail symbols to guarantee that $\Sigma$ remains strictly finite while soundly overapproximating all positive-integer trajectories.
+
 The language of non-contracting infinite trajectories is defined as the Büchi automaton intersection:
 $$\mathcal{L}_{\text{infinite\_bad}} = \mathcal{L}(\mathcal{A}_{\text{realizable}}) \cap \mathcal{L}(\mathcal{A}_{\text{non-descent}}) \cap \mathcal{L}(\mathcal{A}_{\text{critical\_scc}})$$
 If $\mathcal{L}_{\text{infinite\_bad}} = \varnothing$ (empty language), the SCC is provably terminating (`buchi_emptiness_scc_v1`).
