@@ -1,0 +1,49 @@
+{
+  "schema_version": "size_change_scc_prototype_v1",
+  "scc_id": "SCC-MILESTONE-70-INVALIDATED",
+  "status": "invalidated",
+  "failure_reasons": [
+    "target_state_membership_failed",
+    "cross_feature_relations_refuted",
+    "static_residue_state_incomplete",
+    "simple_cycle_reduces_to_phase_6d_composite_word"
+  ],
+  "feature_vector": [
+    "v2_L1",
+    "v2_L2"
+  ],
+  "vertices": [
+    "Q1",
+    "Q2"
+  ],
+  "transition_graphs": [
+    {
+      "source_node": "Q1",
+      "target_node": "Q2",
+      "valuation_word": [1, 1, 2],
+      "relations": [
+        {
+          "src_feature": "v2_L1",
+          "relation": "decrease",
+          "dst_feature": "v2_L1"
+        }
+      ]
+    },
+    {
+      "source_node": "Q2",
+      "target_node": "Q1",
+      "valuation_word": [1, 2, 2],
+      "relations": [
+        {
+          "src_feature": "v2_L2",
+          "relation": "decrease",
+          "dst_feature": "v2_L2"
+        }
+      ]
+    }
+  ],
+  "canonical_edge_ordering": [
+    "Q1->Q2",
+    "Q2->Q1"
+  ]
+}

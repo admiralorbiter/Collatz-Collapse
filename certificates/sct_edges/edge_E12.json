@@ -1,0 +1,50 @@
+{
+  "schema_version": "sct_edge_v1",
+  "edge_id": "E12-CANDIDATE",
+  "status": "invalidated",
+  "source_state": "Q1",
+  "intended_target_state": "Q2",
+  "valuation_word": [1, 1, 2],
+  "source_guard": {
+    "residue": "7",
+    "modulus_exponent": 5,
+    "positivity_required": true
+  },
+  "affine_map": {
+    "odd_steps": 3,
+    "total_twos": 4,
+    "constant": "19"
+  },
+  "features": [
+    {
+      "feature_id": "v2_L1",
+      "kind": "v2_linear_form",
+      "alpha": "11",
+      "beta": "19",
+      "zero_case": "proved_impossible",
+      "zero_case_proof": {
+        "equation": "11*n = -19",
+        "reason": "n is positive natural number"
+      }
+    },
+    {
+      "feature_id": "v2_L2",
+      "kind": "v2_linear_form",
+      "alpha": "5",
+      "beta": "-23",
+      "zero_case": "proved_impossible",
+      "zero_case_proof": {
+        "equation": "5*n = 23",
+        "reason": "23 mod 5 = 3 != 0"
+      }
+    }
+  ],
+  "proved_relations": [
+    {
+      "src_feature": "v2_L1",
+      "relation": "decrease",
+      "dst_feature": "v2_L1"
+    }
+  ],
+  "proof_kind": "fixed_point_linear_form"
+}

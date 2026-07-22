@@ -76,14 +76,54 @@ verifier = "Retracted due to all-ones word (1,1,...,1) having A_20 = 20 < 34"
 limitations = "Replaced with exact sampled broad cover density metric 90.2621%."
 
 [[claims]]
-id = "CLM-CONJECTURE-001"
-category = "Conjecture"
-statement = "Collatz Conjecture (all positive integer trajectories reach 1)"
-domain = "Positive integers N^+"
-status = "Open Conjecture"
-generating_command = "N/A"
-source_file = "docs/00_overview_and_roadmap.md"
-artifact_path = "docs/00_overview_and_roadmap.md"
-verifier = "Open Mathematical Problem"
-limitations = "Unproven."
+id = "CLM-SCT-GRAPH-ALGEBRA-001"
+category = "Verified Finite Theorem"
+statement = "Rust and Python engines independently compute the same normalized transitive closure for the Milestone 7.0 regression fixture"
+domain = "Size-change graph closure algebra G*"
+status = "Verified"
+generating_command = "python scripts/reference_oracle.py certificates/invalidated/milestone70_invalidated_target.json certificates/invalidated/sct_milestone70_invalidated.json"
+source_file = "crates/collatz-cert/src/sct_engine.rs"
+artifact_path = "reports/milestone70/summary.md"
+verifier = "collatz-verify & scripts/reference_oracle.py"
+limitations = "Proves only the finite graph closure algebra, not Collatz edge soundness or termination."
+
+[[claims]]
+id = "CLM-SCT-M71-SEMANTIC-REFINEMENT-001"
+category = "Verified Finite Theorem"
+statement = "The exact source cylinder 7 mod 32 partitions into eight disjoint subcylinders modulo 256, each having a universally determined [1,1,2] image modulo 16. This refinement is insufficient to determine membership in the proposed 43 mod 64 successor state and invalidates the original static two-state abstraction."
+domain = "7 mod 32 starting cylinder under mod 256 refinement"
+status = "Verified"
+generating_command = "python scripts/discover_semantic_graph.py"
+source_file = "certificates/milestone71/partitions/partition_7_mod_32.json"
+artifact_path = "reports/milestone71/phase_7_1_final_review_package.md"
+verifier = "collatz-verify & scripts/reference_oracle.py"
+limitations = "Proves sound mod 256 partition to target mod 16 and invalidation of original 2-state graph."
+
+[[claims]]
+id = "CLM-SCT-M71-COMPOSITE-W-001"
+category = "Domain-Scoped Certificate"
+statement = "Composite word W=[1,1,2,1,2,2] has finite repetition fuel on positive integers, certified by normalized linear form L_W(n) = 217n + 881"
+domain = "Trajectories realizing infinite repetition of word W"
+status = "Verified"
+generating_command = "cargo test -p collatz-cert"
+source_file = "certificates/milestone71/composite_W_finite_fuel.json"
+artifact_path = "reports/milestone71/phase6d_reduction_analysis.json"
+verifier = "collatz-verify & Lean 4 (lean/Milestone71.lean)"
+limitations = "Applies strictly to trajectories staying within the W macrostep cycle."
+
+[[claims]]
+id = "CLM-SCT-M71-COUNTEREXAMPLE-103"
+category = "Verified Finite Theorem"
+statement = "Cross-feature weak relation v2(L1(F1(n))) <= v2(L2(n)) is refuted on 7 mod 32; n=103 is proved minimal (checked 7, 39, 71)"
+domain = "7 mod 32 starting cylinder"
+status = "Verified"
+generating_command = "python scripts/discover_semantic_graph.py"
+source_file = "reports/milestone71/counterexamples.json"
+artifact_path = "reports/milestone71/counterexamples.json"
+verifier = "collatz-verify & scripts/reference_oracle.py"
+limitations = "Proves minimal refutation of candidate weak relation on 7 mod 32."
+
+
+
+
 

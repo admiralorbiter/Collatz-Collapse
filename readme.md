@@ -42,6 +42,7 @@ The detailed specifications, mathematical derivations, verification protocols, a
 | **[04_cegar_and_synthesis.md](docs/04_cegar_and_synthesis.md)** | Relational abstract domains, CEGAR loop with Craig interpolation, and SyGuS ranking functions. |
 | **[05_certificates_and_verify.md](docs/05_certificates_and_verify.md)** | JSON BigInt string schemas, `collatz-verify` engine, LRAT proof logging & Lean 4 bridge. |
 | **[06_experimental_suite.md](docs/06_experimental_suite.md)** | Specifications for Core Experiments 0–7 and Side Experiments A–G (Sieve Ablation, Grammar Inference). |
+| **[07_phase_7_sct_and_language_invariants.md](docs/07_phase_7_sct_and_language_invariants.md)** | Size-Change Termination (SCT), $\omega$-automata language invariants, and 2-adic fixed-point dynamics. |
 | **[08_lean_vertical_slice.md](docs/08_lean_vertical_slice.md)** | Lean 4 formalization specification, subtraction-free `Nat` contraction lemmas, and export templates. |
 
 ---
@@ -52,6 +53,9 @@ The detailed specifications, mathematical derivations, verification protocols, a
 Collatz-Collapse/
 ├── Cargo.toml
 ├── README.md
+├── lean/                      # Standalone Lean 4 formal theorem bundle (Milestone70.lean)
+├── reports/                   # Publication-grade experiment logs & reproducibility manifests
+│   └── milestone70/           # Phase 7 Milestone 7.0 results directory
 ├── docs/                      # Theoretical documentation and specifications
 │   ├── 00_overview_and_roadmap.md
 │   ├── 01_mathematical_foundation.md
@@ -60,6 +64,7 @@ Collatz-Collapse/
 │   ├── 04_cegar_and_synthesis.md
 │   ├── 05_certificates_and_verify.md
 │   ├── 06_experimental_suite.md
+│   ├── 07_phase_7_sct_and_language_invariants.md
 │   └── 08_lean_vertical_slice.md
 └── crates/                    # Modular Rust workspace crates
     ├── collatz-core/          # Exact ordinary/odd steps, u128/BigUint arithmetic

@@ -1,0 +1,98 @@
+{
+  "schema_version": "semantic_graph_v1",
+  "graph_id": "SEMANTIC-GRAPH-M71-DISCOVERED",
+  "states": [
+    {
+      "state_id": "Q1_7_32",
+      "canonical_flattened_residue": "7 mod 32",
+      "modulus_exponent": 5,
+      "quotient_representation": {
+        "q": "Q1",
+        "r": 7,
+        "m": 5,
+        "t": 0,
+        "h": 0
+      },
+      "reachability_status": "SEED",
+      "provenance": "seed_domain"
+    },
+    {
+      "state_id": "Q2_43_64",
+      "canonical_flattened_residue": "43 mod 64",
+      "modulus_exponent": 6,
+      "quotient_representation": {
+        "q": "Q2",
+        "r": 43,
+        "m": 6,
+        "t": 0,
+        "h": 0
+      },
+      "reachability_status": "SEED",
+      "provenance": "seed_domain"
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "E12_cell_0",
+      "source_state": "Q1_7_256",
+      "valuation_word": [
+        1,
+        1,
+        2
+      ],
+      "canonical_target_image": "13 mod 16",
+      "exact_word_forcing_status": "ExactWord",
+      "universal_image_inclusion": true
+    },
+    {
+      "edge_id": "E21",
+      "source_state": "Q2_43_64",
+      "valuation_word": [
+        1,
+        2,
+        2
+      ],
+      "canonical_target_image": "5 mod 32",
+      "exact_word_forcing_status": "ExactWord",
+      "universal_image_inclusion": true,
+      "note": "F_2(43) = 37 = 5 mod 32 (not 7 mod 32)"
+    }
+  ],
+  "discovery_metadata": {
+    "search_bounds": {
+      "max_depth": 10,
+      "max_states": 100
+    },
+    "total_states_discovered": 32,
+    "total_edges_discovered": 32,
+    "refinement_progression": [
+      {
+        "refinement_depth": 0,
+        "states": 2,
+        "edges": 2,
+        "sound_recurrent_sccs": 0,
+        "branching_sccs": 0,
+        "max_exponent": 6,
+        "outcome": "PROPOSED_2_STATE_GRAPH_INVALIDATED"
+      },
+      {
+        "refinement_depth": 1,
+        "states": 8,
+        "edges": 8,
+        "sound_recurrent_sccs": 0,
+        "branching_sccs": 0,
+        "max_exponent": 8,
+        "outcome": "MOD_256_PARTITION_TO_TARGET_MOD_16"
+      },
+      {
+        "refinement_depth": 2,
+        "states": 32,
+        "edges": 32,
+        "sound_recurrent_sccs": 0,
+        "branching_sccs": 0,
+        "max_exponent": 10,
+        "outcome": "MOD_1024_PARTITION_TO_TARGET_MOD_64_NO_RECURRENT_SCC"
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "scc_id": "NONE",
+  "cycle_rank": 0,
+  "reduces_to_phase_6d_composite_word": true,
+  "composite_word": [
+    1,
+    1,
+    2,
+    1,
+    2,
+    2
+  ],
+  "composite_affine_map": "F_W(n) = (729*n + 881) / 512",
+  "composite_fixed_point": "-881/217",
+  "normalized_linear_form": "217*n + 881",
+  "disposed_by_phase_6d": true,
+  "classification": "REDUCIBLE_TO_SINGLE_PERIODIC_COMPOSITE_WORD"
+}

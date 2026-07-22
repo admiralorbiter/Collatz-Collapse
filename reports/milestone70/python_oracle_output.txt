@@ -1,0 +1,12 @@
+=== Artifact-Driven Python Reference Oracle Detailed Report ===
+Target Artifact: certificates/invalidated/milestone70_invalidated_target.json
+Canonical SHA-256 Digest: 4ed22239480a9c3530d9cbc4b86ab68651c3a4d382cbc2fb3b3d0c6ee3d44f4f
+
+Detailed Status Breakdown:
+  Artifact Parsing:        VALID
+  Canonical Hash:          VALID
+  Affine Arithmetic:       VALID
+  Target State Membership: INVALIDATED
+  Edge Semantic Proofs:    INVALIDATED
+  Graph Closure Algebra:   VALID (6 graphs)
+  SCT Theorem Status:      NOT APPLICABLE (Target Invalidated)

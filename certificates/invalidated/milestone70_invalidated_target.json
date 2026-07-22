@@ -1,0 +1,88 @@
+{
+  "schema_version": "milestone70_invalidated_target_v1",
+  "scc_id": "SCC-MILESTONE-70-INVALIDATED",
+  "canonical_hash": "88069a475d2c59ee009376aba7b03a493da1b95dba6f5071022e0e1e5491deb4",
+  "status": "invalidated",
+  "failure_reasons": [
+    "target_state_membership_failed",
+    "cross_feature_relations_refuted",
+    "static_residue_state_incomplete",
+    "simple_cycle_reduces_to_phase_6d_composite_word"
+  ],
+  "states": [
+    {
+      "state_id": "Q1",
+      "residue": "7",
+      "modulus": 32,
+      "modulus_exponent": 5
+    },
+    {
+      "state_id": "Q2",
+      "residue": "43",
+      "modulus": 64,
+      "modulus_exponent": 6
+    }
+  ],
+  "candidate_transitions": [
+    {
+      "edge_id": "E12-CANDIDATE",
+      "source_state": "Q1",
+      "intended_target_state": "Q2",
+      "universal_target_membership": false,
+      "witness_source": "7",
+      "witness_target_image": "13",
+      "witness_target_residue": "13",
+      "witness_target_modulus": 16,
+      "cylinder_image": {
+        "source_residue": 7,
+        "source_exponent": 5,
+        "valuation_word": [1, 1, 2],
+        "target_base": 13,
+        "quotient_multiplier": 54,
+        "required_quotient_bits": 3,
+        "target_partition": ["13 mod 16"]
+      },
+      "macrostep_word": [1, 1, 2],
+      "primitive_canonical_word": [1, 1, 2],
+      "cyclic_class_id": "CLASS_1_1_2",
+      "affine_constant": "19",
+      "total_twos": 4,
+      "odd_steps": 3,
+      "fixed_point_linear_form": {
+        "alpha": "11",
+        "beta": "19"
+      },
+      "status": "invalidated"
+    },
+    {
+      "edge_id": "E21-CANDIDATE",
+      "source_state": "Q2",
+      "intended_target_state": "Q1",
+      "universal_target_membership": false,
+      "witness_source": "43",
+      "witness_target_image": "37",
+      "witness_target_residue": "37",
+      "witness_target_modulus": 32,
+      "cylinder_image": {
+        "source_residue": 43,
+        "source_exponent": 6,
+        "valuation_word": [1, 2, 2],
+        "target_base": 37,
+        "quotient_multiplier": 54,
+        "required_quotient_bits": 4,
+        "target_partition": ["37 mod 32"]
+      },
+      "macrostep_word": [1, 2, 2],
+      "primitive_canonical_word": [1, 2, 2],
+      "cyclic_class_id": "CLASS_1_2_2",
+      "affine_constant": "23",
+      "total_twos": 5,
+      "odd_steps": 3,
+      "fixed_point_linear_form": {
+        "alpha": "5",
+        "beta": "-23"
+      },
+      "status": "invalidated"
+    }
+  ]
+}

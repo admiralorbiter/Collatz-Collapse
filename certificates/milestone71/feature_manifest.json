@@ -1,0 +1,20 @@
+{
+  "features": [
+    {
+      "feature_id": "v2_L1",
+      "linear_form": "11n + 19",
+      "alpha": 11,
+      "beta": 19,
+      "zero_case": "proved_impossible",
+      "origin": "fixed_point_[1,1,2]"
+    },
+    {
+      "feature_id": "v2_L2",
+      "linear_form": "5n - 23",
+      "alpha": 5,
+      "beta": -23,
+      "zero_case": "proved_impossible_5_does_not_divide_23",
+      "origin": "fixed_point_[1,2,2]"
+    }
+  ]
+}

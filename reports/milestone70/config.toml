@@ -1,0 +1,11 @@
+[sct]
+max_saturation_iterations = 1000
+composition_direction = "G1_then_G2"
+algebra = "None_Weak_Strict"
+zero_case_policy = "proved_impossible_on_positive_source_domain"
+
+[lean]
+imports = ["Mathlib.Data.Nat.Basic", "Mathlib.Data.Nat.ModEq", "Mathlib.Tactic.Omega"]
+allow_sorry = false
+allow_admit = false
+allow_new_axioms = false

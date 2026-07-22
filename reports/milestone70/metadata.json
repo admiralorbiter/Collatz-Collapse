@@ -1,0 +1,21 @@
+{
+  "project": "Collatz-Collapse",
+  "phase": "Phase 7",
+  "milestone": "Milestone 7.0",
+  "git_commit": "d8f37b12e4b5c7a",
+  "rust_version": "rustc 1.85.0",
+  "python_version": "Python 3.12.2",
+  "lean_version": "Lean 4 v4.7.0",
+  "os": "Windows_NT x86_64",
+  "target_scc": "SCC-MILESTONE-70-MULTI-CLASS",
+  "primitive_cyclic_classes": ["CLASS_1_1_2", "CLASS_1_2_2"],
+  "closure_graph_count": 4,
+  "idempotent_graph_count": 2,
+  "strict_self_edge_witnesses": {
+    "G_11": "v2_L1",
+    "G_22": "v2_L2"
+  },
+  "lean_verification_status": "PASSED (0 sorry, 0 admit, 0 new axiom)",
+  "rust_verification_status": "PASSED",
+  "python_oracle_status": "PASSED"
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "phase_6d_finite_fuel_v1",
+  "certificate_id": "CERT-PHASE-6D-COMPOSITE-W-001",
+  "composite_word": [1, 1, 2, 1, 2, 2],
+  "odd_steps_k": 6,
+  "total_valuation_a": 9,
+  "affine_constant_c": "881",
+  "affine_map_formula": "F_W(n) = (729 * n + 881) / 512",
+  "fixed_point": "-881/217",
+  "normalized_linear_form": {
+    "alpha": "217",
+    "beta": "881",
+    "formula": "L_W(n) = 217 * n + 881"
+  },
+  "multiplier": {
+    "numerator": "729",
+    "denominator": "512"
+  },
+  "transformation_identity": "L_W(F_W(n)) = (729 / 512) * L_W(n)",
+  "valuation_drop_per_lap": 9,
+  "fuel_offset": 1,
+  "valuation_drop_identity": "v_2(L_W(F_W(n))) = v_2(L_W(n)) - 9",
+  "positivity_proof": {
+    "equation": "217 * n + 881 = 0",
+    "reason": "n is positive integer (n >= 1 => L_W(n) >= 1098 > 0)"
+  },
+  "broad_source_cylinder": {
+    "residue": "423",
+    "modulus_exponent": 9,
+    "formula": "n = 423 mod 512"
+  },
+  "exact_word_source_cylinder": {
+    "residue": "935",
+    "modulus_exponent": 10,
+    "formula": "n = 935 mod 1024"
+  },
+  "exact_witness_image": {
+    "source_witness": "935",
+    "image": "1333",
+    "image_residue": "21",
+    "image_modulus_exponent": 5
+  },
+  "finite_repetition_fuel_bound": {
+    "formula": "N_W(n) = max(0, floor((v_2(217*n + 881) - 1) / 9))",
+    "broad_witness_423_fuel": 0,
+    "exact_witness_935_fuel": 1,
+    "finite_fuel_guaranteed": true
+  },
+  "verification_status": "VERIFIED"
+}

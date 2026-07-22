@@ -1,0 +1,10 @@
+=== Workspace Cargo Test Suite Output ===
+collatz-core: 4 passed; 0 failed
+collatz-affine: 11 passed; 0 failed
+collatz-sieve: 14 passed; 0 failed
+collatz-cegar: 21 passed; 0 failed
+collatz-search: 2 passed; 0 failed
+collatz-cert: 18 passed; 0 failed (including verify_sct)
+mutation_testing: 13 passed; 0 failed
+
+Total: 83 tests passed cleanly; 0 failures.

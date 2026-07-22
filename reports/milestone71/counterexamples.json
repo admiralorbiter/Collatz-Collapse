@@ -1,0 +1,14 @@
+[
+  {
+    "edge_id": "E12",
+    "source_guard": "7 mod 32",
+    "candidate_relation": "v2(L1(F1(n))) <= v2(L2(n))",
+    "counterexample": "103",
+    "source_feature_value": 2,
+    "destination_feature_value": 3,
+    "minimality_status": "proved_minimal",
+    "enumeration_order": "ascending positive integers in 7 mod 32",
+    "values_checked_before_witness": ["7", "39", "71"],
+    "status": "refuted"
+  }
+]

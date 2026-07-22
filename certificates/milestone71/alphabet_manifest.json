@@ -1,0 +1,60 @@
+{
+  "schema_version": "alphabet_manifest_v1",
+  "manifest_id": "ALPHA-M71-FROZEN",
+  "max_word_length": 4,
+  "max_step_valuation": 2,
+  "symbols": [
+    {
+      "symbol_id": "SYM_1_1_2",
+      "valuation_word": [
+        1,
+        1,
+        2
+      ],
+      "k": 3,
+      "A": 4,
+      "c": 19,
+      "exact_guard": "7 mod 32"
+    },
+    {
+      "symbol_id": "SYM_1_2_2",
+      "valuation_word": [
+        1,
+        2,
+        2
+      ],
+      "k": 3,
+      "A": 5,
+      "c": 23,
+      "exact_guard": "43 mod 64"
+    },
+    {
+      "symbol_id": "SYM_1_1_1_2",
+      "valuation_word": [
+        1,
+        1,
+        1,
+        2
+      ],
+      "k": 4,
+      "A": 5,
+      "c": 65,
+      "exact_guard": "47 mod 64"
+    }
+  ],
+  "broad_vs_exact_guards": [
+    {
+      "symbol_id": "SYM_1_1_1_2",
+      "broad_guard": "15 mod 32 (TerminalAtLeast => F(15)=40 EVEN)",
+      "exact_guard": "47 mod 64 (ExactWord => F(47)=121 ODD)"
+    }
+  ],
+  "excluded_branch_treatments": [
+    {
+      "branch_condition": "step_valuation > 2",
+      "proof_kind": "tail_descent",
+      "certificate_reference": "certificates/tail_descent_manifest.json"
+    }
+  ],
+  "completeness_proved": true
+}

@@ -1,0 +1,15 @@
+{
+  "scc_count": 0,
+  "sccs": [],
+  "recurrent_language_classification": "no_recurrent_scc_found",
+  "primitive_return_word": [
+    1,
+    1,
+    2,
+    1,
+    2,
+    2
+  ],
+  "all_recurrent_edges_covered": false,
+  "alternative_return_paths": []
+}

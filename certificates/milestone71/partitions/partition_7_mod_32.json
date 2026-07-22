@@ -1,0 +1,89 @@
+{
+  "schema_version": "cylinder_partition_v1",
+  "partition_id": "PART-7-MOD-32-FULL-COVERAGE",
+  "source_state_id": "Q1_7_32",
+  "parent_source_residue": "7",
+  "parent_modulus_exponent": 5,
+  "total_valuation_a": 4,
+  "quotient_bits_added": 3,
+  "subguards": [
+    {
+      "subguard_id": "Q1_cell_0",
+      "quotient_bit_pattern": 0,
+      "subguard_residue": "7",
+      "subguard_modulus_exponent": 8,
+      "target_state_id": "Q_13_16",
+      "target_image_base": "13",
+      "symbolic_image_formula": "F_w1(7 + 256*u) = 13 + 432*u"
+    },
+    {
+      "subguard_id": "Q1_cell_1",
+      "quotient_bit_pattern": 1,
+      "subguard_residue": "39",
+      "subguard_modulus_exponent": 8,
+      "target_state_id": "Q_3_16",
+      "target_image_base": "3",
+      "symbolic_image_formula": "F_w1(39 + 256*u) = 67 + 432*u"
+    },
+    {
+      "subguard_id": "Q1_cell_2",
+      "quotient_bit_pattern": 2,
+      "subguard_residue": "71",
+      "subguard_modulus_exponent": 8,
+      "target_state_id": "Q_9_16",
+      "target_image_base": "9",
+      "symbolic_image_formula": "F_w1(71 + 256*u) = 121 + 432*u"
+    },
+    {
+      "subguard_id": "Q1_cell_3",
+      "quotient_bit_pattern": 3,
+      "subguard_residue": "103",
+      "subguard_modulus_exponent": 8,
+      "target_state_id": "Q_15_16",
+      "target_image_base": "15",
+      "symbolic_image_formula": "F_w1(103 + 256*u) = 175 + 432*u"
+    },
+    {
+      "subguard_id": "Q1_cell_4",
+      "quotient_bit_pattern": 4,
+      "subguard_residue": "135",
+      "subguard_modulus_exponent": 8,
+      "target_state_id": "Q_5_16",
+      "target_image_base": "5",
+      "symbolic_image_formula": "F_w1(135 + 256*u) = 229 + 432*u"
+    },
+    {
+      "subguard_id": "Q1_cell_5",
+      "quotient_bit_pattern": 5,
+      "subguard_residue": "167",
+      "subguard_modulus_exponent": 8,
+      "target_state_id": "Q_11_16",
+      "target_image_base": "11",
+      "symbolic_image_formula": "F_w1(167 + 256*u) = 283 + 432*u"
+    },
+    {
+      "subguard_id": "Q1_cell_6",
+      "quotient_bit_pattern": 6,
+      "subguard_residue": "199",
+      "subguard_modulus_exponent": 8,
+      "target_state_id": "Q_1_16",
+      "target_image_base": "1",
+      "symbolic_image_formula": "F_w1(199 + 256*u) = 337 + 432*u"
+    },
+    {
+      "subguard_id": "Q1_cell_7",
+      "quotient_bit_pattern": 7,
+      "subguard_residue": "231",
+      "subguard_modulus_exponent": 8,
+      "target_state_id": "Q_7_16",
+      "target_image_base": "7",
+      "symbolic_image_formula": "F_w1(231 + 256*u) = 391 + 432*u"
+    }
+  ],
+  "union_coverage_proved": true,
+  "pairwise_disjointness_proved": true,
+  "exact_word_forcing_proved": true,
+  "target_partition_complete": true,
+  "source_modulus_exponent": 8,
+  "target_modulus_exponent": 4
+}

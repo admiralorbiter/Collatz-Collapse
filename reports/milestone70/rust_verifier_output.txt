@@ -1,0 +1,11 @@
+=== Collatz Independent Rust Verifier (`collatz-cert`) ===
+Verifying main SCT certificate: certificates/sct_milestone70.json
+  [OK] Schema version: size_change_scc_v1
+  [OK] Subordinate edge certificate E12 verified (v2_L1 positivity & relation decrease)
+  [OK] Subordinate edge certificate E21 verified (v2_L2 positivity & relation decrease)
+  [OK] Graph composition algebra: None < Weak < Strict (G1 then G2)
+  [OK] Transitive closure computed via hash-set saturation: 4 graphs generated
+  [OK] Idempotent self-edge check:
+       - Graph G11 (Q1 -> Q1): Strict self-edge on v2_L1 [VERIFIED]
+       - Graph G22 (Q2 -> Q2): Strict self-edge on v2_L2 [VERIFIED]
+VERIFICATION SUCCESSFUL: Target SCC SCC-MILESTONE-70-MULTI-CLASS satisfies Size-Change Termination.

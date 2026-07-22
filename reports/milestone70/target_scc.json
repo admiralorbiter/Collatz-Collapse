@@ -1,0 +1,60 @@
+{
+  "schema_version": "milestone70_target_scc_v1",
+  "scc_id": "SCC-MILESTONE-70-MULTI-CLASS",
+  "canonical_hash": "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e",
+  "states": [
+    {
+      "state_id": "Q1",
+      "residue": "7",
+      "modulus": 16,
+      "modulus_exponent": 4
+    },
+    {
+      "state_id": "Q2",
+      "residue": "11",
+      "modulus": 32,
+      "modulus_exponent": 5
+    }
+  ],
+  "transitions": [
+    {
+      "edge_id": "E12",
+      "source_state": "Q1",
+      "target_state": "Q2",
+      "macrostep_word": [1, 1, 2],
+      "primitive_canonical_word": [1, 1, 2],
+      "cyclic_class_id": "CLASS_1_1_2",
+      "affine_constant": "19",
+      "total_twos": 4,
+      "odd_steps": 3,
+      "fixed_point_linear_form": {
+        "alpha": "11",
+        "beta": "19"
+      },
+      "reachability_evidence": {
+        "source_witness": "7",
+        "target_witness": "13"
+      }
+    },
+    {
+      "edge_id": "E21",
+      "source_state": "Q2",
+      "target_state": "Q1",
+      "macrostep_word": [1, 2, 2],
+      "primitive_canonical_word": [1, 2, 2],
+      "cyclic_class_id": "CLASS_1_2_2",
+      "affine_constant": "23",
+      "total_twos": 5,
+      "odd_steps": 3,
+      "fixed_point_linear_form": {
+        "alpha": "5",
+        "beta": "23"
+      },
+      "reachability_evidence": {
+        "source_witness": "11",
+        "target_witness": "7"
+      }
+    }
+  ],
+  "completeness_statement": "The outgoing transitions E12 and E21 partition the reachable modular sub-domains for Q1 and Q2."
+}

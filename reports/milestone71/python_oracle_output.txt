@@ -1,0 +1,23 @@
+=== Adversarial Python Reference Oracle Audit Detailed Report ===
+Composite W Certificate: certificates/milestone71/composite_W_finite_fuel.json
+  Canonical SHA-256 Digest: 2d2f54c80202fba03d04f44c38d21105ccd4c8bd31d7bc78e3285dde6ab12be2
+  Composite Word: [1, 1, 2, 1, 2, 2] (A=9, k=6, c_W=881)
+  Recomputed Fixed Point: -881/217
+  Normalized Linear Form: L_W(n) = 217n + 881
+  Transformation Multiplier: L_W(F_W(n)) = (729/512) * L_W(n) [VERIFIED]
+  Exact Witness (935 mod 1024): Image Residue = 21 mod 32, Fuel = 1 [VERIFIED]
+
+Partition Certificate Set: certificates/milestone71/partitions/partition_7_mod_32.json
+  Canonical SHA-256 Digest: 44726952075170e20826a1fee4fbb31b39dd58fc68296933962a65a82e648184
+  Subguard Partition Cell Audit: 8 / 8 cells verified (mod 256 -> mod 16)
+
+Semantic Graph Artifact: certificates/milestone71/semantic_graph.json
+  Canonical SHA-256 Digest: 9bc87fcfdff7568346e03410601efce2b240e1177ed28da7469a958b39c2490f
+
+--- 4 Independent Validity Layer Statuses ---
+Layer 1: Arithmetic Validity:       VALID (Structured multiplier 729/512, c_W=881, fixed point x_W* = -881/217 verified)
+Layer 2: Abstract Semantic Validity: VALID (All 8 mod 256 subguards verified)
+Layer 3: Termination-Algebra:       VALID (Fuel formula N_W(n) = max(0, floor((v2 - 1)/9)) verified)
+Layer 4: Claim-Scope Validity:       BOUNDED VERIFIED (Bounded negative result under frozen alphabet)
+
+Python Reference Oracle: ADVERSARIAL HARDENED AUDIT COMPLETE.

@@ -1,0 +1,15 @@
+{
+  "base_state": "N/A",
+  "composite_return_word": [
+    1,
+    1,
+    2,
+    1,
+    2,
+    2
+  ],
+  "exact_composite_cylinder": "1959 mod 16384",
+  "one_lap_image": "2791 mod 16384",
+  "canonical_one_lap_residue": "7 mod 32",
+  "non_recurrent_reason": "2791 = 231 mod 256, which lands in a different mod 256 subcell than 1959 = 167 mod 256"
+}

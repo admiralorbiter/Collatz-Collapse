@@ -1,0 +1,21 @@
+{
+  "project": "Collatz-Collapse",
+  "phase": "Phase 7.1",
+  "git_commit": "HEAD",
+  "search_bounds": {
+    "max_depth": 10,
+    "max_states": 100
+  },
+  "seed_domain": [
+    "7 mod 32",
+    "43 mod 64"
+  ],
+  "rust_version": "1.80+",
+  "python_version": "3.12+",
+  "lean_version": "4.8.0",
+  "metrics_summary": {
+    "sound_recurrent_sccs": 0,
+    "non_commuting_branching_sccs": 0,
+    "required_max_residue_precision": 10
+  }
+}

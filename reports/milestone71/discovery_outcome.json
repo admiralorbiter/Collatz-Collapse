@@ -1,0 +1,11 @@
+{
+  "project": "Collatz-Collapse",
+  "phase": "Phase 7.1",
+  "milestone": "Milestone 7.1",
+  "status": "VERIFIED_BOUNDED_SEMANTIC_REFINEMENT_RESULT",
+  "sct_status": "NOT_APPLICABLE",
+  "recurrent_scc_status": "NOT_ESTABLISHED",
+  "original_target_status": "INVALIDATED",
+  "composite_phase_6d_certificate": "VERIFIED",
+  "outcome_statement": "Milestone 7.1 verified bounded semantic-refinement result: The exact [1,1,2] source cylinder 7mod32 was partitioned into eight disjoint subcylinders modulo 256, producing universally valid target images modulo 16. This refinement invalidated the proposed static two-state abstraction but did not contain enough source precision to classify membership in the proposed 43mod64 successor state; doing so requires source precision modulo 1024. The reverse proposed transition is independently invalid because F_[1,2,2](43) = 37 = 5mod32, not 7mod32. Separately, the composite word W=[1,1,2,1,2,2] has a verified Phase 6D finite-fuel certificate based on L_W(n) = 217n + 881. No sound recurrent SCC or Phase 7 SCT target was established."
+}

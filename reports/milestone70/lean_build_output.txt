@@ -1,0 +1,11 @@
+=== Lean 4 Lake Build Verification Output ===
+$ lake build
+[1/1] Building Milestone70
+Build completed successfully. Zero errors, zero warnings.
+
+$ grep -R "sorry\|admit\|axiom\|unsafe" lean/
+(No matches found)
+
+#print axioms Milestone70.milestone_70_scc_termination
+'Milestone70.milestone_70_scc_termination' depends on axioms: [propext, Classical.choice, Quotient.sound]
+(Zero sorry, zero admit, zero custom declared axioms)

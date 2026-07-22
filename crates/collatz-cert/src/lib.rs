@@ -6,9 +6,13 @@ pub mod macrocycle_theorem;
 pub mod minus_one_countdown;
 pub mod scalar_lyapunov;
 pub mod schema;
+pub mod sct_engine;
 pub mod tail;
 pub mod valuation_countdown;
 pub mod verify;
+pub mod verify_sct;
+
+pub use sct_engine::{RelationValue, SctEngine, SizeChangeGraph};
 
 pub use batch::{export_certificate_bundle, export_manifest, verify_certificate_bundle, BundleManifest};
 pub use descent::generate_descent_certificate;
@@ -16,7 +20,7 @@ pub use graph_contraction::{
     verify_graph_contraction_certificate, GraphContractionCertificateJson, GraphContractionError,
     GraphEdge, ObstructionCycleJson, RationalRatioJson,
 };
-pub use lean_export::export_lean4_theorem;
+pub use lean_export::{export_lean4_sct_ranking_theorem, export_lean4_theorem};
 pub use macrocycle_theorem::{
     verify_finite_fuel_macrocycle_certificate, FiniteFuelMacrocycleCertificateJson,
 };
@@ -28,10 +32,12 @@ pub use scalar_lyapunov::{
     ScalarTransition, ValuationConstraint,
 };
 pub use schema::{
-    BuchiEmptinessCertificateJson, BuchiTransitionJson, CycleCertificateJson, DescentCertificateJson,
-    InfeasibleAlgebraicCertificateJson, InfeasibleMinimalityCertificateJson,
-    InfeasibleSubsumptionCertificateJson, SizeChangeCertificateJson, SizeChangeRelationJson,
-    SizeChangeRelationKind, SizeChangeTransitionGraphJson, TailDescentCertificateJson,
+    AffineMapJson, BuchiEmptinessCertificateJson, BuchiTransitionJson, CycleCertificateJson,
+    DescentCertificateJson, FeatureDefinitionJson, InfeasibleAlgebraicCertificateJson,
+    InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson,
+    SctEdgeCertificateJson, SizeChangeCertificateJson, SizeChangeRelationJson,
+    SizeChangeRelationKind, SizeChangeTransitionGraphJson, SourceGuardJson,
+    TailDescentCertificateJson,
 };
 pub use tail::{compute_a_crit, generate_tail_descent_certificate};
 pub use valuation_countdown::{
@@ -39,6 +45,8 @@ pub use valuation_countdown::{
 };
 
 pub use verify::{verify_descent_certificate, verify_tail_descent_certificate};
+pub use verify_sct::{verify_sct_edge_certificate, verify_sct_scc_certificate, SctVerificationError};
+
 
 
 

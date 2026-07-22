@@ -131,6 +131,48 @@ pub struct SizeChangeCertificateJson {
     pub verifier_recomputation_required: bool,
 }
 
+/// Subordinate Edge Soundness Certificate Schema (sct_edge_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SourceGuardJson {
+    pub residue: String,
+    pub modulus_exponent: u64,
+    pub positivity_required: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AffineMapJson {
+    pub odd_steps: usize,
+    pub total_twos: u64,
+    pub constant: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FeatureDefinitionJson {
+    pub feature_id: String,
+    pub kind: String,
+    pub alpha: String,
+    pub beta: String,
+    pub zero_case: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SctEdgeCertificateJson {
+    pub schema_version: String,
+    pub edge_id: String,
+    pub source_state: String,
+    pub target_state: String,
+    pub valuation_word: Vec<u32>,
+    pub source_guard: SourceGuardJson,
+    pub affine_map: AffineMapJson,
+    pub features: Vec<FeatureDefinitionJson>,
+    pub proved_relations: Vec<SizeChangeRelationJson>,
+    pub proof_kind: String,
+}
+
 /// Büchi Automaton Transition
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -155,5 +197,6 @@ pub struct BuchiEmptinessCertificateJson {
     pub scc_decomposition: Vec<Vec<String>>,
     pub verifier_recomputation_required: bool,
 }
+
 
 
