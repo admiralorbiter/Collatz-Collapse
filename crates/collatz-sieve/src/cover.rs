@@ -1,3 +1,4 @@
+use crate::measure_trie::MeasureTrie;
 use crate::pipeline::SievePipeline;
 use crate::traits::{PrefixState, SieveResult};
 use collatz_affine::{AffinePrefix, ValuationWord};
@@ -26,6 +27,9 @@ pub struct PrefixTrie {
     max_depth: usize,
     pipeline: SievePipeline,
     pub certified_measure: BigRational,
+    pub raw_overlap_mass: BigRational,
+    pub exact_cylinder_measure: BigRational,
+    pub measure_trie: MeasureTrie,
     pub certified_count: usize,
 }
 
@@ -35,12 +39,25 @@ impl PrefixTrie {
             max_depth,
             pipeline,
             certified_measure: BigRational::zero(),
+            raw_overlap_mass: BigRational::zero(),
+            exact_cylinder_measure: BigRational::zero(),
+            measure_trie: MeasureTrie::new(),
             certified_count: 0,
         }
     }
 
-    /// Computes analytical Tail-Cutoff valuation threshold a_crit.
-    /// For all a_k >= a_crit, the child branch is guaranteed to descend with zero exceptions (B <= 1).
+    /// Returns canonical 2-adic union measure in [0, 1] computed via the LSB Patricia Trie.
+    pub fn broad_union_measure(&self) -> BigRational {
+        self.measure_trie.canonical_union_measure()
+    }
+
+    /// Returns unresolved measure (1.0 - broad_union_measure).
+    pub fn unresolved_measure(&self) -> BigRational {
+        BigRational::one() - self.broad_union_measure()
+    }
+
+    /// Computes analytical Tail-Cutoff valuation threshold a_crit using exact integer bit length:
+    /// a_crit = max(1, bitlength(3c_k + 2^{A_k} + 3^{k+1}) - A_k)
     pub fn compute_tail_cutoff(c_k: &BigUint, k: usize, total_twos: u64) -> u8 {
         let pow3_k1 = BigUint::from(3u32).pow((k + 1) as u32);
         let pow2_ak = BigUint::one() << total_twos;
@@ -48,8 +65,8 @@ impl PrefixTrie {
 
         let bits = bound_val.bits();
         if bits > total_twos {
-            let cutoff = (bits - total_twos) as u8 + 1;
-            cutoff.min(16) // Cap maximum search expansion per step
+            let cutoff = (bits - total_twos) as u8;
+            cutoff.max(1).min(16) // Cap maximum search expansion per DFS step
         } else {
             1
         }
@@ -122,11 +139,20 @@ impl PrefixTrie {
     ) -> std::io::Result<()> {
         let total_twos = state.affine.total_twos;
 
-        // Exact 2-adic measure density \mu = 1 / 2^{A_k - 1}
+        // Broad measure = 1 / 2^{A_k - 1}
         if total_twos >= 1 {
-            let denom = BigUint::one() << (total_twos - 1);
-            let measure = BigRational::new(BigUint::one().into(), denom.into());
-            self.certified_measure += measure;
+            let broad_denom = BigUint::one() << (total_twos - 1);
+            let broad_m = BigRational::new(BigUint::one().into(), broad_denom.into());
+            self.raw_overlap_mass += &broad_m;
+            self.certified_measure += &broad_m;
+
+            // Exact cylinder measure = 1 / 2^{A_k}
+            let exact_denom = BigUint::one() << total_twos;
+            let exact_m = BigRational::new(BigUint::one().into(), exact_denom.into());
+            self.exact_cylinder_measure += exact_m;
+
+            // Insert broad residue class into LSB Patricia Trie for canonical union computation
+            self.measure_trie.insert(&state.affine.starting_residue, total_twos);
         }
 
         self.certified_count += 1;

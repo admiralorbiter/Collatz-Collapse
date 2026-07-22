@@ -1,28 +1,29 @@
 # Computational Sieves & Tree Pruning Framework
 
-## 1. Sieve Taxonomy: Kinematic vs. Minimality
+## 1. The Four-Category Sieve Taxonomy
 
-To avoid conflating algebraic impossibilities with bounds constraints, all sieves in the workbench are classified into one of two mathematical categories:
+To avoid conflating algebraic impossibilities in $\mathbb{Z}_2$, state subsumption, and minimal counterexample bounds, all sieves in the workbench are classified into a rigorous 4-category taxonomy:
 
 ```text
                                ┌─────────────────────────┐
                                │     Prefix Sieve        │
                                └────────────┬────────────┘
                                             │
-                    ┌───────────────────────┴───────────────────────┐
-                    ▼                                               ▼
-     ┌─────────────────────────────┐                 ┌─────────────────────────────┐
-     │      Kinematic Sieves       │                 │      Minimality Sieves      │
-     ├─────────────────────────────┤                 ├─────────────────────────────┤
-     │ Rule out valuation sequences│                 │ Rule out valuation sequences│
-     │ that are algebraically      │                 │ that are valid in Z2 but    │
-     │ impossible in Z2.           │                 │ impossible for a minimal    │
-     │                             │                 │ counterexample in N+.       │
-     │ Examples:                   │                 │ Examples:                   │
-     │ - Mod9PreimageSieve         │                 │ - DescentSieve              │
-     │ - PathMergingSieve          │                 │ - MinimalCounterexampleSieve│
-     │ - OddEvenEvenSieve          │                 │ - TwoAdicImpostorSieve      │
-     └─────────────────────────────┘                 └─────────────────────────────┘
+     ┌──────────────────────┬───────────────┴───────────────┬──────────────────────┐
+     ▼                      ▼                               ▼                      ▼
+┌──────────────┐   ┌─────────────────┐             ┌──────────────────┐   ┌──────────────────┐
+│ Category 1:  │   │   Category 2:   │             │   Category 3:    │   │   Category 4:    │
+│ Semantic     │   │ Subsumption &   │             │ Minimal Counter- │   │ Search           │
+│ Emptiness    │   │ Deduplication   │             │ example Exclusion│   │ Diagnostics      │
+├──────────────┤   ├─────────────────┤             ├──────────────────┤   ├──────────────────┤
+│ Integer set  │   │ State already   │             │ Valid path in Z2 │   │ Heuristic        │
+│ is empty     │   │ covered/subsumed│             │ but cannot be in │   │ prioritization   │
+│ in N+.       │   │ in DAG.         │             │ least N+ counter-│   │ score.           │
+│              │   │ Examples:       │             │ example.         │   │ Example:         │
+│              │   │ - Mod9Preimage  │             │ Examples:        │   │ - TwoAdic        │
+│              │   │ - PathMerging   │             │ - DescentSieve   │   │   Impostor       │
+│              │   │ - OddEvenEven   │             │ - MinimalCounter │   │                  │
+└──────────────┘   └─────────────────┘             └──────────────────┘   └──────────────────┘
 ```
 
 ---

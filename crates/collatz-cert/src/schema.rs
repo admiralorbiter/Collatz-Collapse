@@ -12,6 +12,8 @@ pub struct DescentCertificateJson {
     pub constant: String,
     pub descent_threshold: String,
     pub checked_exceptions: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub valuation_semantics: Option<String>,
 }
 
 /// Cycle Certificate Schema v1 (cycle_v1)

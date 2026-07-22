@@ -2,8 +2,11 @@ pub mod affine;
 pub mod inversion;
 pub mod valuation;
 
-pub use affine::{compute_descent_threshold, AffineDiagnostics, AffinePrefix};
-pub use inversion::{hensel_inverse_3_pow, modular_inverse_3k_mod_2A, solve_starting_residue};
+pub use affine::{compute_descent_threshold, AffineDiagnostics, AffinePrefix, ValuationSemantics};
+pub use inversion::{
+    hensel_inverse_3_pow, modular_inverse_3k_mod_2A, solve_starting_residue, solve_starting_residue_broad,
+    solve_starting_residue_exact,
+};
 pub use valuation::ValuationWord;
 
 use thiserror::Error;

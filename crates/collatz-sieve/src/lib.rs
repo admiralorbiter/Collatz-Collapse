@@ -1,5 +1,6 @@
 pub mod cover;
 pub mod descent;
+pub mod measure_trie;
 pub mod minimality;
 pub mod mod9;
 pub mod odd_even_even;
@@ -10,6 +11,7 @@ pub mod two_adic;
 
 pub use cover::{NodeStatus, PrefixTrie, TrieNode};
 pub use descent::DescentSieve;
+pub use measure_trie::MeasureTrie;
 pub use minimality::MinimalCounterexampleSieve;
 pub use mod9::Mod9PreimageSieve;
 pub use odd_even_even::OddEvenEvenSieve;

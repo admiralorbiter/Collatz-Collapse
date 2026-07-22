@@ -1,6 +1,16 @@
-use crate::{solve_starting_residue, AffineError, ValuationWord};
+use crate::{solve_starting_residue_broad, solve_starting_residue_exact, AffineError, ValuationWord};
 use num_bigint::BigUint;
 use num_traits::{One, Zero};
+
+/// Explicit valuation semantics for symbolic residue classes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum ValuationSemantics {
+    /// Terminal valuation >= a_{k-1}. Modulus 2^A_k, 2-adic measure 2^{-(A_k-1)}.
+    #[default]
+    TerminalAtLeast,
+    /// Complete exact valuation word. Modulus 2^{A_k + 1}, 2-adic measure 2^{-A_k}.
+    ExactWord,
+}
 
 /// Encapsulates the exact affine transformation n_k = (3^k * n_0 + c_k) / 2^{A_k} for a valuation prefix.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -31,7 +41,7 @@ impl AffinePrefix {
             partial_sum += a_i as u64;
         }
 
-        let starting_residue = solve_starting_residue(&c_k, k, a_k)?;
+        let starting_residue = solve_starting_residue_broad(&c_k, k, a_k)?;
 
         Ok(Self {
             valuations: word,
@@ -41,6 +51,30 @@ impl AffinePrefix {
             starting_residue,
             modulus_exponent: a_k,
         })
+    }
+
+    /// Solves broad residue class starting_residue mod 2^A_k (terminal valuation >= a_{k-1}).
+    pub fn starting_residue_broad(&self) -> Result<BigUint, AffineError> {
+        solve_starting_residue_broad(&self.constant, self.odd_steps, self.total_twos)
+    }
+
+    /// Solves exact cylinder residue class starting_residue mod 2^{A_k + 1} (terminal valuation == a_{k-1}).
+    pub fn starting_residue_exact(&self) -> Result<BigUint, AffineError> {
+        solve_starting_residue_exact(&self.constant, self.odd_steps, self.total_twos)
+    }
+
+    /// Solves starting residue for the specified ValuationSemantics.
+    pub fn starting_residue_for_semantics(&self, semantics: ValuationSemantics) -> Result<(BigUint, u64), AffineError> {
+        match semantics {
+            ValuationSemantics::TerminalAtLeast => {
+                let res = self.starting_residue_broad()?;
+                Ok((res, self.total_twos))
+            }
+            ValuationSemantics::ExactWord => {
+                let res = self.starting_residue_exact()?;
+                Ok((res, self.total_twos + 1))
+            }
+        }
     }
 
     /// Evaluates the affine transformation n_k = (3^k * n_0 + c_k) / 2^{A_k} for a concrete starting value n_0.

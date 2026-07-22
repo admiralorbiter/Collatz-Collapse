@@ -39,25 +39,30 @@ $$c_k = \sum_{i=0}^{k-1} 3^{k-1-i} 2^{A_i}$$
 
 ## 3. Closed-Form Modular Inversion Identity
 
-### 3.1 Closed-Form Congruence Derivation
-Every valuation word $(a_0, \ldots, a_{k-1})$ of total valuation $A_k$ imposes an exact modular congruence on the starting value $n_0$. 
+### 3.1 Closed-Form Congruence Derivation & Valuation Semantics
+Every valuation word $(a_0, \ldots, a_{k-1})$ of total valuation $A_k$ imposes modular congruences on the starting value $n_0$. Crucially, there are two distinct semantics:
 
-From the exact affine transformation:
-$$2^{A_k} n_k = 3^k n_0 + c_k$$
-
-Taking both sides modulo $2^{A_k}$:
-$$3^k n_0 + c_k \equiv 0 \pmod{2^{A_k}}$$
-
-Since $\gcd(3, 2) = 1$, $3^k$ is strictly invertible modulo $2^{A_k}$. Multiplying by $(3^k)^{-1} \pmod{2^{A_k}}$ yields the **Closed-Form Modular Inversion Identity**:
-
+#### 1. Broad Valuation Class (`TerminalAtLeast`)
+Taking $3^k n_0 + c_k \equiv 0 \pmod{2^{A_k}}$ yields:
 $$n_0 \equiv -c_k \cdot (3^k)^{-1} \pmod{2^{A_k}}$$
+This congruence forces the first $k-1$ valuations $(a_0, \ldots, a_{k-2})$ exactly, and guarantees that the $k$-th valuation is **at least** $a_{k-1}$ ($v_2(3n_{k-1}+1) \ge a_{k-1}$).
+- **Modulus:** $2^{A_k}$
+- **Normalized 2-Adic Measure over $2\mathbb{N}+1$:** $2^{-(A_k - 1)}$
+- **Overlap:** Broad valuation classes are **not disjoint** (a class with terminal valuation $\ge a+1$ is contained within terminal valuation $\ge a$).
+
+#### 2. Complete Exact Valuation Cylinder (`ExactWord`)
+To force the final value after $k$ divisions to be odd—and therefore obtain the exact word $(a_0, \ldots, a_{k-1})$—we apply a 1-bit lift requiring $3^k n_0 + c_k \equiv 2^{A_k} \pmod{2^{A_k + 1}}$:
+$$n_0 \equiv (2^{A_k} - c_k) \cdot (3^k)^{-1} \pmod{2^{A_k + 1}}$$
+- **Modulus:** $2^{A_k + 1}$
+- **Normalized 2-Adic Measure over $2\mathbb{N}+1$:** $2^{-A_k}$
+- **Disjointness:** Exact valuation cylinders from a prefix-free valuation tree are **strictly disjoint** over $\mathbb{Z}_2$.
 
 ### 3.2 Significance for Search Logic
 This closed-form identity eliminates the need for iterative modular lifting or candidate branching. Given any valuation word $(a_0, \ldots, a_{k-1})$:
 1. Compute total valuation $A_k$ and additive constant $c_k$.
-2. Compute $(3^k)^{-1} \pmod{2^{A_k}}$ via modular exponentiation or inverse chains.
-3. Compute the unique starting residue $r_k = (-c_k \cdot (3^k)^{-1}) \bmod 2^{A_k}$.
-4. The residue class $n_0 \equiv r_k \pmod{2^{A_k}}$ is the exact, unique set of starting integers that produce the valuation word for at least $k$ steps.
+2. Compute $(3^k)^{-1} \pmod{2^{A_k}}$ or $\pmod{2^{A_k+1}}$ via Hensel lifting or modular exponentiation.
+3. Compute starting residue $r_k$ for either broad or exact semantics.
+4. The residue class is the exact set of starting integers satisfying the valuation constraints.
 
 ---
 
@@ -85,19 +90,26 @@ $$B = \left\lfloor \frac{c_k}{2^{A_k} - 3^k} \right\rfloor + 1$$
 ### 4.4 The Tail-Cutoff Lemma for Infinite Valuation Branching
 At any tree node with length $k$, additive constant $c_k$, and total valuation $A_k$, the child valuation $a_k$ can theoretically range from $1$ to $\infty$. However, as $a_k$ increases, $2^{A_k + a_k}$ grows exponentially relative to $3^{k+1}$, driving the descent threshold $B \to 1$.
 
-Define the analytical cutoff threshold $a_{\text{crit}}$:
-$$a_{\text{crit}} = \left\lfloor \log_2(3c_k + 2^{A_k} + 3^{k+1}) - A_k \right\rfloor + 1$$
+Define the analytical cutoff threshold $a_{\text{crit}}$ using exact integer bit length:
+$$a_{\text{crit}} = \max\left(1, \text{bitlength}(3c_k + 2^{A_k} + 3^{k+1}) - A_k\right)$$
 
 **Tail-Cutoff Theorem:** For all child valuations $a_k \ge a_{\text{crit}}$, the resulting macrostep satisfies $2^{A_k + a_k} > 3^{k+1}$ and descent threshold $B \le 1$. Because no positive odd integer is strictly less than 1, all branches $a_k \ge a_{\text{crit}}$ are **trivially certified with zero exceptions**.
 
 This enables the `PrefixTrie` to cover infinite child valuation branches $a_k \ge a_{\text{crit}}$ in a single exact analytical step without allocating infinite nodes in memory.
 
-### 4.5 Exact 2-Adic Measure Density Calculation
-In the measure space of odd integers $2\mathbb{N}+1$ (which has total 2-adic measure $1.0$), a certified leaf node $L$ of total valuation $A_k$ covers a 2-adic set of exact measure:
-$$\mu(L) = 2^{-(A_k - 1)}$$
+### 4.5 The Four 2-Adic Coverage Metrics
+To provide rigorous mathematical interpretation of tree search results without confusing overlap mass with set measure, the workbench reports **4 distinct metrics**:
 
-Because valuation prefixes form a strict prefix-free code over $\mathbb{Z}_2$, distinct certified leaves are 100% disjoint in 2-adic measure space. To prevent IEEE-754 floating-point mantissa cancellation when $A_k > 53$, the cumulative certified density $\mu_{\text{total}}$ is accumulated using exact rational numbers (`num-rational::BigRational`):
-$$\mu_{\text{total}} = \sum_{L \in \text{CertifiedLeaves}} \frac{1}{2^{A_k(L) - 1}}$$
+1. **Exact-Cylinder Lower Bound Coverage ($\mu_{\text{exact}}$):**
+   $$\mu_{\text{exact}} = \sum_{L \in \text{Leaves}} \frac{1}{2^{A_k(L)}} = \frac{1}{2} \cdot \text{Mass}_{\text{broad}}$$
+   Because exact valuation cylinders are strictly disjoint, this gives a provable lower bound (e.g., $\approx 79.6\%$ at depth 20).
+2. **Broad-Certificate Canonical Union Measure ($\mu_{\text{union}}$):**
+   Computed by inserting broad residue classes $r_k \pmod{2^{A_k}}$ into an LSB-first binary Patricia trie (`MeasureTrie`) and canonicalizing overlapping subtrees. Enforces the strict invariant $0 \le \mu_{\text{union}} \le 1.0$.
+3. **Raw Overlap-Weighted Mass ($\text{Mass}_{\text{broad}}$):**
+   $$\text{Mass}_{\text{broad}} = \sum_{L \in \text{Leaves}} \frac{1}{2^{A_k(L) - 1}}$$
+   Quantifies total certificate mass including broad overlaps (e.g., $1.592$ at depth 20).
+4. **Unresolved Measure ($\mu_{\text{unresolved}}$):**
+   $$\mu_{\text{unresolved}} = 1.0 - \mu_{\text{union}}$$
 
 ---
 
@@ -136,4 +148,27 @@ A valid non-trivial positive cycle requires:
 3. $n_0$ is odd and positive ($n_0 \in 2\mathbb{N}+1$).
 4. Every intermediate value $n_j = \frac{3^j n_0 + c_j}{2^{A_j}}$ is odd and positive.
 5. $v_2(3n_j + 1) = a_j$ exactly for all $0 \le j < k$.
-6. The trajectory is not the trivial cycle $1 \mapsto 1$ ($a_0 = 2$).
+6. The trajectory is not the trivial cycle $1 \mapsto 1$ ($a_0 = 2$, repeated word $(2, 2)$).
+
+---
+
+## 7. Fundamental Literature References
+
+The theoretical framework of the Collatz Research Workbench builds upon and connects to the following key literature:
+
+1. **2-Adic Conjugacy & Valuation Encodings:**
+   - Bernstein, D. J., & Lagarias, J. C. (1996). *The 3x+1 conjugacy map*. Canadian Journal of Mathematics, 48(6), 1154-1169.
+2. **Stopping-Time Density Framework:**
+   - Terras, R. (1976). *A stopping time problem on the positive integers*. Acta Arithmetica, 30(3), 241-252.
+   - Everett, C. J. (1977). *Iteration of the 3x+1 function*. Advances in Mathematics, 25(1), 42-45.
+3. **Logarithmic Density Bounds:**
+   - Tao, T. (2022). *Almost all Collatz orbits attain almost bounded values*. Forum of Mathematics, Pi, 10, e12.
+4. **Paradoxical Sequences & Growth Ratio Dynamics:**
+   - Rozier, O., & Terracol, R. (2025). *Paradoxical behavior and exponent dynamics in Collatz sequences*.
+5. **Adaptive Exponent-Code Search (2-Adic / 3-Adic):**
+   - Kramer, O. (2026). *Adaptive search in Collatz exponent-code space*.
+6. **Difference Inequalities & Potential Invariants:**
+   - Krasikov, I., & Lagarias, J. C. (2003). *Bounds for the 3x+1 problem using difference inequalities*. Acta Arithmetica, 109(3), 237-258.
+7. **Computational Baselines & High-Performance Sieving:**
+   - Barina, D. (2021). *Convergence verification of the Collatz problem*. Journal of Supercomputing, 77(3), 2681-2688.
+

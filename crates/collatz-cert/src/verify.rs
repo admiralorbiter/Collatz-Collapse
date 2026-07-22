@@ -1,6 +1,8 @@
 use crate::schema::DescentCertificateJson;
 use crate::VerificationError;
-use collatz_affine::{solve_starting_residue, ValuationWord};
+use collatz_affine::{
+    solve_starting_residue_broad, solve_starting_residue_exact, ValuationSemantics, ValuationWord,
+};
 use collatz_core::odd_step;
 use num_bigint::BigUint;
 use num_traits::{One, Zero};
@@ -30,12 +32,33 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
     let word = ValuationWord::from_u32_slice(&cert.valuation_word)
         .map_err(|e| VerificationError::InvalidValuationWord(e.to_string()))?;
 
-    // Step 1: Recompute Total Valuation A_k
+    // Step 1: Recompute Total Valuation A_k & Verify Modulus Exponent
     let computed_a_k = word.total_valuation();
-    if computed_a_k != cert.total_twos || computed_a_k != cert.modulus_exponent {
+    if computed_a_k != cert.total_twos {
         return Err(VerificationError::TotalTwosMismatch {
             declared: cert.total_twos,
             computed: computed_a_k,
+        });
+    }
+
+    let semantics = match cert.valuation_semantics.as_deref().unwrap_or("terminal_at_least") {
+        "exact_word" => ValuationSemantics::ExactWord,
+        "terminal_at_least" => ValuationSemantics::TerminalAtLeast,
+        other => return Err(VerificationError::SchemaMismatch {
+            expected: "exact_word or terminal_at_least".to_string(),
+            found: other.to_string(),
+        }),
+    };
+
+    let expected_mod_exponent = match semantics {
+        ValuationSemantics::TerminalAtLeast => computed_a_k,
+        ValuationSemantics::ExactWord => computed_a_k + 1,
+    };
+
+    if cert.modulus_exponent != expected_mod_exponent {
+        return Err(VerificationError::TotalTwosMismatch {
+            declared: cert.modulus_exponent,
+            computed: expected_mod_exponent,
         });
     }
 
@@ -59,9 +82,11 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         });
     }
 
-    // Step 3: Verify Closed-Form Starting Residue n_0 mod 2^A_k
-    let computed_residue = solve_starting_residue(&c_k, k, computed_a_k)
-        .map_err(|e| VerificationError::ResidueMismatch { declared: cert.starting_residue.clone(), computed: e.to_string() })?;
+    // Step 3: Verify Closed-Form Starting Residue
+    let computed_residue = match semantics {
+        ValuationSemantics::TerminalAtLeast => solve_starting_residue_broad(&c_k, k, computed_a_k),
+        ValuationSemantics::ExactWord => solve_starting_residue_exact(&c_k, k, computed_a_k),
+    }.map_err(|e| VerificationError::ResidueMismatch { declared: cert.starting_residue.clone(), computed: e.to_string() })?;
 
     let declared_residue = BigUint::from_str(&cert.starting_residue)
         .map_err(|_| VerificationError::ParseBigIntError(cert.starting_residue.clone()))?;
@@ -97,13 +122,12 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         });
     }
 
-    // Step 6 (Peer-Reviewed Fix): Independent Exhaustive Exception Generation and Verification
-    // Do NOT rely solely on prover-supplied array; generate all e < B independently.
-    let modulus = &pow2_a;
+    // Step 6: Independent Exhaustive Exception Generation and Verification
+    let modulus = BigUint::one() << cert.modulus_exponent;
     let mut e = computed_residue.clone();
 
     if e.is_zero() || (&e & BigUint::one()).is_zero() {
-        e += modulus;
+        e += &modulus;
     }
 
     while e < computed_threshold {
@@ -124,7 +148,7 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
             return Err(VerificationError::ExceptionVerificationFailed { integer: e.to_string() });
         }
 
-        e += modulus;
+        e += &modulus;
     }
 
     Ok(())
@@ -141,6 +165,19 @@ mod tests {
         // 3^5 = 243, 2^8 = 256. 256 > 243 -> Multiplicative contraction!
         let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).unwrap();
         let cert = generate_descent_certificate(word).unwrap();
+        assert!(verify_descent_certificate(&cert).is_ok());
+    }
+
+    #[test]
+    fn test_verify_exact_word_descent_certificate() {
+        use collatz_affine::ValuationSemantics;
+        use crate::descent::generate_descent_certificate_with_semantics;
+
+        let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).unwrap();
+        let cert = generate_descent_certificate_with_semantics(word, ValuationSemantics::ExactWord).unwrap();
+        assert_eq!(cert.starting_residue, "295");
+        assert_eq!(cert.modulus_exponent, 9);
+        assert_eq!(cert.valuation_semantics, Some("exact_word".to_string()));
         assert!(verify_descent_certificate(&cert).is_ok());
     }
 

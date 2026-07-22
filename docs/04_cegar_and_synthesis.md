@@ -74,7 +74,7 @@ $$\lambda^* = \max_C \frac{\sum_{e \in C} w(e)}{|C|}$$
 
 ### 3.1 Concretization Check
 For a critical abstract cycle $(a_0, a_1, \ldots, a_{k-1})$:
-1. Compute closed-form starting residue $r_k \equiv -c_k (3^k)^{-1} \pmod{2^{A_k}}$.
+1. Compute closed-form starting residue: broad class $r_k \equiv -c_k (3^k)^{-1} \pmod{2^{A_k}}$ or exact cylinder $r_k \equiv (2^{A_k}-c_k) (3^k)^{-1} \pmod{2^{A_k + 1}}$.
 2. Check if $2^{A_k} > 3^k$ and compute threshold $B = \lfloor \frac{c_k}{2^{A_k} - 3^k} \rfloor + 1$.
 3. Check minimal-counterexample upper bounds for all intermediate steps.
 

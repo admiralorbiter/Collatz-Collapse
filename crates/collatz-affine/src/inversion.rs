@@ -64,9 +64,9 @@ pub fn modular_inverse_3k_mod_2A(k: usize, a_k: u64) -> BigUint {
     inv_3.modpow(&BigUint::from(k), &modulus)
 }
 
-/// Solves the closed-form starting residue n_0 mod 2^A_k:
+/// Solves the closed-form starting residue n_0 mod 2^A_k for the broad class (terminal valuation >= a_{k-1}):
 /// n_0 = (-c_k * (3^k)^-1) mod 2^A_k
-pub fn solve_starting_residue(c_k: &BigUint, k: usize, a_k: u64) -> Result<BigUint, AffineError> {
+pub fn solve_starting_residue_broad(c_k: &BigUint, k: usize, a_k: u64) -> Result<BigUint, AffineError> {
     if a_k == 0 {
         return Ok(BigUint::zero());
     }
@@ -83,6 +83,39 @@ pub fn solve_starting_residue(c_k: &BigUint, k: usize, a_k: u64) -> Result<BigUi
     } else {
         Ok(&modulus - prod)
     }
+}
+
+/// Solves the closed-form starting residue n_0 mod 2^{A_k + 1} for the exact valuation cylinder (terminal valuation == a_{k-1}):
+/// n_0 = ((2^A_k - c_k) * (3^k)^-1) mod 2^{A_k + 1}
+pub fn solve_starting_residue_exact(c_k: &BigUint, k: usize, a_k: u64) -> Result<BigUint, AffineError> {
+    if a_k == 0 {
+        return Ok(BigUint::zero());
+    }
+
+    let mod_exponent = a_k + 1;
+    let inv_3k = modular_inverse_3k_mod_2A(k, mod_exponent);
+    let modulus = BigUint::one() << mod_exponent;
+    let pow2_a = BigUint::one() << a_k;
+
+    // target = (2^A_k - c_k) mod 2^{A_k + 1}
+    let target = if &pow2_a >= c_k {
+        (&pow2_a - c_k) % &modulus
+    } else {
+        let diff = c_k - &pow2_a;
+        let rem = diff % &modulus;
+        if rem.is_zero() {
+            BigUint::zero()
+        } else {
+            &modulus - rem
+        }
+    };
+
+    Ok((target * inv_3k) % &modulus)
+}
+
+/// Solves the starting residue mod 2^A_k (broad class default).
+pub fn solve_starting_residue(c_k: &BigUint, k: usize, a_k: u64) -> Result<BigUint, AffineError> {
+    solve_starting_residue_broad(c_k, k, a_k)
 }
 
 #[cfg(test)]
@@ -117,5 +150,16 @@ mod tests {
         let c_2 = BigUint::from(5u32);
         let res = solve_starting_residue(&c_2, 2, 2).unwrap();
         assert_eq!(res, BigUint::from(3u32));
+    }
+
+    #[test]
+    fn test_solve_starting_residue_broad_and_exact_1_1_2_1_3() {
+        // Word (1, 1, 2, 1, 3), k=5, A_k=8, c_5=251.
+        let c_5 = BigUint::from(251u32);
+        let broad_res = solve_starting_residue_broad(&c_5, 5, 8).unwrap();
+        let exact_res = solve_starting_residue_exact(&c_5, 5, 8).unwrap();
+
+        assert_eq!(broad_res, BigUint::from(39u32));
+        assert_eq!(exact_res, BigUint::from(295u32));
     }
 }

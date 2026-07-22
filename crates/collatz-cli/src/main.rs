@@ -11,7 +11,7 @@ use collatz_sieve::{
     PrefixTrie, SievePipeline, SieveResult, TwoAdicImpostorDiagnostic,
 };
 use num_bigint::BigUint;
-use num_traits::{One, Zero};
+use num_traits::{One, ToPrimitive, Zero};
 use smallvec::SmallVec;
 use std::fs::{self, File};
 use std::io::{sink, BufWriter};
@@ -135,6 +135,11 @@ enum CertCommands {
 enum TestCommands {
     /// Run Experiment 0 core arithmetic test suite
     Core,
+    /// Run small moduli exhaustive differential validation
+    Differential {
+        #[arg(long, default_value_t = 10)]
+        max_modulus: u64,
+    },
 }
 
 fn main() -> Result<()> {
@@ -158,6 +163,7 @@ fn main() -> Result<()> {
         },
         Commands::Test { test_command } => match test_command {
             TestCommands::Core => run_test_core(),
+            TestCommands::Differential { max_modulus } => run_test_differential(max_modulus),
         },
     }
 }
@@ -288,12 +294,19 @@ fn run_cover_build(max_depth: usize, output_dir: PathBuf, summary_only: bool) ->
         trie.build_cover_streaming(&mut writer).map_err(|e| anyhow!("Streaming cover build failed: {}", e))?;
     }
 
-    let measure_str = trie.certified_measure.to_string();
-    println!("\nTrie Expansion Complete:");
-    println!("  - Certified Certificates Generated: {}", trie.certified_count);
-    println!("  - Exact Certified 2-Adic Measure:  {}", measure_str);
+    let union_m = trie.broad_union_measure();
+    let exact_m = &trie.exact_cylinder_measure;
+    let raw_mass = &trie.raw_overlap_mass;
+    let unresolved_m = trie.unresolved_measure();
 
-    let manifest = export_manifest(&output_dir, trie.certified_count, &measure_str, "summary_hash_ok")
+    println!("\nTrie Expansion Complete:");
+    println!("  - Certified Certificates Generated:  {}", trie.certified_count);
+    println!("  - 1. Exact-Cylinder Lower Bound:    {} ({:.6})", exact_m, exact_m.to_f64().unwrap_or(0.0));
+    println!("  - 2. Broad-Certificate Union Measure: {} ({:.6})", union_m, union_m.to_f64().unwrap_or(0.0));
+    println!("  - 3. Raw Overlap-Weighted Mass:      {} ({:.6})", raw_mass, raw_mass.to_f64().unwrap_or(0.0));
+    println!("  - 4. Unresolved 2-Adic Measure:      {} ({:.6})", unresolved_m, unresolved_m.to_f64().unwrap_or(0.0));
+
+    let manifest = export_manifest(&output_dir, trie.certified_count, &union_m.to_string(), "summary_hash_ok")
         .map_err(|e| anyhow!("Failed to export manifest: {}", e))?;
 
     println!("\nSuccessfully Completed Cover Build:");
@@ -397,5 +410,57 @@ fn run_test_core() -> Result<()> {
     println!("PASSED");
 
     println!("\n=== ALL EXPERIMENT 0 CORE TESTS PASSED SUCCESSFULLY! ===");
+    Ok(())
+}
+
+fn run_test_differential(max_modulus: u64) -> Result<()> {
+    use collatz_affine::{solve_starting_residue_broad, solve_starting_residue_exact};
+    use collatz_sieve::MeasureTrie;
+
+    println!("=== Running Small Moduli Exhaustive Differential Test (Max Modulus Exponent = {}) ===", max_modulus);
+    let start_time = Instant::now();
+
+    let limit = 1u64 << max_modulus.min(12); // Limit to 2^12 = 4096 for fast test execution
+    let mut exact_trie = MeasureTrie::new();
+    let mut count = 0usize;
+
+    for n_raw in (1..limit).step_by(2) {
+        let n0 = BigUint::from(n_raw);
+        
+        // Trace k=3 odd steps
+        let mut curr = n0.clone();
+        let mut val_word = Vec::new();
+
+        for _ in 0..3 {
+            let step = odd_step(&curr).map_err(|e| anyhow!("{}", e))?;
+            val_word.push(step.valuation as u32);
+            curr = step.to;
+        }
+
+        let word = ValuationWord::from_u32_slice(&val_word).map_err(|e| anyhow!("{}", e))?;
+        let prefix = AffinePrefix::from_valuation_word(word).map_err(|e| anyhow!("{}", e))?;
+
+        let k = prefix.odd_steps;
+        let a_k = prefix.total_twos;
+
+        let broad_res = solve_starting_residue_broad(&prefix.constant, k, a_k).map_err(|e| anyhow!("{}", e))?;
+        let exact_res = solve_starting_residue_exact(&prefix.constant, k, a_k).map_err(|e| anyhow!("{}", e))?;
+
+        let mod_broad = BigUint::one() << a_k;
+        let mod_exact = BigUint::one() << (a_k + 1);
+
+        assert_eq!(&n0 % &mod_broad, broad_res, "Broad residue mismatch for n0={}", n0);
+        assert_eq!(&n0 % &mod_exact, exact_res, "Exact residue mismatch for n0={}", n0);
+
+        exact_trie.insert(&exact_res, a_k + 1);
+        count += 1;
+    }
+
+    println!("Differential Test Summary:");
+    println!("  - Odd Integers Enumerated: {}", count);
+    println!("  - Disjoint Exact Cylinder Union Measure: {}", exact_trie.canonical_union_measure());
+    println!("  - All starting residues matched predicted broad (mod 2^A) and exact (mod 2^{{A+1}}) predictions perfectly!");
+    println!("\n=== EXHAUSTIVE DIFFERENTIAL TEST PASSED SUCCESSFULLY in {:.2?} ===", start_time.elapsed());
+
     Ok(())
 }

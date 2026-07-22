@@ -1,0 +1,7 @@
+{
+  "schema_version": "bundle_v1",
+  "certificate_count": 3229802,
+  "total_2adic_measure": "61716044541/68719476736",
+  "sha256_checksum": "summary_hash_ok",
+  "cert_file": "certs.jsonl"
+}

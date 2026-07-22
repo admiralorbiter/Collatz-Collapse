@@ -29,17 +29,36 @@ The verification layer enforces strict separation between search heuristics and 
 2. **Informational Field Stripping:** Fields like `growth_debt_float` or `heuristic_score` may exist for reporting, but `collatz-verify` ignores them completely.
 
 ### 2.2 Descent Certificate Schema (`descent_v1.json`)
+
+#### Broad Valuation Class Example (`terminal_at_least`)
 ```json
 {
   "schema_version": "descent_v1",
   "valuation_word": [1, 1, 2, 1, 3],
   "total_twos": 8,
   "odd_steps": 5,
-  "starting_residue": "23",
+  "starting_residue": "39",
   "modulus_exponent": 8,
-  "constant": "211",
-  "descent_threshold": "15",
-  "checked_exceptions": ["1", "3", "5", "7", "9", "11", "13"]
+  "constant": "251",
+  "descent_threshold": "20",
+  "checked_exceptions": [],
+  "valuation_semantics": "terminal_at_least"
+}
+```
+
+#### Exact Valuation Cylinder Example (`exact_word`)
+```json
+{
+  "schema_version": "descent_v1",
+  "valuation_word": [1, 1, 2, 1, 3],
+  "total_twos": 8,
+  "odd_steps": 5,
+  "starting_residue": "295",
+  "modulus_exponent": 9,
+  "constant": "251",
+  "descent_threshold": "20",
+  "checked_exceptions": [],
+  "valuation_semantics": "exact_word"
 }
 ```
 
@@ -47,8 +66,8 @@ The verification layer enforces strict separation between search heuristics and 
 ```json
 {
   "schema_version": "cycle_v1",
-  "valuation_word": [1, 2],
-  "total_twos": 3,
+  "valuation_word": [2, 2],
+  "total_twos": 4,
   "odd_steps": 2,
   "starting_integer": "1",
   "intermediate_values": ["1", "1"],
