@@ -13,6 +13,11 @@ pub mod cylinder_partition;
 pub mod feature_counterexample_search;
 pub mod non_commuting_cycles;
 pub mod semantic_gate;
+pub mod destination_refinement_m72;
+pub mod product_state_m72;
+pub mod path_semantics;
+pub mod closed_walk_analyzer;
+pub mod graph_closure_m72;
 
 pub use abstract_domain::{AbstractEdge, RelationalState};
 pub use concretization::{ConcretizationEngine, ConcretizationResult, MultiLapCycleSolution};
@@ -33,5 +38,12 @@ pub use cylinder_partition::{CylinderPartitionCertificateJson, CylinderPartition
 pub use feature_counterexample_search::{FeatureCounterexampleSearchEngine, FeatureRelationKind};
 pub use non_commuting_cycles::{NonCommutingCycleAnalyzer, ReturnCycle};
 pub use semantic_gate::{CylinderImage, SemanticGate, WordForcingStatus};
+pub use destination_refinement_m72::{DestinationRefinementEngine, RefinementRequirement};
+pub use product_state_m72::ProductState;
+pub use path_semantics::{PathSemanticsCertificateJson, PathSemanticsEngine};
+pub use closed_walk_analyzer::{ClosedWalkAnalyzer, TransportedClosedWalk};
+pub use graph_closure_m72::{GuardedEdge, GraphClosureEngine};
+
+
 
 

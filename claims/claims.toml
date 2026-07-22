@@ -64,6 +64,44 @@ verifier = "collatz-verify & scripts/reference_oracle.py"
 limitations = "Yields sound broad descent argument P_w(n) < n => S^k(n) < n."
 
 [[claims]]
+id = "CLM-SCT-M72-GRAPH-CLOSURE-001"
+category = "Verified Finite Theorem"
+statement = "Under the explicitly selected three-word benchmark library, destination-aware refinement produces a complete internal 3x3 guarded transition matrix over Q1, Q2, Q3"
+domain = "43 mod 64 and 7 mod 32 starting cylinders under mod 1024/2048 refinement"
+status = "Verified"
+generating_command = "cargo test -p collatz-cegar"
+source_file = "crates/collatz-cegar/src/destination_refinement_m72.rs"
+artifact_path = "reports/milestone72/phase_7_2_final_review_package.md"
+verifier = "collatz-verify & Lean 4 (lean/Milestone72.lean)"
+limitations = "Applies to explicitly selected 3-word benchmark library Sigma."
+
+[[claims]]
+id = "CLM-SCT-M72-NONCOMMUTING-TARGET-001"
+category = "Verified Finite Theorem"
+statement = "The guarded graph contains based closed walks u=w1 and v=w1w2 at Q1, satisfying uv != vu"
+domain = "Base state Q1 (7 mod 32) under benchmark library Sigma"
+status = "Verified"
+generating_command = "cargo test -p collatz-cegar"
+source_file = "crates/collatz-cegar/src/closed_walk_analyzer.rs"
+artifact_path = "reports/milestone72/phase_7_2_final_review_package.md"
+verifier = "collatz-verify & scripts/reference_oracle.py"
+limitations = "Proves non-commutativity of based closed walks u and v."
+
+[[claims]]
+id = "CLM-SCT-M72-SWITCHING-REALIZABILITY-001"
+category = "Verified Finite Theorem"
+statement = "The orders uv and vu have nonempty positive-integer guarded path cylinders, respectively 214759 mod 262144 and 1959 mod 262144"
+domain = "7 mod 32 starting cylinder"
+status = "Verified"
+generating_command = "cargo test -p collatz-cegar"
+source_file = "crates/collatz-cegar/src/graph_closure_m72.rs"
+artifact_path = "reports/milestone72/phase_7_2_final_review_package.md"
+verifier = "collatz-verify & scripts/reference_oracle.py"
+limitations = "Proves length-two switching realizability over positive integers."
+
+
+
+[[claims]]
 id = "CLM-RETRACTED-001"
 category = "Retracted / Superseded Claim"
 statement = "Universal depth-20 contraction (A_20 >= 34 for all unresolved words)"
