@@ -1,0 +1,41 @@
+{
+  "deny_unknown_fields": true,
+  "roundtrip_successful": true,
+  "status": "PASSED",
+  "supported_schemas": [
+    {
+      "roundtrip_status": "PASSED",
+      "schema_version": "macrostep_data_v1",
+      "valid_fixtures_tested": 3
+    },
+    {
+      "branches_covered": [
+        "Delta < 0",
+        "Delta > 0",
+        "Delta = 0",
+        "d > 0",
+        "d < 0",
+        "infinity_v2"
+      ],
+      "roundtrip_status": "PASSED",
+      "schema_version": "affine_interaction_v1",
+      "valid_fixtures_tested": 4
+    },
+    {
+      "branches_covered": [
+        "broad_recovery",
+        "exact_recovery",
+        "parity_preservation",
+        "sequence_recovery"
+      ],
+      "roundtrip_status": "PASSED",
+      "schema_version": "cross_form_cylinder_recovery_v1",
+      "valid_fixtures_tested": 4
+    },
+    {
+      "roundtrip_status": "PASSED",
+      "schema_version": "phase73a_verification_report_v1",
+      "valid_fixtures_tested": 1
+    }
+  ]
+}

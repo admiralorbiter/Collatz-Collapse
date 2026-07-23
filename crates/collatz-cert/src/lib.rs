@@ -1,5 +1,6 @@
 #![allow(clippy::all)]
 
+pub mod affine_interaction_verifier;
 pub mod batch;
 pub mod descent;
 pub mod graph_contraction;
@@ -15,6 +16,7 @@ pub mod valuation_countdown;
 pub mod verify;
 pub mod verify_sct;
 
+pub use affine_interaction_verifier::verify_phase73a_report;
 pub use batch::{
     export_certificate_bundle, export_manifest, verify_certificate_bundle, BundleManifest,
 };
@@ -24,7 +26,9 @@ pub use graph_contraction::{
     GraphEdge, ObstructionCycleJson, RationalRatioJson,
 };
 pub use guarded_path_verifier::verify_guarded_path_certificate;
-pub use lean_export::{export_lean4_sct_ranking_theorem, export_lean4_theorem};
+pub use lean_export::{
+    export_lean4_affine_interaction_theorem, export_lean4_sct_ranking_theorem, export_lean4_theorem,
+};
 pub use macrocycle_theorem::verify_finite_fuel_macrocycle_certificate;
 pub use minus_one_countdown::{
     verify_minus_one_countdown_certificate, MinusOneCountdownCertificateJson,
@@ -35,10 +39,11 @@ pub use scalar_lyapunov::{
     ScalarTransition, ValuationConstraint,
 };
 pub use schema::{
-    AffineMapJson, BuchiEmptinessCertificateJson, BuchiTransitionJson, CycleCertificateJson,
-    DescentCertificateJson, FeatureDefinitionJson, GuardedPathCertificateJson,
-    InfeasibleAlgebraicCertificateJson, InfeasibleMinimalityCertificateJson,
-    InfeasibleSubsumptionCertificateJson, SctEdgeCertificateJson, SequenceStepJson,
+    AffineInteractionJson, AffineMapJson, BuchiEmptinessCertificateJson, BuchiTransitionJson,
+    CrossFormCylinderRecoveryJson, CycleCertificateJson, DescentCertificateJson,
+    FeatureDefinitionJson, GuardedPathCertificateJson, InfeasibleAlgebraicCertificateJson,
+    InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson, MacrostepDataJson,
+    Phase73aVerificationReportJson, SctEdgeCertificateJson, SequenceStepJson,
     SizeChangeCertificateJson, SizeChangeRelationJson, SizeChangeRelationKind,
     SizeChangeTransitionGraphJson, SourceGuardJson, TailDescentCertificateJson,
 };

@@ -1,0 +1,105 @@
+{
+  "mutated_fixtures_rejected": "16/16",
+  "mutations": [
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change one valuation in p",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change one valuation in q",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change a_p multiplier",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change b_p denominator",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change c_p constant",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change d_p fixed point denominator",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Negate Delta only",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change delta_v2 kappa exponent",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Set finite delta_v2 to infinity",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Set infinity delta_v2 to finite (on (u,u) interaction)",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Reverse commutator orientation without changing sign",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Replace exact exponent A_q + 1 with A_q",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Drop -b_q*c_p exactness term",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Replace recovered q-cylinder with concatenated pq-cylinder",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change common_center flag only",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt sequence exact cylinder residue",
+      "passed": true
+    }
+  ],
+  "schema_version": "mutation_test_report_v1",
+  "unexpected_accepts": 0,
+  "unexpected_rejects": 0,
+  "valid_fixtures_accepted": "1/1 (Multi-Branch Aggregate Report)"
+}

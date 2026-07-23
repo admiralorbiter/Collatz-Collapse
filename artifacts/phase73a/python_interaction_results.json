@@ -1,0 +1,223 @@
+{
+  "schema_version": "phase73a_verification_report_v1",
+  "macrosteps": [
+    {
+      "schema_version": "macrostep_data_v1",
+      "valuation_word": [
+        1,
+        1,
+        2
+      ],
+      "odd_steps": 3,
+      "total_valuation": 4,
+      "multiplier": "27",
+      "denominator": "16",
+      "constant": "19",
+      "fixed_point_denominator": "-11"
+    },
+    {
+      "schema_version": "macrostep_data_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "odd_steps": 6,
+      "total_valuation": 9,
+      "multiplier": "729",
+      "denominator": "512",
+      "constant": "881",
+      "fixed_point_denominator": "-217"
+    },
+    {
+      "schema_version": "macrostep_data_v1",
+      "valuation_word": [
+        1,
+        2,
+        2
+      ],
+      "odd_steps": 3,
+      "total_valuation": 5,
+      "multiplier": "27",
+      "denominator": "32",
+      "constant": "23",
+      "fixed_point_denominator": "5"
+    }
+  ],
+  "interactions": [
+    {
+      "schema_version": "affine_interaction_v1",
+      "p_word": [
+        1,
+        1,
+        2
+      ],
+      "q_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "delta": "-5568",
+      "delta_v2": "6",
+      "is_common_center": false,
+      "same_form_identity_holds": true,
+      "cross_form_identity_holds": true,
+      "commutator_identity_holds": true
+    },
+    {
+      "schema_version": "affine_interaction_v1",
+      "p_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "q_word": [
+        1,
+        1,
+        2
+      ],
+      "delta": "5568",
+      "delta_v2": "6",
+      "is_common_center": false,
+      "same_form_identity_holds": true,
+      "cross_form_identity_holds": true,
+      "commutator_identity_holds": true
+    },
+    {
+      "schema_version": "affine_interaction_v1",
+      "p_word": [
+        1,
+        1,
+        2
+      ],
+      "q_word": [
+        1,
+        2,
+        2
+      ],
+      "delta": "-348",
+      "delta_v2": "2",
+      "is_common_center": false,
+      "same_form_identity_holds": true,
+      "cross_form_identity_holds": true,
+      "commutator_identity_holds": true
+    },
+    {
+      "schema_version": "affine_interaction_v1",
+      "p_word": [
+        1,
+        1,
+        2
+      ],
+      "q_word": [
+        1,
+        1,
+        2
+      ],
+      "delta": "0",
+      "delta_v2": "infinity",
+      "is_common_center": true,
+      "same_form_identity_holds": true,
+      "cross_form_identity_holds": true,
+      "commutator_identity_holds": true
+    }
+  ],
+  "cylinder_recoveries": [
+    {
+      "schema_version": "cross_form_cylinder_recovery_v1",
+      "p_word": [
+        1,
+        1,
+        2
+      ],
+      "q_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "broad_cylinder_residue": "423",
+      "broad_cylinder_modulus_exponent": 9,
+      "exact_cylinder_residue": "935",
+      "exact_cylinder_modulus_exponent": 10,
+      "sequence_exact_cylinder_residue": "1767",
+      "sequence_exact_cylinder_modulus_exponent": 14,
+      "parity_term_preserved": true
+    },
+    {
+      "schema_version": "cross_form_cylinder_recovery_v1",
+      "p_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "q_word": [
+        1,
+        1,
+        2
+      ],
+      "broad_cylinder_residue": "7",
+      "broad_cylinder_modulus_exponent": 4,
+      "exact_cylinder_residue": "7",
+      "exact_cylinder_modulus_exponent": 5,
+      "sequence_exact_cylinder_residue": "1959",
+      "sequence_exact_cylinder_modulus_exponent": 14,
+      "parity_term_preserved": true
+    },
+    {
+      "schema_version": "cross_form_cylinder_recovery_v1",
+      "p_word": [
+        1,
+        1,
+        2
+      ],
+      "q_word": [
+        1,
+        2,
+        2
+      ],
+      "broad_cylinder_residue": "11",
+      "broad_cylinder_modulus_exponent": 5,
+      "exact_cylinder_residue": "43",
+      "exact_cylinder_modulus_exponent": 6,
+      "sequence_exact_cylinder_residue": "935",
+      "sequence_exact_cylinder_modulus_exponent": 10,
+      "parity_term_preserved": true
+    },
+    {
+      "schema_version": "cross_form_cylinder_recovery_v1",
+      "p_word": [
+        1,
+        1,
+        2
+      ],
+      "q_word": [
+        1,
+        1,
+        2
+      ],
+      "broad_cylinder_residue": "7",
+      "broad_cylinder_modulus_exponent": 4,
+      "exact_cylinder_residue": "7",
+      "exact_cylinder_modulus_exponent": 5,
+      "sequence_exact_cylinder_residue": "231",
+      "sequence_exact_cylinder_modulus_exponent": 9,
+      "parity_term_preserved": true
+    }
+  ],
+  "all_identities_verified": true
+}

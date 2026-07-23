@@ -88,6 +88,54 @@ theorem countdown_decrement_identity (k u : ℕ) (h_u : u % 2 = 1) :\n\
     )
 }
 
+/// Generates formal Lean 4 theorems over Int (Z) for Phase 7.3A generic affine interactions.
+pub fn export_lean4_affine_interaction_theorem() -> String {
+    format!(
+        "-- Formal Lean 4 Theorem Suite for Phase 7.3A Generic Affine Interaction Algebra\n\
+import Mathlib.Data.Int.Basic\n\
+import Mathlib.Tactic.Ring\n\
+import Mathlib.Tactic.Omega\n\
+\n\
+namespace Phase73A\n\
+\n\
+-- 1. Same-Form Eigenidentity over Z\n\
+theorem same_form_identity (aP bP cP dP n : ℤ) (hdP : dP = bP - aP) :\n\
+    dP * (aP * n + cP) - bP * cP = aP * (dP * n - cP) := by\n\
+  subst hdP\n\
+  ring\n\
+\n\
+-- 2. Cross-Form Identity over Z\n\
+theorem cross_form_identity (aP bP cP aQ bQ cQ dP dQ Delta n : ℤ)\n\
+    (hdP : dP = bP - aP) (hdQ : dQ = bQ - aQ) (hDelta : Delta = dP * cQ - dQ * cP) :\n\
+    dP * (aQ * n + cQ) - bQ * cP = aQ * (dP * n - cP) + Delta := by\n\
+  subst hdP\n\
+  subst hdQ\n\
+  subst hDelta\n\
+  ring\n\
+\n\
+-- 3. Affine Commutator Identity over Z\n\
+theorem affine_commutator_identity (aP bP cP aQ bQ cQ dP dQ Delta : ℤ)\n\
+    (hdP : dP = bP - aP) (hdQ : dQ = bQ - aQ) (hDelta : Delta = dP * cQ - dQ * cP) :\n\
+    (aP * cQ + bQ * cP) - (aQ * cP + bP * cQ) = -Delta := by\n\
+  subst hdP\n\
+  subst hdQ\n\
+  subst hDelta\n\
+  ring\n\
+\n\
+-- 4. Delta Antisymmetry over Z\n\
+theorem delta_antisymmetric (dP cP dQ cQ : ℤ) :\n\
+    (dQ * cP - dP * cQ) = -(dP * cQ - dQ * cP) := by\n\
+  ring\n\
+\n\
+-- 5. Common-Center Equality Criterion over Z\n\
+theorem delta_zero_iff_cross_products_equal (dP cP dQ cQ : ℤ) :\n\
+    (dP * cQ - dQ * cP = 0) ↔ (dP * cQ = dQ * cP) := by\n\
+  omega\n\
+\n\
+end Phase73A\n"
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -103,5 +151,17 @@ mod tests {
         assert!(lean_code.contains("theorem certified_descent_residue_1_mod_16"));
         assert!(lean_code.contains("have h_ineq : 7 + 9 * n < 16 * n := by omega"));
         assert!(lean_code.contains("import Mathlib.Tactic.Omega"));
+    }
+
+    #[test]
+    fn test_export_lean4_affine_interaction_theorem_valid() {
+        let lean_code = export_lean4_affine_interaction_theorem();
+        assert!(lean_code.contains("theorem same_form_identity"));
+        assert!(lean_code.contains("theorem cross_form_identity"));
+        assert!(lean_code.contains("theorem affine_commutator_identity"));
+        assert!(lean_code.contains("theorem delta_antisymmetric"));
+        assert!(lean_code.contains("theorem delta_zero_iff_cross_products_equal"));
+        assert!(!lean_code.contains("sorry"));
+        assert!(!lean_code.contains("admit"));
     }
 }

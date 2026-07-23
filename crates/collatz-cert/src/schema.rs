@@ -222,3 +222,59 @@ pub struct GuardedPathCertificateJson {
     pub composite_constant: String,
     pub composite_denominator: String,
 }
+
+/// Macrostep Data Schema v1 (macrostep_data_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MacrostepDataJson {
+    pub schema_version: String,
+    pub valuation_word: Vec<u32>,
+    pub odd_steps: usize,
+    pub total_valuation: u64,
+    pub multiplier: String,
+    pub denominator: String,
+    pub constant: String,
+    pub fixed_point_denominator: String,
+}
+
+/// Affine Interaction Schema v1 (affine_interaction_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AffineInteractionJson {
+    pub schema_version: String,
+    pub p_word: Vec<u32>,
+    pub q_word: Vec<u32>,
+    pub delta: String,
+    pub delta_v2: String,
+    pub is_common_center: bool,
+    pub same_form_identity_holds: bool,
+    pub cross_form_identity_holds: bool,
+    pub commutator_identity_holds: bool,
+}
+
+/// Cross-Form Cylinder Recovery Schema v1 (cross_form_cylinder_recovery_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CrossFormCylinderRecoveryJson {
+    pub schema_version: String,
+    pub p_word: Vec<u32>,
+    pub q_word: Vec<u32>,
+    pub broad_cylinder_residue: String,
+    pub broad_cylinder_modulus_exponent: u64,
+    pub exact_cylinder_residue: String,
+    pub exact_cylinder_modulus_exponent: u64,
+    pub sequence_exact_cylinder_residue: String,
+    pub sequence_exact_cylinder_modulus_exponent: u64,
+    pub parity_term_preserved: bool,
+}
+
+/// Phase 7.3A Verification Report Schema v1 (phase73a_verification_report_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Phase73aVerificationReportJson {
+    pub schema_version: String,
+    pub macrosteps: Vec<MacrostepDataJson>,
+    pub interactions: Vec<AffineInteractionJson>,
+    pub cylinder_recoveries: Vec<CrossFormCylinderRecoveryJson>,
+    pub all_identities_verified: bool,
+}
