@@ -26,4 +26,10 @@ path = "../../tests/phase73s1_math_audit.rs"
 name = "phase73s1b_math_audit"
 path = "../../tests/phase73s1b_math_audit.rs"
 
+[[test]]
+name = "phase73s2b_tree_audit"
+path = "../../tests/phase73s2b_tree_audit.rs"
 
+[[test]]
+name = "phase73s2c_tree_audit"
+path = "../../tests/phase73s2c_tree_audit.rs"

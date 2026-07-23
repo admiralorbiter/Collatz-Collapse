@@ -1,10 +1,17 @@
 pub mod accelerated_branch_params;
 pub mod adaptive_stress_engine;
 pub mod adversarial_corpus;
+pub mod backward_approximant_engine;
 pub mod backward_fixed_point_probe;
+pub mod bounded_reachability_probe;
+pub mod cylinder_trie_reduction;
 pub mod extremal_source_search;
 pub mod periodic_ghost_atlas;
+pub mod positive_control_replay_engine;
 pub mod precision_aware_cylinder;
+pub mod single_pass_grid_traversal;
+pub mod state_coupled_invariant_miner;
+pub mod two_zero_cylinder_characterization;
 pub mod zero_lift_cegar_engine;
 pub mod zero_lift_endpoint_graph;
 pub mod zero_output_scc_probe;
