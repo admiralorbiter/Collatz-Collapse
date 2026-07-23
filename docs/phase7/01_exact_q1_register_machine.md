@@ -1,55 +1,53 @@
-# Phase 7.3A: Exact $Q_1$ Register Machine & Reference Semantics
+# Phase 7.3B-1: Exact $Q_1$ Register Machine & Reference Semantics
 
 ## 1. Parameterization of $Q_1$
 
-All states in $Q_1 = 7 + 32\mathbb{N}_0$ are represented by an exact non-negative integer coordinate $k$:
-$$n = 7 + 32k, \quad k \in \mathbb{N}_0$$
+All states in $Q_1 = \{ n \in \mathbb{N}^+ \mid n \equiv 7 \pmod{32} \}$ are represented by an exact non-negative integer coordinate $k$:
+$$n = 32k + 7, \quad k \in \mathbb{Z}_{\ge 0}$$
 
-This parameterization has no hidden congruence invariant.
+Constants:
+- `pub const Q1_RESIDUE: u64 = 7;`
+- `pub const Q1_EXPONENT: u32 = 5;` (modulus $2^5 = 32$)
 
 ---
 
-## 2. Derivation of $u$-return and $v$-return Guards
+## 2. Generic Quotient-Return Theorem ($\eta_p$)
+
+For a base cylinder $B = r \pmod{2^q}$ ($r = 7, q = 5$), write $n = 2^q k + r$.
+A macrostep $p$ with affine form $F_p(n) = \frac{a_p n + c_p}{2^{A_p}}$ returns to the same base state when:
+$$F_p(n) = 2^q k' + r \iff 2^{A_p} k' = a_p k + \eta_p$$
+
+where:
+$$\eta_p = \frac{7 a_p + c_p - 7 \cdot 2^{A_p}}{32}$$
+
+For $Q_1$ ($r = 7, q = 5$):
+- $\eta_u = \frac{7(27) + 19 - 7(16)}{32} = 3$.
+- $\eta_v = \frac{7(729) + 881 - 7(512)}{32} = 75$.
+
+The based-return guard is uniquely determined by:
+$$k \equiv -\eta_p a_p^{-1} \pmod{2^{A_p}}$$
+
+---
+
+## 3. Derivation of $u$-return and $v$-return Guards
 
 ### $u$-return Derivation
-Applying macro $u = [1,1,2]$ to $n = 7 + 32k$:
-$$F_u(n) = \frac{27n + 19}{16} = \frac{27(7 + 32k) + 19}{16} = \frac{189 + 864k + 19}{16} = \frac{864k + 208}{16} = 54k + 13$$
+Applying macro $u = [1,1,2]$ to $n = 32k + 7$:
+$$F_u(n) = \frac{27(32k + 7) + 19}{16} = 54k + 13$$
 
-For $F_u(n)$ to land back in $Q_1 = 7 + 32k'$:
-$$54k + 13 \equiv 7 \pmod{32} \iff 54k \equiv -6 \equiv 26 \pmod{32} \iff 27k \equiv 13 \pmod{16}$$
-Multiplying by $27^{-1} \equiv 3 \pmod{16}$:
-$$k \equiv 13 \cdot 3 = 39 \equiv 7 \pmod{16}$$
-
-Writing $k = 7 + 16t$:
-$$k' = \frac{54(7 + 16t) + 13 - 7}{32} = \frac{378 + 864t + 6}{32} = \frac{864t + 384}{32} = 27t + 12 = \frac{27(k - 7)/16 \cdot 16 + 192}{16} = \frac{27k + 3}{16}$$
-
-Thus, the exact $u$-return transition is:
-$$\text{Guard: } k \equiv 7 \pmod{16}, \qquad k' = \frac{27k + 3}{16}$$
-
----
+- Guard: $k \equiv 7 \pmod{16} \iff n \equiv 231 \pmod{512}$.
+- Register transition: $k' = \frac{27k + 3}{16}$ (for $k = 16m + 7 \implies k' = 27m + 12$).
 
 ### $v$-return Derivation
-Applying macro $v = [1,1,2,1,2,2]$ to $n = 7 + 32k$:
-$$F_v(n) = \frac{729n + 881}{512} = \frac{729(7 + 32k) + 881}{512} = \frac{5103 + 23328k + 881}{512} = \frac{23328k + 5984}{512}$$
+Applying macro $v = [1,1,2,1,2,2]$ to $n = 32k + 7$:
+$$F_v(n) = \frac{729(32k + 7) + 881}{512} = \frac{729k + 187}{16}$$
 
-For $F_v(n)$ to land back in $Q_1 = 7 + 32k'$:
-$$\frac{23328k + 5984}{512} \equiv 7 \pmod{32} \iff 23328k + 5984 \equiv 3584 \pmod{16384} \iff 23328k \equiv -2400 \equiv 13984 \pmod{16384}$$
-Dividing by $\gcd(23328, 16384) = 32$:
-$$729k \equiv 437 \pmod{512}$$
-Multiplying by $729^{-1} \pmod{512}$:
-$$729 \equiv 217 \pmod{512}, \quad 217^{-1} \equiv 33 \pmod{512} \implies k \equiv 437 \cdot 33 = 14421 \equiv 61 \pmod{512}$$
-
-Writing $k = 61 + 512t$:
-$$k' = \frac{F_v(7 + 32(61 + 512t)) - 7}{32} = 729t + 87 = \frac{729(k - 61) + 44544}{512} = \frac{729k + 75}{512}$$
-
-Thus, the exact $v$-return transition is:
-$$\text{Guard: } k \equiv 61 \pmod{512}, \qquad k' = \frac{729k + 75}{512}$$
+- Guard: $k \equiv 61 \pmod{512} \iff n \equiv 1959 \pmod{16384}$.
+- Register transition: $k' = \frac{729k + 75}{512}$ (for $k = 512m + 61 \implies k' = 729m + 87$).
 
 ---
 
-## 3. Reference Register Machine Semantics
-
-The $Q_1$ core is governed by the deterministic partial register machine:
+## 4. Reference Register Machine Semantics
 
 ```text
 U-return:
@@ -61,30 +59,59 @@ V-return:
     k := (729k + 75) / 512
 ```
 
-### Relationship to $L_u(n) = 11n + 19$
-For $n = 7 + 32k$:
-$$L_u(n) = 11(7 + 32k) + 19 = 77 + 352k + 19 = 352k + 96 = 32(11k + 3)$$
-Let $x = v_2(L_u(n))$:
-$$x = 5 + v_2(11k + 3)$$
-
-- $x \ge 5$ corresponds to membership in $Q_1$.
-- $x = 6 \iff v_2(11k + 3) = 1 \iff 11k + 3 \equiv 2 \pmod 4 \iff 11k \equiv 7 \pmod 4 \iff k \equiv 1 \pmod 4$.
-- Based $v$-return ($k \equiv 61 \pmod{512}$) implies $x = 6$ and $U \equiv 81 \pmod{256}$, which is strictly stronger than $U \equiv 1 \pmod{16}$ (which only guarantees exact $v$-execution, not return to $Q_1$).
+### Three-Way Semantic Outcomes over $0 \le k < 512$
+- $u$: 512 exact word, 32 based returns ($k \equiv 7 \pmod{16}$), 480 exact-but-leaving, 0 not exact.
+- $v$: 16 exact word ($k \equiv 29 \pmod{32}$), 1 based return ($k = 61$), 15 exact-but-leaving, 496 not exact.
 
 ---
 
-## 4. Ultimately Periodic Exclusion Theorem
+## 5. Topological Structure of Guard Tree: Measure-Zero Cantor Set
 
-**Theorem**: No positive integer $n \in \mathbb{N}^+$ realizes an ultimately periodic infinite switching path $\alpha \beta^\omega$ with non-empty block $\beta \in \{u,v\}^+$.
+The quotient return guards form a **full disjoint nested binary tree** of 2-adic cylinders in $\mathbb{Z}_2$:
+- $G_u = 7 + 16\mathbb{Z}_2 \implies \mu(G_u) = 2^{-4} = \frac{1}{16}$.
+- $G_v = 61 + 512\mathbb{Z}_2 \implies \mu(G_v) = 2^{-9} = \frac{1}{512}$.
+- Disjoint since $61 \equiv 13 \pmod{16} \neq 7 \pmod{16}$.
 
-*Proof*:
-Any composite macrostep $\beta$ corresponds to an affine map $F_\beta(n) = \frac{a_\beta n + c_\beta}{b_\beta}$.
-Since both $u$ ($a_u/b_u = 27/16 > 1$) and $v$ ($a_v/b_v = 729/512 > 1$) are real-expanding, any non-empty composition $\beta$ satisfies:
-$$a_\beta > b_\beta > 0 \quad \text{and} \quad c_\beta > 0$$
+### Haar Measure and Hausdorff Dimension
+- Combined single-step measure: $\mu(G_1) = 2^{-4} + 2^{-9} = \frac{33}{512}$.
+- Combined depth-$r$ measure: $\mu(G_r) = \left(\frac{33}{512}\right)^r \xrightarrow{r \to \infty} 0$.
+- **Infinite Limit Set**: $\mu(G_\infty) = 0$ (measure-zero Cantor-type subset of $\mathbb{Z}_2$).
+- **2-Adic Hausdorff Dimension $d$**: Satisfies $2^{-4d} + 2^{-9d} = 1 \implies d \approx 0.1625357554$.
 
-The unique 2-adic rational fixed point of $F_\beta$ is:
-$$n_\beta^* = \frac{c_\beta}{b_\beta - a_\beta} < 0$$
+---
 
-Since $c_\beta > 0$ and $b_\beta - a_\beta < 0$, $n_\beta^*$ is strictly negative.
+## 6. Theorem: Full Finite Switching Language & Periodic Path Divergence
 
-Pulling $n_\beta^*$ back through any finite prefix $\alpha$ via inverse affine steps $F_{p}^{-1}(y) = \frac{b_p y - c_p}{a_p}$ preserves negativity because $y < 0 \implies b_p y - c_p < 0$. Thus, any state supporting a periodic tail must be a strictly negative 2-adic rational, so no positive integer can lie on an ultimately periodic path. $\blacksquare$
+### Theorem 7.3B.2 (Uniqueness of Finite Quotient Guards)
+Every finite word $s \in \{u,v\}^*$ has a **unique** non-empty quotient guard cylinder $k \equiv r_s \pmod{2^{A(s)}}$.
+Thus, the finite return language is $\mathcal{L}_{\text{finite}} = \{u, v\}^*$. Every finite word is positively realizable.
+
+### Theorem 7.3B.4 (Periodic Path Divergence)
+For any fixed non-empty word $s \in \{u,v\}^+$, the composite quotient map $T_s(k) = \frac{a_s k + \eta_s}{2^{A_s}}$ has a strictly negative rational fixed point $k^*_s = \frac{\eta_s}{2^{A_s} - a_s} < 0$.
+The guard for $s^m$ is the $2^{m A_s}$-adic truncation of $k^*_s$.
+Therefore, the least non-negative guard representative satisfies:
+$$r_{s^m} \longrightarrow \infty \quad \text{as } m \to \infty$$
+No positive integer can realize an ultimately periodic infinite switching tail $s^\omega$.
+
+---
+
+## 7. Source-Height Monotonicity & Mixed Word Minimization
+
+- Monotonicity: $M_{r+1} \ge M_r$ for all $r$.
+- Observed strictly increasing through depth 15 ($7 \to 23 \to 3351 \to \dots \to 314,433,137,620,049,175$).
+- Pure $u^r$ minimizes source height through depth 9, but at depth 10, the mixed word $u^4 v u^5$ achieves $k = 204,094,463,255 < \text{guard}(u^{10}) = 299,866,807,575$.
+
+---
+
+## 8. Transition to Phase 7.3B-2: Ultrametric Cancellation Machine
+
+The exact reference semantics are now frozen. Phase 7.3B-2 constructs the 2-adic ultrametric cancellation register machine:
+- Coordinate: $L_u(n) = 11n + 19 = 32(11k + 3)$.
+- State: $(x, U)$ where $L_u(n) = 2^x U$ ($U$ odd, $x \ge 5$).
+- Exact Guard Equivalences:
+  - $u$-return $\iff x \ge 9$.
+  - $v$-exact $\iff x = 6$ and $U \equiv 1 \pmod{16}$.
+  - $v$-return $\iff x = 6$ and $U \equiv 81 \pmod{256}$.
+- Transition Laws:
+  - $u: (x, U) \mapsto (x - 4, 27U)$.
+  - $v: (x = 6, U) \mapsto (x' = \gamma - 3, U' = \frac{729U + 87}{2^\gamma})$ where $\gamma = v_2(729U + 87)$.

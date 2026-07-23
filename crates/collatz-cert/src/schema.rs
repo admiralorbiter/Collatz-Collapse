@@ -278,3 +278,48 @@ pub struct Phase73aVerificationReportJson {
     pub cylinder_recoveries: Vec<CrossFormCylinderRecoveryJson>,
     pub all_identities_verified: bool,
 }
+
+/// Quotient Register Transition Schema v1 (quotient_register_transition_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct QuotientRegisterTransitionJson {
+    pub schema_version: String,
+    pub valuation_word: Vec<u32>,
+    pub eta: String,
+    pub guard_residue: String,
+    pub guard_modulus_exponent: u64,
+    pub starting_k: String,
+    pub outcome_type: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub next_k: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub image: Option<String>,
+}
+
+/// Guarded Return Classification Schema v1 (guarded_return_classification_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GuardedReturnClassificationJson {
+    pub schema_version: String,
+    pub valuation_word: Vec<u32>,
+    pub exact_word_residue: String,
+    pub exact_word_modulus_exponent: u64,
+    pub based_return_residue: String,
+    pub based_return_modulus_exponent: u64,
+    pub positive_image_start: String,
+    pub positive_image_step: String,
+    pub target_residue: String,
+    pub target_modulus_exponent: u64,
+    pub quotient_guard_residue: String,
+    pub quotient_guard_modulus_exponent: u64,
+}
+
+/// Phase 7.3B Verification Report Schema v1 (phase73b_verification_report_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Phase73bVerificationReportJson {
+    pub schema_version: String,
+    pub transitions: Vec<QuotientRegisterTransitionJson>,
+    pub classifications: Vec<GuardedReturnClassificationJson>,
+    pub all_register_rules_verified: bool,
+}

@@ -136,6 +136,42 @@ end Phase73A\n"
     )
 }
 
+/// Generates formal Lean 4 theorems over Int (Z) for Phase 7.3B quotient register transitions.
+pub fn export_lean4_quotient_register_theorem() -> String {
+    format!(
+        "-- Formal Lean 4 Theorem Suite for Phase 7.3B Quotient Register Machine\n\
+import Mathlib.Data.Int.Basic\n\
+import Mathlib.Tactic.Ring\n\
+import Mathlib.Tactic.Omega\n\
+import Mathlib.Tactic.Linarith\n\
+\n\
+namespace Phase73B\n\
+\n\
+-- 1. Generic Quotient Return Identity over Z\n\
+theorem generic_quotient_return_identity (aP bP cP r q k k' eta : ℤ)\n\
+    (h_eta : 2^q * eta = aP * r + cP - bP * r)\n\
+    (h_transition : bP * k' = aP * k + eta) :\n\
+    bP * (2^q * k' + r) = aP * (2^q * k + r) + cP := by\n\
+  linarith\n\
+\n\
+-- 2. u-step Quotient Transition Identity (r=7, q=5, b_u=16, a_u=27, c_u=19, eta_u=3)\n\
+theorem u_quotient_register_transition (k m k' : ℤ) (hk : k = 16 * m + 7) (hk' : k' = 27 * m + 12) :\n\
+    16 * k' = 27 * k + 3 := by\n\
+  subst hk\n\
+  subst hk'\n\
+  ring\n\
+\n\
+-- 3. v-step Quotient Transition Identity (r=7, q=5, b_v=512, a_v=729, c_v=881, eta_v=75)\n\
+theorem v_quotient_register_transition (k m k' : ℤ) (hk : k = 512 * m + 61) (hk' : k' = 729 * m + 87) :\n\
+    512 * k' = 729 * k + 75 := by\n\
+  subst hk\n\
+  subst hk'\n\
+  ring\n\
+\n\
+end Phase73B\n"
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -161,6 +197,16 @@ mod tests {
         assert!(lean_code.contains("theorem affine_commutator_identity"));
         assert!(lean_code.contains("theorem delta_antisymmetric"));
         assert!(lean_code.contains("theorem delta_zero_iff_cross_products_equal"));
+        assert!(!lean_code.contains("sorry"));
+        assert!(!lean_code.contains("admit"));
+    }
+
+    #[test]
+    fn test_export_lean4_quotient_register_theorem_valid() {
+        let lean_code = export_lean4_quotient_register_theorem();
+        assert!(lean_code.contains("theorem generic_quotient_return_identity"));
+        assert!(lean_code.contains("theorem u_quotient_register_transition"));
+        assert!(lean_code.contains("theorem v_quotient_register_transition"));
         assert!(!lean_code.contains("sorry"));
         assert!(!lean_code.contains("admit"));
     }

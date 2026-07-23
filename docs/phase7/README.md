@@ -15,51 +15,40 @@ The central shift is:
 2. `01_affine_interaction_theory.md`  
    Exact algebra for macrostep composition, precision debt, affine commutators, cross-linear-form identities, resonance, and exact-word forcing.
 
-3. `02_ultrametric_switching_abstraction.md`  
-   A proposed abstraction based on valuation regions, cancellation residues, and affine register machines instead of raw residue splitting alone.
+3. `01_exact_q1_register_machine.md`  
+   Exact $Q_1$ integer register machine ($n = 32k + 7$), generic quotient return theorem ($\eta_p$), $u/v$ transition rules, positive image progressions vs 2-adic target cylinders, and inverse-guard recursions.
 
-4. `03_phase7x_implementation_and_experiments.md`  
-   Rust/Python/Lean implementation plan and a sequence of falsifiable experiments for Phase 7.3A through 7.3E.
+4. `02_ultrametric_switching_abstraction.md`  
+   Phase 7.3B-2 ultrametric cancellation machine ($L_u(n) = 32(11k+3)$, $x = v_2(L_u(n)) \ge 5$, $x' = x-4, U' = 27U$ under $u$; $x' = \gamma - 3, U' = \frac{729U+87}{2^\gamma}$ under $v$).
 
-5. `04_certificate_schemas_and_verification.md`  
-   Proposed proof-object schemas (`based_switching_core_v1`, `finite_switching_language_v1`, `path_complete_ranking_v1`, `disjunctive_transition_invariant_v1`, `language_growth_report_v1`).
+5. `phase73a_closeout.md`  
+   Formally frozen closeout report for Phase 7.3A (Generic Affine Interaction & Cross-Form Theorem Kernel).
 
-6. `05_claims_registry_and_review_gates.md`  
+6. `phase73b_1_closeout.md`  
+   Formally frozen closeout report for Phase 7.3B-1 (Exact $Q_1$ Quotient Reference Machine & Finite Language Uniqueness Theorem).
+
+7. `04_certificate_schemas_and_verification.md`  
+   Proof-object schemas (`macrostep_data_v1`, `affine_interaction_v1`, `cross_form_cylinder_recovery_v1`, `quotient_register_transition_v1`, `guarded_return_classification_v1`, `phase73a_verification_report_v1`, `phase73b_verification_report_v1`).
+
+7. `05_claims_registry_and_review_gates.md`  
    Candidate claims, theorem-status language, negative outcomes, and milestone review gates (Gates 7.3A through 7.3E).
 
-7. `06_phase72_handoff_and_migration.md`  
+8. `06_phase72_handoff_and_migration.md`  
    Documentation of the verified Phase 7.2 noncommuting branching core and entry criteria for Phase 7.3.
 
 ## Benchmark Levels
 
-### Edge-Level Benchmark Pair
-\[
-w_1=[1,1,2],\qquad w_2=[1,2,2], \qquad \Delta_{w_1,w_2}=-348, \qquad v_2(\Delta)=2
-\]
-Used for generic formula and identity validation.
-
 ### Primary Phase 7.3 Switching Benchmark
-The primary switching system at $Q_1$ uses based closed walks:
-\[
-u=w_1=[1,1,2],\qquad v=w_1 w_2=[1,1,2,1,2,2]
-\]
+The primary switching system at $Q_1 = \{ n \equiv 7 \pmod{32} \}$ uses based closed walks:
+$$u=[1,1,2],\qquad v=[1,1,2,1,2,2]$$
 
-| Word | \(k\) | \(A\) | \(a=3^k\) | \(b=2^A\) | \(c\) | \(d=b-a\) |
-|---|---:|---:|---:|---:|---:|---:|
-| \(u\) | 3 | 4 | 27 | 16 | 19 | \(-11\) |
-| \(v\) | 6 | 9 | 729 | 512 | 881 | \(-217\) |
+| Word | $K$ | $A$ | $a=3^K$ | $b=2^A$ | $c$ | $d=b-a$ | $Q_1$ Return Guard | Quotient Rule $k'$ |
+|---|---:|---:|---:|---:|---:|---:|---|---|
+| $u$ | 3 | 4 | 27 | 16 | 19 | $-11$ | $k \equiv 7 \pmod{16}$ | $(27k + 3)/16$ |
+| $v$ | 6 | 9 | 729 | 512 | 881 | $-217$ | $k \equiv 61 \pmod{512}$ | $(729k + 75)/512$ |
 
-The interaction constant and 2-adic valuation depth are:
-\[
-\Delta_{u,v} = d_u c_v - d_v c_u = (-11)(881) - (-217)(19) = -5568 = -2^6 \cdot 87, \qquad \kappa_{u,v} = v_2(\Delta_{u,v}) = 6
-\]
-
-This constant measures the exact order defect between compositions:
-\[
-b_u b_v \big(F_{uv}(n) - F_{vu}(n)\big) = 8192 \left(-\frac{5568}{8192}\right) = -5568
-\]
+$$\Delta_{u,v} = d_u c_v - d_v c_u = (-11)(881) - (-217)(19) = -5568 = -2^6 \cdot 87, \qquad \kappa_{u,v} = v_2(\Delta_{u,v}) = 6$$
 
 ## Trust Rule
 
 Search code may propose patterns. A claim enters the verified layer only if an independent verifier recomputes all arithmetic from the valuation words and proves the quantified divisibility or inclusion statement.
-

@@ -1,0 +1,80 @@
+{
+  "schema_version": "phase73b_verification_report_v1",
+  "transitions": [
+    {
+      "schema_version": "quotient_register_transition_v1",
+      "valuation_word": [
+        1,
+        1,
+        2
+      ],
+      "eta": "3",
+      "guard_residue": "7",
+      "guard_modulus_exponent": 4,
+      "starting_k": "7",
+      "outcome_type": "based_return",
+      "next_k": "12",
+      "image": "391"
+    },
+    {
+      "schema_version": "quotient_register_transition_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "eta": "75",
+      "guard_residue": "61",
+      "guard_modulus_exponent": 9,
+      "starting_k": "61",
+      "outcome_type": "based_return",
+      "next_k": "87",
+      "image": "2791"
+    }
+  ],
+  "classifications": [
+    {
+      "schema_version": "guarded_return_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2
+      ],
+      "exact_word_residue": "7",
+      "exact_word_modulus_exponent": 5,
+      "based_return_residue": "231",
+      "based_return_modulus_exponent": 9,
+      "positive_image_start": "391",
+      "positive_image_step": "864",
+      "target_residue": "7",
+      "target_modulus_exponent": 5,
+      "quotient_guard_residue": "7",
+      "quotient_guard_modulus_exponent": 4
+    },
+    {
+      "schema_version": "guarded_return_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "exact_word_residue": "935",
+      "exact_word_modulus_exponent": 10,
+      "based_return_residue": "1959",
+      "based_return_modulus_exponent": 14,
+      "positive_image_start": "2791",
+      "positive_image_step": "23328",
+      "target_residue": "7",
+      "target_modulus_exponent": 5,
+      "quotient_guard_residue": "61",
+      "quotient_guard_modulus_exponent": 9
+    }
+  ],
+  "all_register_rules_verified": true
+}

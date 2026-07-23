@@ -151,7 +151,8 @@ fn test_phase73a_roundtrip_verification() {
 }
 
 #[test]
-fn test_16_corruption_mutation_matrix() {
+#[allow(clippy::type_complexity)]
+fn test_16_corruption_mutation_matrix_phase73a() {
     let valid_report = build_multi_branch_report();
     let mut mutation_results = Vec::new();
 
@@ -217,8 +218,9 @@ fn test_16_corruption_mutation_matrix() {
         (
             "Replace recovered q-cylinder with concatenated pq-cylinder",
             Box::new(|r| {
-                r.cylinder_recoveries[0].exact_cylinder_residue =
-                    r.cylinder_recoveries[0].sequence_exact_cylinder_residue.clone();
+                r.cylinder_recoveries[0].exact_cylinder_residue = r.cylinder_recoveries[0]
+                    .sequence_exact_cylinder_residue
+                    .clone();
             }),
         ),
         (

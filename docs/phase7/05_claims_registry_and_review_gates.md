@@ -109,6 +109,36 @@ The remaining source condition is one normalized odd-residue congruence.
 
 ---
 
+### CLM-P7X-FINITE-UNIQUENESS-001
+
+**Category:** Verified Finite Theorem
+
+**Statement:**
+
+For every finite valuation word $s \in \{u,v\}^*$, there exists exactly one unique quotient guard cylinder $k \equiv r_s \pmod{2^{A(s)}}$. Every finite word is positively realizable on integer representatives.
+
+---
+
+### CLM-P7X-PERIODIC-DIVERGENCE-001
+
+**Category:** Verified Finite Theorem
+
+**Statement:**
+
+For any fixed non-empty word $s \in \{u,v\}^+$, the composite quotient map $T_s(k) = \frac{a_s k + \eta_s}{2^{A_s}}$ has a strictly negative rational fixed point $k^*_s = \frac{\eta_s}{2^{A_s} - a_s} < 0$. The guard for $s^m$ is the $2^{m A_s}$-adic truncation of $k^*_s$, so $r_{s^m} \to \infty$ as $m \to \infty$. No positive integer can realize an ultimately periodic infinite switching tail $s^\omega$.
+
+---
+
+### CLM-P7X-CANTOR-GUARD-TREE-001
+
+**Category:** Verified Bounded Classification
+
+**Statement:**
+
+The $Q_1$ quotient return guards form a full disjoint nested binary tree in $\mathbb{Z}_2$. Its infinite limit set $G_\infty$ is a measure-zero Cantor set with Haar measure $\mu(G_r) = (33/512)^r \to 0$ and 2-adic Hausdorff dimension $d \approx 0.1625357554$.
+
+---
+
 ### CLM-P7X-COMMONCENTER-001
 
 **Category:** Theorem Candidate until formalized

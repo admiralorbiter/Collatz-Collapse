@@ -1,0 +1,69 @@
+{
+  "mutated_fixtures_rejected": "10/10",
+  "mutations": [
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change one valuation in p",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change eta constant",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change guard residue",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change guard modulus exponent",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt outcome type (claiming leaves_base for returning k=7)",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt next_k register",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt transition image",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt based return residue in classification",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt positive image start in classification",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt positive image step in classification",
+      "passed": true
+    }
+  ],
+  "schema_version": "mutation_test_report_phase73b_v1",
+  "unexpected_accepts": 0,
+  "unexpected_rejects": 0,
+  "valid_fixtures_accepted": "1/1"
+}

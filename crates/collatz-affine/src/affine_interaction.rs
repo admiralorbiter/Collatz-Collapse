@@ -63,7 +63,10 @@ impl MacrostepData {
 
         // For any nonempty valuation word, b_p = 2^A is even while a_p = 3^K is odd.
         // Therefore d_p = b_p - a_p is odd and strictly non-zero over Z.
-        assert!(!d.is_zero(), "d_p must be non-zero for nonempty valuation word");
+        assert!(
+            !d.is_zero(),
+            "d_p must be non-zero for nonempty valuation word"
+        );
 
         Ok(Self {
             word,

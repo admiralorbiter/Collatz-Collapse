@@ -7,7 +7,8 @@ use num_traits::Zero;
 use proptest::prelude::*;
 
 fn gen_valuation_word() -> impl Strategy<Value = ValuationWord> {
-    prop::collection::vec(1u32..=4u32, 1..=3).prop_map(|v| ValuationWord::from_u32_slice(&v).unwrap())
+    prop::collection::vec(1u32..=4u32, 1..=3)
+        .prop_map(|v| ValuationWord::from_u32_slice(&v).unwrap())
 }
 
 #[test]
@@ -40,7 +41,10 @@ fn test_benchmark_uv_interaction() {
     let exact_v_recovered = recover_exact_cylinder(&interaction).unwrap();
     let direct_exact_v = ExactWordCylinder::from_valuation_word(v.clone()).unwrap();
     assert_eq!(exact_v_recovered.residue, direct_exact_v.source.residue);
-    assert_eq!(exact_v_recovered.modulus_exponent, direct_exact_v.source.modulus_exponent);
+    assert_eq!(
+        exact_v_recovered.modulus_exponent,
+        direct_exact_v.source.modulus_exponent
+    );
     assert_eq!(exact_v_recovered.residue, num_bigint::BigUint::from(935u32));
     assert_eq!(exact_v_recovered.modulus_exponent, 10);
 
@@ -127,7 +131,10 @@ fn test_nonempty_word_implies_d_nonzero() {
     ];
     for w in words {
         let m = MacrostepData::from_word(w).unwrap();
-        assert!(!m.d().is_zero(), "d_p must be non-zero for nonempty valuation word");
+        assert!(
+            !m.d().is_zero(),
+            "d_p must be non-zero for nonempty valuation word"
+        );
     }
 }
 

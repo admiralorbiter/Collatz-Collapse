@@ -12,6 +12,7 @@ pub mod fixed_point_synthesizer;
 pub mod graph_closure_m72;
 pub mod graph_contraction_solver;
 pub mod guarded_path;
+pub mod guarded_return_classifier;
 pub mod karp_cycle;
 pub mod non_commuting_cycles;
 pub mod path_semantics;
@@ -21,6 +22,7 @@ pub mod relational_domain;
 pub mod scalar_lyapunov_solver;
 pub mod sct_engine;
 pub mod semantic_gate;
+pub mod ultrametric_machine;
 
 pub use abstract_domain::{AbstractEdge, RelationalState};
 pub use alphabet_manifest::{AlphabetManifestCertificateJson, AlphabetManifestEngine};
@@ -38,6 +40,10 @@ pub use graph_contraction_solver::GraphContractionSolver;
 pub use guarded_path::{
     BasedReturnCylinder, GuardCheckpoint, GuardedPathCylinder, StateId, StateMembership,
 };
+pub use guarded_return_classifier::{
+    classify_guarded_return, compose_guarded_path, GuardedPathClassification,
+    GuardedReturnClassification, PathCheckpoint, PositiveImageProgression,
+};
 pub use karp_cycle::KarpCycleEngine;
 pub use non_commuting_cycles::{NonCommutingCycleAnalyzer, ReturnCycle};
 pub use path_semantics::{PathSemanticsCertificateJson, PathSemanticsEngine};
@@ -50,3 +56,4 @@ pub use relational_domain::{
 pub use scalar_lyapunov_solver::ScalarLyapunovSolver;
 pub use sct_engine::{RelationValue, SctEngine, SizeChangeGraph};
 pub use semantic_gate::{CylinderImage, SemanticGate, WordForcingStatus};
+pub use ultrametric_machine::{UltrametricMachineValidator, UltrametricState, ValuationRegion};

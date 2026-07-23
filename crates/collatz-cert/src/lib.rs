@@ -8,6 +8,7 @@ pub mod guarded_path_verifier;
 pub mod lean_export;
 pub mod macrocycle_theorem;
 pub mod minus_one_countdown;
+pub mod quotient_register_verifier;
 pub mod scalar_lyapunov;
 pub mod schema;
 pub mod sct_engine;
@@ -27,13 +28,15 @@ pub use graph_contraction::{
 };
 pub use guarded_path_verifier::verify_guarded_path_certificate;
 pub use lean_export::{
-    export_lean4_affine_interaction_theorem, export_lean4_sct_ranking_theorem, export_lean4_theorem,
+    export_lean4_affine_interaction_theorem, export_lean4_quotient_register_theorem,
+    export_lean4_sct_ranking_theorem, export_lean4_theorem,
 };
 pub use macrocycle_theorem::verify_finite_fuel_macrocycle_certificate;
 pub use minus_one_countdown::{
     verify_minus_one_countdown_certificate, MinusOneCountdownCertificateJson,
     MinusOneCountdownError,
 };
+pub use quotient_register_verifier::verify_phase73b_report;
 pub use scalar_lyapunov::{
     verify_scalar_lyapunov_certificate, ScalarLyapunovCertificateJson, ScalarLyapunovError,
     ScalarTransition, ValuationConstraint,
@@ -41,10 +44,11 @@ pub use scalar_lyapunov::{
 pub use schema::{
     AffineInteractionJson, AffineMapJson, BuchiEmptinessCertificateJson, BuchiTransitionJson,
     CrossFormCylinderRecoveryJson, CycleCertificateJson, DescentCertificateJson,
-    FeatureDefinitionJson, GuardedPathCertificateJson, InfeasibleAlgebraicCertificateJson,
-    InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson, MacrostepDataJson,
-    Phase73aVerificationReportJson, SctEdgeCertificateJson, SequenceStepJson,
-    SizeChangeCertificateJson, SizeChangeRelationJson, SizeChangeRelationKind,
+    FeatureDefinitionJson, GuardedPathCertificateJson, GuardedReturnClassificationJson,
+    InfeasibleAlgebraicCertificateJson, InfeasibleMinimalityCertificateJson,
+    InfeasibleSubsumptionCertificateJson, MacrostepDataJson, Phase73aVerificationReportJson,
+    Phase73bVerificationReportJson, QuotientRegisterTransitionJson, SctEdgeCertificateJson,
+    SequenceStepJson, SizeChangeCertificateJson, SizeChangeRelationJson, SizeChangeRelationKind,
     SizeChangeTransitionGraphJson, SourceGuardJson, TailDescentCertificateJson,
 };
 pub use tail::{compute_a_crit, generate_tail_descent_certificate};
