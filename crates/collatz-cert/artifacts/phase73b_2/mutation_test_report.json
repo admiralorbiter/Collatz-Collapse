@@ -1,0 +1,57 @@
+{
+  "mutated_fixtures_rejected": "8/8",
+  "mutations": [
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Change one valuation in p",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt starting x valuation",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt starting unit U",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt outcome type (claiming non_integral for returning k=7)",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt next_x valuation",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt next_unit U",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt starting_k integer",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Set all_commuting_diagrams_verified to false",
+      "passed": true
+    }
+  ],
+  "schema_version": "mutation_test_report_phase73b_2_v1",
+  "unexpected_accepts": 0,
+  "unexpected_rejects": 0,
+  "valid_fixtures_accepted": "1/1"
+}

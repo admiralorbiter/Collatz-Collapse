@@ -129,13 +129,63 @@ For any fixed non-empty word $s \in \{u,v\}^+$, the composite quotient map $T_s(
 
 ---
 
-### CLM-P7X-CANTOR-GUARD-TREE-001
+### CLM-P7X-CANTOR-MEASURE-001
+
+**Category:** Verified Finite Theorem
+
+**Statement:**
+
+At depth $r$, every word $s \in \{u,v\}^r$ has a disjoint cylinder of measure $2^{-A(s)}$. The total depth-$r$ Haar measure is $\mu(G_r) = \sum_{|s|=r} 2^{-A(s)} = (2^{-4} + 2^{-9})^r = (33/512)^r$, which vanishes exponentially: $\mu(G_\infty) = 0$.
+
+---
+
+### CLM-P7X-CANTOR-DIMENSION-001
+
+**Category:** Theorem Candidate until formalization of 2-adic self-similar open-set separation condition
+
+**Statement:**
+
+The infinite switching limit set $G_\infty$ in $\mathbb{Z}_2$ has 2-adic Hausdorff dimension $d \approx 0.1625357554$ satisfying $2^{-4d} + 2^{-9d} = 1$.
+
+---
+
+### CLM-P7X-ULTRAMETRIC-ISO-001
+
+**Category:** Verified Finite Theorem
+
+**Statement:**
+
+The map $\Phi(k) = (5 + v_2(11k+3), \, (11k+3)/2^{v_2(11k+3)}) = (x, U)$ provides an exact bijection between non-negative integer quotient coordinates $k \in \mathbb{Z}_{\ge 0}$ and positive-realizable finite ultrametric states $\text{Img}(\Phi) = \{ (x, U) \in \mathbb{N}_{\ge 5} \times \mathbb{N}_{\text{odd}} \mid 2^{x-5} U \equiv 3 \pmod{11} \}$.
+
+---
+
+### CLM-P7X-65536-DETERMINISM-001
 
 **Category:** Verified Bounded Classification
 
 **Statement:**
 
-The $Q_1$ quotient return guards form a full disjoint nested binary tree in $\mathbb{Z}_2$. Its infinite limit set $G_\infty$ is a measure-zero Cantor set with Haar measure $\mu(G_r) = (33/512)^r \to 0$ and 2-adic Hausdorff dimension $d \approx 0.1625357554$.
+Unit precision $U \bmod 65536$ ($2^{16}$) makes the resonant $v$-return successor valuation-region deterministic across the ten valuation regions ($X5, X6, X7, X8, X9, X10, X11, X12, XGe13, \text{Infinity}$).
+
+---
+
+### CLM-P7X-PRECISION-PROPAGATION-001
+
+**Category:** Verified Finite Theorem
+
+**Statement:**
+
+For $U \equiv U_0 \pmod{2^M}$ and $\gamma = v_2(729U_0 + 87) < M$, cancellation depth $\gamma$ is constant on the cylinder and $U' = \frac{729U+87}{2^\gamma} \equiv \frac{729U_0+87}{2^\gamma} \pmod{2^{M-\gamma}}$. Conversely, on a branch with prescribed cancellation depth $\gamma$, output unit precision $U' \bmod 2^m$ is uniquely determined by input precision $U \bmod 2^{m+\gamma}$.
+
+---
+
+### CLM-P7X-INFINITE-STATE-FUTURE-001
+
+**Category:** Verified Finite Theorem
+
+**Statement:**
+
+For positive-realizable states with valuation $x = 9 + 4r$ ($r \in \mathbb{N}_{\ge 0}$), each $u$-return maps $x \mapsto x - 4$. A state with $x = 9 + 4r$ admits exactly $r+1$ successive $u$-returns before leaving $Q_1$. Because states with different $r$ are future-distinguishable by their pure-$u$ return length, no finite deterministic quotient preserves complete future return behavior.
 
 ---
 

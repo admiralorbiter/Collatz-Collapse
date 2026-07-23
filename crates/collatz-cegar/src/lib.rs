@@ -56,4 +56,8 @@ pub use relational_domain::{
 pub use scalar_lyapunov_solver::ScalarLyapunovSolver;
 pub use sct_engine::{RelationValue, SctEngine, SizeChangeGraph};
 pub use semantic_gate::{CylinderImage, SemanticGate, WordForcingStatus};
-pub use ultrametric_machine::{UltrametricMachineValidator, UltrametricState, ValuationRegion};
+pub use ultrametric_machine::{
+    positive_integer_realization, AbstractEnabledness, AbstractUltrametricState,
+    ConcreteUltrametricState, UltrametricMachine, UltrametricStepOutcome, UnitResidue,
+    ValuationRegion,
+};

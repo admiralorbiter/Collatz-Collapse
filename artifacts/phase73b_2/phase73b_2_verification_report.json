@@ -1,0 +1,37 @@
+{
+  "schema_version": "phase73b_2_verification_report_v1",
+  "transitions": [
+    {
+      "schema_version": "ultrametric_state_transition_v1",
+      "valuation_word": [
+        1,
+        1,
+        2
+      ],
+      "starting_k": "7",
+      "start_x": 9,
+      "start_unit": "5",
+      "outcome_type": "based_return",
+      "next_x": 5,
+      "next_unit": "135"
+    },
+    {
+      "schema_version": "ultrametric_state_transition_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "starting_k": "61",
+      "start_x": 6,
+      "start_unit": "337",
+      "outcome_type": "based_return",
+      "next_x": 11,
+      "next_unit": "15"
+    }
+  ],
+  "all_commuting_diagrams_verified": true
+}

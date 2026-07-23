@@ -13,6 +13,7 @@ pub mod scalar_lyapunov;
 pub mod schema;
 pub mod sct_engine;
 pub mod tail;
+pub mod ultrametric_verifier;
 pub mod valuation_countdown;
 pub mod verify;
 pub mod verify_sct;
@@ -29,7 +30,7 @@ pub use graph_contraction::{
 pub use guarded_path_verifier::verify_guarded_path_certificate;
 pub use lean_export::{
     export_lean4_affine_interaction_theorem, export_lean4_quotient_register_theorem,
-    export_lean4_sct_ranking_theorem, export_lean4_theorem,
+    export_lean4_sct_ranking_theorem, export_lean4_theorem, export_lean4_ultrametric_theorem,
 };
 pub use macrocycle_theorem::verify_finite_fuel_macrocycle_certificate;
 pub use minus_one_countdown::{
@@ -47,11 +48,14 @@ pub use schema::{
     FeatureDefinitionJson, GuardedPathCertificateJson, GuardedReturnClassificationJson,
     InfeasibleAlgebraicCertificateJson, InfeasibleMinimalityCertificateJson,
     InfeasibleSubsumptionCertificateJson, MacrostepDataJson, Phase73aVerificationReportJson,
-    Phase73bVerificationReportJson, QuotientRegisterTransitionJson, SctEdgeCertificateJson,
-    SequenceStepJson, SizeChangeCertificateJson, SizeChangeRelationJson, SizeChangeRelationKind,
+    Phase73b2VerificationReportJson, Phase73bVerificationReportJson,
+    QuotientRegisterTransitionJson, SctEdgeCertificateJson, SequenceStepJson,
+    SizeChangeCertificateJson, SizeChangeRelationJson, SizeChangeRelationKind,
     SizeChangeTransitionGraphJson, SourceGuardJson, TailDescentCertificateJson,
+    UltrametricStateTransitionJson,
 };
 pub use tail::{compute_a_crit, generate_tail_descent_certificate};
+pub use ultrametric_verifier::verify_phase73b_2_report;
 pub use valuation_countdown::{
     verify_valuation_countdown_certificate, ValuationCountdownCertificateJson,
     ValuationCountdownError,

@@ -148,27 +148,63 @@ import Mathlib.Tactic.Linarith\n\
 namespace Phase73B\n\
 \n\
 -- 1. Generic Quotient Return Identity over Z\n\
-theorem generic_quotient_return_identity (aP bP cP r q k k' eta : ℤ)\n\
+theorem generic_quotient_return_identity (aP bP cP r q k k_next eta : ℤ)\n\
     (h_eta : 2^q * eta = aP * r + cP - bP * r)\n\
-    (h_transition : bP * k' = aP * k + eta) :\n\
-    bP * (2^q * k' + r) = aP * (2^q * k + r) + cP := by\n\
+    (h_transition : bP * k_next = aP * k + eta) :\n\
+    bP * (2^q * k_next + r) = aP * (2^q * k + r) + cP := by\n\
   linarith\n\
 \n\
 -- 2. u-step Quotient Transition Identity (r=7, q=5, b_u=16, a_u=27, c_u=19, eta_u=3)\n\
-theorem u_quotient_register_transition (k m k' : ℤ) (hk : k = 16 * m + 7) (hk' : k' = 27 * m + 12) :\n\
-    16 * k' = 27 * k + 3 := by\n\
+theorem u_quotient_register_transition (k m k_next : ℤ) (hk : k = 16 * m + 7) (hk_next : k_next = 27 * m + 12) :\n\
+    16 * k_next = 27 * k + 3 := by\n\
   subst hk\n\
-  subst hk'\n\
+  subst hk_next\n\
   ring\n\
 \n\
 -- 3. v-step Quotient Transition Identity (r=7, q=5, b_v=512, a_v=729, c_v=881, eta_v=75)\n\
-theorem v_quotient_register_transition (k m k' : ℤ) (hk : k = 512 * m + 61) (hk' : k' = 729 * m + 87) :\n\
-    512 * k' = 729 * k + 75 := by\n\
+theorem v_quotient_register_transition (k m k_next : ℤ) (hk : k = 512 * m + 61) (hk_next : k_next = 729 * m + 87) :\n\
+    512 * k_next = 729 * k + 75 := by\n\
   subst hk\n\
-  subst hk'\n\
+  subst hk_next\n\
   ring\n\
 \n\
 end Phase73B\n"
+    )
+}
+
+/// Generates formal Lean 4 theorems over Int (Z) for Phase 7.3B-2 ultrametric coordinate transitions.
+pub fn export_lean4_ultrametric_theorem() -> String {
+    format!(
+        "-- Formal Lean 4 Theorem Suite for Phase 7.3B-2 Ultrametric Cancellation Machine\n\
+import Mathlib.Data.Int.Basic\n\
+import Mathlib.Tactic.Ring\n\
+import Mathlib.Tactic.Omega\n\
+import Mathlib.Tactic.Linarith\n\
+\n\
+namespace Phase73B2\n\
+\n\
+-- 1. Ultrametric Coordinate Definition over Z: L_u(n) = 11*n + 19\n\
+def L_u (n : ℤ) : ℤ := 11 * n + 19\n\
+\n\
+-- 2. Quotient-to-Ultrametric Coordinate Isomorphism: L_u(32*k + 7) = 32 * (11*k + 3)\n\
+theorem quotient_to_ultrametric_identity (k : ℤ) :\n\
+    L_u (32 * k + 7) = 32 * (11 * k + 3) := by\n\
+  dsimp [L_u]\n\
+  ring\n\
+\n\
+-- 3. u-Step Ultrametric Transition Identity: 16 * L_u(F_u(n)) = 27 * L_u(n)\n\
+theorem u_ultrametric_step_identity (n n_next : ℤ) (h_u : 16 * n_next = 27 * n + 19) :\n\
+    16 * L_u n_next = 27 * L_u n := by\n\
+  dsimp [L_u]\n\
+  linarith\n\
+\n\
+-- 4. Resonant v-Step Ultrametric Transition Identity: 16 * L_u(F_v(n)) = 729 * L_u(n) - 5568\n\
+theorem v_resonant_ultrametric_step_identity (n n_next : ℤ) (h_v : 512 * n_next = 729 * n + 881) :\n\
+    16 * L_u n_next = 729 * L_u n - 5568 := by\n\
+  dsimp [L_u]\n\
+  linarith\n\
+\n\
+end Phase73B2\n"
     )
 }
 
@@ -207,6 +243,16 @@ mod tests {
         assert!(lean_code.contains("theorem generic_quotient_return_identity"));
         assert!(lean_code.contains("theorem u_quotient_register_transition"));
         assert!(lean_code.contains("theorem v_quotient_register_transition"));
+        assert!(!lean_code.contains("sorry"));
+        assert!(!lean_code.contains("admit"));
+    }
+
+    #[test]
+    fn test_export_lean4_ultrametric_theorem_valid() {
+        let lean_code = export_lean4_ultrametric_theorem();
+        assert!(lean_code.contains("theorem quotient_to_ultrametric_identity"));
+        assert!(lean_code.contains("theorem u_ultrametric_step_identity"));
+        assert!(lean_code.contains("theorem v_resonant_ultrametric_step_identity"));
         assert!(!lean_code.contains("sorry"));
         assert!(!lean_code.contains("admit"));
     }

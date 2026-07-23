@@ -1,8 +1,8 @@
 use collatz_affine::{
-    classify_guarded_return, compose_guarded_path, CanonicalCylinder, MacrostepData,
+    classify_guarded_return, compose_guarded_path, CanonicalCylinder, MacrostepData, Q1Quotient,
     ValuationWord,
 };
-use collatz_cegar::UltrametricMachineValidator;
+use collatz_cegar::UltrametricMachine;
 use num_bigint::BigUint;
 
 #[test]
@@ -63,9 +63,26 @@ fn test_compose_guarded_path_uv_and_vu() {
 }
 
 #[test]
-fn test_ultrametric_conformance() {
-    for k in [7u32, 23, 39, 55] {
-        let k_big = BigUint::from(k);
-        assert!(UltrametricMachineValidator::validate_u_conformance(&k_big));
+fn test_ultrametric_commuting_diagram_conformance() {
+    let u_word = ValuationWord::from_u32_slice(&[1, 1, 2]).unwrap();
+    let v_word = ValuationWord::from_u32_slice(&[1, 1, 2, 1, 2, 2]).unwrap();
+
+    let m_u = MacrostepData::from_word(u_word).unwrap();
+    let m_v = MacrostepData::from_word(v_word).unwrap();
+
+    for k in [0u32, 7, 12, 23, 29, 61, 87, 231, 1959, 6711, 175165] {
+        let q = Q1Quotient::from_k(BigUint::from(k));
+
+        assert!(
+            UltrametricMachine::verify_commuting_diagram(&q, &m_u).unwrap(),
+            "u commuting diagram failed for k={}",
+            k
+        );
+
+        assert!(
+            UltrametricMachine::verify_commuting_diagram(&q, &m_v).unwrap(),
+            "v commuting diagram failed for k={}",
+            k
+        );
     }
 }

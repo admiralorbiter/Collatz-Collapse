@@ -119,11 +119,8 @@ pub fn compose_guarded_path(
         word_list.push(step.word().clone());
         let rule = QuotientRegisterMachine::derive_rule(step)?;
 
-        let (pred_res, pred_exp) = QuotientRegisterMachine::preimage_guard(
-            &rule,
-            &current_target.residue,
-            current_exp,
-        );
+        let (pred_res, pred_exp) =
+            QuotientRegisterMachine::preimage_guard(&rule, &current_target.residue, current_exp);
 
         current_target = CanonicalCylinder::new(pred_res, pred_exp);
         current_exp = pred_exp;

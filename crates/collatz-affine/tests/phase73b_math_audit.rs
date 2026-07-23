@@ -78,15 +78,14 @@ fn generate_math_audit_tables_and_deep_exploration() {
     let concat_vuu = ValuationWord::from_u32_slice(&[1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2]).unwrap();
     let m_concat_vuu = MacrostepData::from_word(concat_vuu).unwrap();
     let direct_vuu = classify_guarded_return(&m_concat_vuu, &q1_base).unwrap();
-    assert_eq!(
-        direct_vuu.quotient_guard.residue,
-        BigUint::from(98365u32)
-    );
+    assert_eq!(direct_vuu.quotient_guard.residue, BigUint::from(98365u32));
     assert_eq!(direct_vuu.quotient_guard.modulus_exponent, 17);
 
     // 3. Deep Exploration of M_r and Minimizing Words up to depth 15
     println!("\n=== DEEP EXPLORATION: M_r, MINIMIZING WORDS & RATIOS (DEPTH 1 TO 15) ===");
-    println!("r | A_min | Min k (M_r) | Minimizing Word | 2nd Min k | Min n = 32k+7 | Ratio r_s / 2^A");
+    println!(
+        "r | A_min | Min k (M_r) | Minimizing Word | 2nd Min k | Min n = 32k+7 | Ratio r_s / 2^A"
+    );
 
     let mut current_level: Vec<(String, Vec<MacrostepData>, BigUint, u64)> = vec![
         ("u".to_string(), vec![m_u.clone()], BigUint::from(7u32), 4),
@@ -111,13 +110,7 @@ fn generate_math_audit_tables_and_deep_exploration() {
 
         println!(
             "{:2} | {:5} | {:15} | {:18} | {:15} | {:17} | {:.8}",
-            depth,
-            min_exp,
-            min_k,
-            min_word,
-            second_min_entry.2,
-            min_n,
-            ratio
+            depth, min_exp, min_k, min_word, second_min_entry.2, min_n, ratio
         );
 
         if depth < 15 {

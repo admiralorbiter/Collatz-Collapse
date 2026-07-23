@@ -323,3 +323,28 @@ pub struct Phase73bVerificationReportJson {
     pub classifications: Vec<GuardedReturnClassificationJson>,
     pub all_register_rules_verified: bool,
 }
+
+/// Ultrametric State Transition Schema v1 (ultrametric_state_transition_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UltrametricStateTransitionJson {
+    pub schema_version: String,
+    pub valuation_word: Vec<u32>,
+    pub starting_k: String,
+    pub start_x: u64,
+    pub start_unit: String,
+    pub outcome_type: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub next_x: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub next_unit: Option<String>,
+}
+
+/// Phase 7.3B-2 Verification Report Schema v1 (phase73b_2_verification_report_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Phase73b2VerificationReportJson {
+    pub schema_version: String,
+    pub transitions: Vec<UltrametricStateTransitionJson>,
+    pub all_commuting_diagrams_verified: bool,
+}

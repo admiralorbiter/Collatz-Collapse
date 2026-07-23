@@ -6,6 +6,7 @@ pub mod guarded_return_classifier;
 pub mod inversion;
 pub mod quotient_register;
 pub mod semantic_cylinders;
+pub mod ultrametric_machine;
 pub mod valuation;
 
 pub use affine::{compute_descent_threshold, AffineDiagnostics, AffinePrefix, ValuationSemantics};
@@ -23,10 +24,15 @@ pub use inversion::{
     solve_starting_residue_broad, solve_starting_residue_exact,
 };
 pub use quotient_register::{
-    Q1Quotient, QuotientAffineRule, QuotientRegisterMachine, ReturnTransitionOutcome,
-    Q1_EXPONENT, Q1_RESIDUE,
+    Q1Quotient, QuotientAffineRule, QuotientRegisterMachine, ReturnTransitionOutcome, Q1_EXPONENT,
+    Q1_RESIDUE,
 };
 pub use semantic_cylinders::{CanonicalCylinder, ExactWordCylinder};
+pub use ultrametric_machine::{
+    positive_integer_realization, AbstractEnabledness, AbstractUltrametricState,
+    ConcreteUltrametricState, UltrametricMachine, UltrametricStepOutcome, UnitResidue,
+    ValuationRegion,
+};
 pub use valuation::ValuationWord;
 
 use thiserror::Error;
