@@ -169,43 +169,43 @@ This is the Phase 6D finite-fuel mechanism.
 
 ---
 
-## 4. Affine Interaction Constant
+## 4. Affine Interaction Determinant & Core Unification
 
-For two words \(p,q\), define:
+For two macrostep blocks \(v, w\) with \(d_v=Q_v-M_v, d_w=Q_w-M_w\) and additive constants \(\beta_v=c_v, \beta_w=c_w\), define the **Core Interaction Determinant**:
 
 \[
 \boxed{
-\Delta_{p,q}=d_pc_q-d_qc_p
+\Gamma_{v,w} = d_v \beta_w - d_w \beta_v = \Delta_{v,w}
 }.
 \]
 
-Properties:
+### Fundamental Interaction Properties
 
-\[
-\Delta_{q,p}=-\Delta_{p,q}.
-\]
+1. **Antisymmetry & Self-Nullity:**
+   \[
+   \Gamma_{w,v} = -\Gamma_{v,w}, \qquad \Gamma_{v,v} = 0.
+   \]
 
-\[
-\Delta_{p,p}=0.
-\]
+2. **Core Difference & Valuation Identity:**
+   \[
+   \xi_v - \xi_w = \frac{\Gamma_{v,w}}{d_v d_w} \implies v_2(\xi_v - \xi_w) = v_2(\Gamma_{v,w}).
+   \]
 
-### Fixed-point interpretation
+3. **Affine Commutator Identity:**
+   \[
+   F_w(F_v(D)) - F_v(F_w(D)) = -\frac{M_v M_w}{Q_v Q_w} \Gamma_{v,w}.
+   \]
 
-Because \(x_p^*=c_p/d_p\):
+4. **Exact Integer Core-Switch Identity:**
+   Defining $A_v(D) = d_v D + \beta_v$ and $A_w(D) = d_w D + \beta_w$:
+   \[
+   d_v A_w(D) = d_w A_v(D) + \Gamma_{v,w}.
+   \]
 
-\[
-\Delta_{p,q}=0
-\]
-
-if and only if:
-
-\[
-\frac{c_p}{d_p}
-=
-\frac{c_q}{d_q}.
-\]
-
-Thus \(\Delta=0\) means the two macrosteps share one rational fixed point.
+5. **Unification Theorem:**
+   \[
+   \Gamma_{v,w}=0 \iff \xi_v = \xi_w \iff F_v \circ F_w = F_w \circ F_v \iff v, w \text{ share a common rational fixed point.}
+   \]
 
 ---
 

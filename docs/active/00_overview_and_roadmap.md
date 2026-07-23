@@ -97,8 +97,21 @@ Phase 7: Full 2-Adic Language Invariant Synthesis & System-Level Integration [IN
    ├── Phase 7.3C: Infinite Symbolic Dynamics, Transducer & 2-Adic Fractal Geometry [COMPLETE]
    ├── Phase 7.3D: Reordered Proof Hierarchy & Reachability-Corrected Zero-Tail Semantics [COMPLETE]
    ├── Phase 7.3S: Gap-Closure Strategy Tournament & Shortcut Audit (Phase 7.3S.1B COMPLETE)
-   ├── Phase 7.3E: Target Expansion Discipline (Target A -> Target B -> Target C)
-   └── Phase 7.4: Expanded Word Libraries & Interaction Spectrum at Scale
+   └── Phase H: Canonical Return-Core Interaction & Shadowing Calculus [IN PROGRESS]
+        ├── Phase H.0C: Arithmetic Core Interaction (Gamma_{v,w}, commutator, integer switch law) [COMPLETE]
+        ├── Phase H.1: Minimal Pointwise Reduction (1 fixed integer <=> zero-tail constraint) [COMPLETE]
+        ├── Phase H.2A: Canonical Semantic Core Selector (non-tautological window selector) [COMPLETE]
+        ├── Phase H.2B: Symbolic Core Switching & Fine-Wilf Overlap (|x| >= p+q-gcd(p,q)) [COMPLETE]
+        ├── Phase H.2C: Semantic Core Distance & Weighted Overlap Bridge (H_L <= kappa < H_{upper}) [COMPLETE]
+        ├── Phase H.3: Bounded-Gap Aperiodic Complexity Stratification [IN PROGRESS]
+        │    ├── Phase H.3A: Complexity, Recurrence, and Selector Coverage Interface [COMPLETE]
+        │    ├── Phase H.3B: Sturmian Bounded-Gap Cube Elimination & Finite Graph Deficit [IN PROGRESS]
+        │    ├── Phase H.3C: Primitive Substitutive Finite-State Potential Function Reduction [IN PROGRESS]
+        │    ├── Phase H.3D: General Linear Complexity & Marker Factor Decomposition
+        │    └── Phase H.3E: Quantitative Complexity-to-Flattening Handoff
+        ├── Phase H.4: Unbounded-Gap / High-Complexity Flattening
+        ├── Phase H.5: Core-Switch Compression (decodability, bounded multiplicity)
+        └── Phase H.6: Cross-Adic Elimination (2-adic, 3-adic, real coupling)
         │
 Phase 8: Diophantine Cycle Bounds & SAT/LRAT Proof Production
    ├── collatz-diophantine (Simons & de Weger linear forms in logarithms)

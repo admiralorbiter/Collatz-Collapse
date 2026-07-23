@@ -332,3 +332,30 @@ Rust and Python should remain responsible for:
 
 The final theorem must disclose exactly which parts were checked by Lean and which were checked by independent executable verifiers.
 
+## 15. `pointwise_stabilization_v1`
+
+Purpose: certificate for Phase H.1 minimal pointwise reduction and stabilization verification.
+
+```json
+{
+  "schema_version": "pointwise_stabilization_v1",
+  "precision_schedule": [4, 8, 12, 16, 20],
+  "least_representatives": ["11", "27", "27", "27", "27"],
+  "stabilization_stage": 1,
+  "stabilized_value": "27",
+  "lift_blocks": [
+    { "from": 4, "to": 8, "value": "1" },
+    { "from": 8, "to": 12, "value": "0" },
+    { "from": 12, "to": 16, "value": "0" },
+    { "from": 16, "to": 20, "value": "0" }
+  ],
+  "zero_lift_tail_verified": true
+}
+```
+
+Verifier recomputes all fields:
+1. Validates that `precision_schedule` is strictly increasing ($H_{n+1} > H_n$).
+2. Validates compatibility: $R_{n+1} \equiv R_n \pmod{2^{H_n}}$.
+3. Computes lift blocks $\lambda_{n+1} = (R_{n+1} - R_n) / 2^{H_n}$.
+4. Confirms stabilization stage $K$ and zero lift tail for $j \ge K + 1$.
+

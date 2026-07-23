@@ -113,32 +113,21 @@ For exact \(q\)-forcing:
 
 This creates a demand-driven normalized-residue refinement.
 
-## 5. Proposed transition categories
+## 5. Integer-Primitive Core Switch Classification
 
-Every feature transition should be classified as one of:
+Every core switch transition from reference block $v$ to target block $w$ is driven by the integer identity $d_v A_w(D) = d_w A_v(D) + \Gamma_{v,w}$ and classified into four exact categories:
 
-1. **Deterministic descent**
-   \[
-   x' = x-A_q.
-   \]
+1. **`SameCore` ($\Gamma_{v,w} = 0, \kappa = \infty$):**
+   The two blocks share a rational center $\xi_v = \xi_w$ and commute. Depth is preserved: $s_w = s$.
 
-2. **Threshold reset**
-   \[
-   x' = \kappa-A_q.
-   \]
+2. **`Inherited` ($s < \kappa$):**
+   The incoming shadow depth $s = v_2(A_v(D))$ is strictly less than core separation $\kappa = v_2(\Gamma_{v,w})$. Cores are indistinguishable at this precision: $s_w = s$.
 
-3. **Cancellation-controlled**
-   \[
-   x' = \kappa+\gamma-A_q.
-   \]
+3. **`Reset` ($s > \kappa$):**
+   The incoming shadow depth $s > \kappa$. Switching destroys precision beyond core separation $\kappa$: $s_w = \kappa$.
 
-4. **Infeasible**
-   The divisibility required for a valid macrostep cannot hold.
-
-5. **Zero-form exceptional**
-   The concrete state lies at the rational fixed point of the reference form.
-
-These are exact semantic categories, not guessed SCT relations.
+4. **`Resonant` ($s = \kappa$):**
+   Writing $u = \frac{d_w A_v(D)}{2^\kappa}$ and $g = \frac{\Gamma_{v,w}}{2^\kappa}$ (both odd), $s_w = \kappa + v_2(u + g) \ge \kappa + 1$. Requires unit-cancellation tracking.
 
 ## 6. Sound merging rule
 

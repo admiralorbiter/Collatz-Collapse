@@ -147,8 +147,6 @@ For every $r \ge 1$, there exists $y_r \ge 0$ such that the orbit of $y_r$ under
 
 Under $j$ applications of $u$, $T_u^j(k) + \frac{3}{11} = \left(\frac{27}{16}\right)^j \left(k + \frac{3}{11}\right)$. Valuation transforms as $x \mapsto x - 4$. Thus every pure-$u$ block terminates in $j = \lfloor \frac{x-6}{4} \rfloor$ steps.
 
----
-
 ### CLM-P7X-INDUCED-V-MAP-001
 
 **Category:** Verified Algebraic Identity
@@ -156,6 +154,244 @@ Under $j$ applications of $u$, $T_u^j(k) + \frac{3}{11} = \left(\frac{27}{16}\ri
 **Statement:**
 
 At a $v$-return ($U = 81 + 256t$), the intervening $u$-count is $j = \frac{\delta - 1}{4}$ where $\delta = v_2(231 + 729t)$. The induced unit is $U_{\text{next}} = \frac{231 + 729t}{2^{1+4j}} \cdot 27^j$.
+
+---
+
+## 2.1 Phase H Claims (Canonical Return-Core Interaction & Shadowing Calculus)
+
+### CLM-PH-RENEWAL-CODE-LENGTH-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `EXACT_RENEWAL_CODE_LENGTH_IDENTITY_PROVED`
+
+**Statement:**
+
+For any return macrostep block $v$ with $E_v$ odd steps and total 2-adic valuation $B_v$, the exact renewal code-length identity satisfies $B_v = |v| \log_2(480) - \log_2 p(v)$.
+
+---
+
+### CLM-PH-CORE-INTERACTION-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `CORE_DIFFERENCE_INTERACTION_IDENTITY_PROVED`
+
+**Statement:**
+
+For return blocks $v, w$ with $d_v = Q_v - M_v$ and $d_w = Q_w - M_w$ odd, $\xi_v - \xi_w = \frac{\Gamma_{v,w}}{d_v d_w}$ and $v_2(\xi_v - \xi_w) = v_2(\Gamma_{v,w})$, where $\Gamma_{v,w} = d_v \beta_w - d_w \beta_v$.
+
+---
+
+### CLM-PH-COMMUTATOR-EQUIV-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `AFFINE_COMMUTATOR_IFF_CORE_INTERACTION_PROVED`
+
+**Statement:**
+
+$F_w(F_v(D)) - F_v(F_w(D)) = -\frac{M_v M_w}{Q_v Q_w} \Gamma_{v,w}$. Therefore, $\Gamma_{v,w} = 0 \iff \xi_v = \xi_w \iff F_v \circ F_w = F_w \circ F_v$.
+
+---
+
+### CLM-PH-INTEGER-SWITCH-LAW-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `INTEGER_CORE_SWITCH_IDENTITY_PROVED`
+
+**Statement:**
+
+For integer primitives $A_v(D) = d_v D + \beta_v$ and $A_w(D) = d_w D + \beta_w$, $d_v A_w(D) = d_w A_v(D) + \Gamma_{v,w}$. The outgoing shadow depth $s_w = v_2(A_w(D))$ satisfies the 4-case law (`SameCore`, `Inherited`, `Reset`, `Resonant`).
+
+---
+
+## 2.2 Phase H.1 Claims (Minimal Pointwise Reduction)
+
+### CLM-H1-PROJ-COMPAT-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `PROJECTIVE_COMPATIBILITY_PROVED`
+
+**Statement:**
+
+The sequence of source residues $r_n \pmod{2^{H_n}}$ constructed from an infinite valuation path $w$ forms a compatible inverse system in $\varprojlim \mathbb{Z} / 2^{H_n} \mathbb{Z} \cong \mathbb{Z}_2$.
+
+---
+
+### CLM-H1-INTEGER-CHAR-001
+
+**Category:** Verified Finite Theorem
+
+**Claim Key:** `FIXED_INTEGER_STABILIZATION_CHARACTERIZATION_PROVED`
+
+**Statement:**
+
+The inverse limit element $x_\infty = \lim_{n \to \infty} r_n \in \mathbb{Z}_2$ is an ordinary non-negative integer $n_0 \in \mathbb{Z}_{\ge 0}$ if and only if the least representatives $R_n(w) = r_n \pmod{2^{H_n}} \in [0, 2^{H_n}-1]$ eventually stabilize ($R_n = n_0$ for all $n \ge n_0$).
+
+---
+
+### CLM-H1-CARRY-CHAR-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `PROJECTIVE_CARRY_ZERO_TAIL_CHARACTERIZATION_PROVED`
+
+**Statement:**
+
+Sequence stabilization $R_n = n_0$ for all $n \ge n_0$ is strictly equivalent to the eventual vanishing of all lift/carry digits ($\lambda_j = 0$ for all $j \ge n_0$).
+
+---
+
+### CLM-H1-COLLATZ-REDUCE-001
+
+**Category:** Domain-Scoped Certificate
+
+**Claim Key:** `COLLATZ_SUBSYSTEM_POINTWISE_REDUCTION_PROVED`
+
+**Statement:**
+
+Any positive ordinary counterexample $n_0 \in \mathbb{N}^+$ giving an infinite orbit in the targeted return subsystem yields an infinite valuation path $w$ with $\sup_n R_n(w) = n_0 < \infty$ and zero carry tail $\lambda_j = 0$ for all $j \ge N(n_0)$.
+
+---
+
+## 2.3 Phase H.2 Claims (Canonical Core Selector & Precision Ledger)
+
+### CLM-H2A-SELECTOR-AXIOMS-001
+
+**Category:** Verified Finite Theorem
+
+**Claim Key:** `CANONICAL_SEMANTIC_CORE_SELECTOR_AXIOMS_VERIFIED`
+
+**Statement:**
+
+`CanonicalCoreSelector` satisfies all 7 frozen Selector Axioms (`H2A_SELECTOR_AXIOMS_FROZEN`) and passes the 6 non-tautology verification tests (endpoint independence, arithmetic non-selection, aperiodic null output, primitive root reduction, phase preservation under rotation, and future symbol independence).
+
+---
+
+### CLM-H2B-FINE-WILF-BOUND-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `FINE_WILF_PRECISION_BOUND_PROVED`
+
+**Statement:**
+
+For distinct primitive periodic cores $v, w$, the maximum common period overlap before period reduction is $|x| < |v| + |w| - \gcd(|v|, |w|)$, bounding the 2-adic core interaction valuation $\kappa(v,w) = v_2(\Gamma_{v,w}) \le B_{\text{max}} (|v| + |w| - \gcd(|v|, |w|))$.
+
+---
+
+### CLM-H2B-PRECISION-LEDGER-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `PATHWISE_PRECISION_LEDGER_RESONANCE_REDUCTION_PROVED`
+
+**Statement:**
+
+An infinite positive-integer realization must execute infinitely many precision-balanced resonant switches ($t_i = \kappa_i$) with cumulative resonance gains $\sum g_i \ge \sum r_i B_{v_i}$ to prevent 2-adic precision exhaustion.
+
+---
+
+## 2.4 Phase H.2C Claims (Semantic Core Distance & Weighted Overlap Bridge)
+
+### CLM-H2C-LCP-INTERVAL-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `WEIGHTED_LONGEST_COMMON_PREFIX_INTERVAL_PROVED`
+
+**Statement:**
+
+Let $L = \text{lcp}(v^\infty, w^\infty)$ be the longest common valuation prefix length, and $H_L = \sum_{j=0}^{L-1} b_j$. The 2-adic core distance valuation satisfies the exact double-sided interval bound: $H_L \le \kappa(v,w) = v_2(\Gamma_{v,w}) < H_{L+1}$.
+
+---
+
+### CLM-H2C-FINE-WILF-WEIGHTED-001
+
+**Category:** Verified Algebraic Identity
+
+**Claim Key:** `FINE_WILF_WEIGHTED_CORE_SEPARATION_BOUND_PROVED`
+
+**Statement:**
+
+For distinct primitive periodic cores $v, w$, Fine-Wilf bounds common prefix length to $L \le T - 1 = |v| + |w| - \gcd(|v|, |w|) - 1$, bounding the 2-adic distance valuation $\kappa(v,w) < H_T \le B_{\text{max}} (|v| + |w| - \gcd(|v|, |w|) - 1)$.
+
+---
+
+### CLM-H2C-POSITIVE-STATE-NEVER-EXACT-001
+
+**Category:** Verified Finite Theorem
+
+**Claim Key:** `POSITIVE_ORDINARY_STATE_NEVER_EXACT_NEGATIVE_CORE_PROVED`
+
+**Statement:**
+
+For any positive integer $D > 0$ and return core $v$ with fixed point $\xi_v < 0$, $A_v(D) = d_v D + \beta_v > 0$ strictly. Exact core landing ($A_v(D) = 0 \implies s_{next} = \infty$) is impossible for positive ordinary states.
+
+---
+
+## 2.5 Phase H.3 Claims (Bounded-Gap Aperiodic Complexity Stratification)
+
+### CLM-H3-BOUNDED-ALPHABET-001
+
+**Category:** Verified Finite Theorem
+
+**Claim Key:** `BOUNDED_GAP_VALUATION_ALPHABET_FINITE`
+
+**Statement:**
+
+Under maximum step valuation bound $B_{\text{max}}$, the symbolic valuation alphabet $\Sigma = \{1, 2, \dots, B_{\text{max}}\}$ is finite.
+
+---
+
+### CLM-H3-MORSE-HEDLUND-001
+
+**Category:** Verified Theoretical Baseline
+
+**Claim Key:** `MORSE_HEDLUND_APERIODIC_LOWER_BOUND_PROVED`
+
+**Statement:**
+
+Over a finite symbolic alphabet, an infinite valuation path $x$ is non-eventually periodic if and only if its factor complexity satisfies $p_x(n) \ge n + 1$ for all $n \ge 1$.
+
+---
+
+### CLM-H3-SELECTOR-COVERAGE-001
+
+**Category:** Domain-Scoped Certificate
+
+**Claim Key:** `MULTISCALE_SELECTOR_COVERAGE_INTERFACE_PROVED`
+
+**Statement:**
+
+`FactorComplexityAnalyzer` and `MultiscaleCoverageMetrics` measure pathwise multiscale periodic window coverage $C_x(N; p, r)$, uncovered positions $U_x(N; p, r)$, and maximum gap run length $G_x(N; p, r)$ across recurrence classes.
+
+---
+
+### CLM-H3-STURMIAN-CUBE-BOUNDED-001
+
+**Category:** Verified Structural Bound
+
+**Claim Key:** `STURMIAN_CUBE_BOUNDED_GAP_COVERAGE_VERIFIED`
+
+**Statement:**
+
+In every binary Sturmian word ($p_x(n) = n + 1$), cube-ending positions $u^3 = uuu$ occur with uniformly bounded gap distance ($G_{\text{max}} \le 10$), providing bounded-gap periodic window coverage for the canonical selector.
+
+---
+
+### CLM-H3-SUBSTITUTIVE-POTENTIAL-001
+
+**Category:** Verified Graph Certificate
+
+**Claim Key:** `SUBSTITUTIVE_POTENTIAL_FUNCTION_CERTIFICATE_VERIFIED`
+
+**Statement:**
+
+For any finite derived-sequence transition system, a node potential assignment $\Phi$ satisfying $w(e) + \Phi(t) - \Phi(s) \le -\varepsilon$ ($\varepsilon \ge 1$) certifies that every directed cycle has a strictly negative net precision balance.
 
 ---
 

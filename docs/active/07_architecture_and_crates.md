@@ -155,6 +155,39 @@ pub struct DescentCertificate {
 }
 ```
 
+### 4.6 Core Interaction Calculus (`collatz-affine`)
+```rust
+pub struct PeriodicReturnCore {
+    pub data: MacrostepData,
+    pub fixed_point: OddRational2Adic,
+}
+
+pub struct CoreInteractionKernel<'a> {
+    pub v: &'a PeriodicReturnCore,
+    pub w: &'a PeriodicReturnCore,
+    pub gamma: BigInt,
+    pub kappa: TwoAdicValuation,
+}
+```
+
+### 4.7 Projective Inverse System & Lift Blocks (`collatz-affine`)
+```rust
+pub struct PrecisionSchedule {
+    pub levels: Vec<u64>,
+}
+
+pub struct ProjectiveResidue {
+    pub precision: u64,
+    pub least_representative: BigUint,
+}
+
+pub struct LiftBlock {
+    pub from_precision: u64,
+    pub to_precision: u64,
+    pub value: BigUint,
+}
+```
+
 ---
 
 ## 5. Workspace Dependencies & Technology Selection

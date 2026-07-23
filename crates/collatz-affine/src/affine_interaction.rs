@@ -3,9 +3,10 @@ use num_bigint::{BigInt, BigUint, Sign};
 use num_traits::{One, Signed, Zero};
 
 /// 2-adic valuation representation supporting finite exponents and infinity (v_2(0) = \infty).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum TwoAdicValuation {
     Finite(u64),
+    #[default]
     Infinity,
 }
 
@@ -31,7 +32,7 @@ impl TwoAdicValuation {
 }
 
 /// Word-derived macrostep data independent of any specific source cylinder.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MacrostepData {
     word: ValuationWord,
     odd_steps: usize,
@@ -234,3 +235,256 @@ impl<'a> AffineInteraction<'a> {
         (lhs, rhs)
     }
 }
+
+/// Canonical 2-adic odd rational fixed point representation: \xi_v = -\beta_v / (Q_v - M_v) < 0.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct OddRational2Adic {
+    numerator: BigInt,   // -\beta_v < 0
+    denominator: BigInt, // d_v = Q_v - M_v > 0 (odd)
+}
+
+impl OddRational2Adic {
+    /// Canonical fixed-point constructor enforcing \xi_v = -\beta_v / (Q_v - M_v).
+    pub fn fixed_point(m_v: &BigUint, q_v: &BigUint, beta_v: &BigUint) -> Result<Self, AffineError> {
+        let m_int = BigInt::from_biguint(Sign::Plus, m_v.clone());
+        let q_int = BigInt::from_biguint(Sign::Plus, q_v.clone());
+        let beta_int = BigInt::from_biguint(Sign::Plus, beta_v.clone());
+
+        let d_v = &q_int - &m_int;
+        if d_v <= BigInt::zero() {
+            return Err(AffineError::Overflow);
+        }
+
+        let numerator = -&beta_int;
+        let denominator = d_v;
+
+        Ok(Self {
+            numerator,
+            denominator,
+        })
+    }
+
+    pub fn numerator(&self) -> &BigInt {
+        &self.numerator
+    }
+
+    pub fn denominator(&self) -> &BigInt {
+        &self.denominator
+    }
+
+    pub fn is_negative(&self) -> bool {
+        self.numerator.is_negative()
+    }
+}
+
+/// Canonical return core data holding M_v = 2^{B_v}, Q_v = 3^{E_v}, \beta_v = c_v, and d_v = Q_v - M_v.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PeriodicReturnCore {
+    data: MacrostepData,
+    fixed_point: OddRational2Adic,
+}
+
+impl PeriodicReturnCore {
+    pub fn new(word: ValuationWord) -> Result<Self, AffineError> {
+        let data = MacrostepData::from_word(word)?;
+        // Canonical return convention: M_v = 2^{B_v} (denominator), Q_v = 3^{E_v} (multiplier)
+        let m_v = data.denominator().clone();
+        let q_v = data.multiplier().clone();
+        let beta_v = data.constant().clone();
+
+        let fixed_point = OddRational2Adic::fixed_point(&m_v, &q_v, &beta_v)?;
+        Ok(Self { data, fixed_point })
+    }
+
+    pub fn data(&self) -> &MacrostepData {
+        &self.data
+    }
+
+    pub fn fixed_point(&self) -> &OddRational2Adic {
+        &self.fixed_point
+    }
+
+    pub fn m_v(&self) -> &BigUint {
+        self.data.denominator()
+    }
+
+    pub fn q_v(&self) -> &BigUint {
+        self.data.multiplier()
+    }
+
+    pub fn beta_v(&self) -> &BigUint {
+        self.data.constant()
+    }
+
+    /// Returns d_v = Q_v - M_v > 0.
+    pub fn d_v(&self) -> BigInt {
+        let q_int = BigInt::from_biguint(Sign::Plus, self.q_v().clone());
+        let m_int = BigInt::from_biguint(Sign::Plus, self.m_v().clone());
+        q_int - m_int
+    }
+
+    /// Evaluates canonical return map F_v(D) = (Q_v * D + beta_v) / M_v over Z.
+    pub fn eval_map(&self, d: &BigInt) -> Option<BigInt> {
+        let q_int = BigInt::from_biguint(Sign::Plus, self.q_v().clone());
+        let m_int = BigInt::from_biguint(Sign::Plus, self.m_v().clone());
+        let beta_int = self.data.constant_int();
+
+        let num = (q_int * d) + beta_int;
+        if (&num % &m_int).is_zero() {
+            Some(num / m_int)
+        } else {
+            None
+        }
+    }
+
+    /// Evaluates the Integer Primitive Form A_v(D) = d_v * D + \beta_v.
+    pub fn eval_integer_primitive(&self, d: &BigInt) -> BigInt {
+        (self.d_v() * d) + self.data.constant_int()
+    }
+
+    /// Returns the authoritative CANONICAL_RETURN_CONVENTION_V1 ASCII formula.
+    pub fn canonical_ascii_definition(&self) -> &'static str {
+        "F_v(D) = (Q_v * D + beta_v) / M_v"
+    }
+}
+
+/// The 4-case Core Switch Classification Type.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CoreSwitchType {
+    SameCore,
+    Inherited,
+    Reset,
+    Resonant,
+}
+
+/// The outcome of unit cancellation in a resonant core switch (s = \kappa).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ResonanceOutcome {
+    FiniteGain { extra_bits: u64 },
+    ExactCore,
+}
+
+/// Detailed evaluation result for an integer core switch transition.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CoreSwitchResult {
+    pub switch_type: CoreSwitchType,
+    pub incoming_depth: TwoAdicValuation,
+    pub core_separation_kappa: TwoAdicValuation,
+    pub outgoing_depth: TwoAdicValuation,
+    pub resonance_unit_cancellation: Option<u64>,
+    pub resonance_outcome: Option<ResonanceOutcome>,
+}
+
+/// Core interaction kernel providing exact arithmetic for core separation, commutators, and switch budget.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CoreInteractionKernel<'a> {
+    v: &'a PeriodicReturnCore,
+    w: &'a PeriodicReturnCore,
+    gamma: BigInt,
+    kappa: TwoAdicValuation,
+}
+
+impl<'a> CoreInteractionKernel<'a> {
+    pub fn new(v: &'a PeriodicReturnCore, w: &'a PeriodicReturnCore) -> Self {
+        // \Gamma_{v,w} = d_v \beta_w - d_w \beta_v where d_v = Q_v - M_v > 0
+        let gamma = (v.d_v() * w.data().constant_int()) - (w.d_v() * v.data().constant_int());
+        let kappa = TwoAdicValuation::from_bigint(&gamma);
+        Self { v, w, gamma, kappa }
+    }
+
+    pub fn v(&self) -> &'a PeriodicReturnCore {
+        self.v
+    }
+
+    pub fn w(&self) -> &'a PeriodicReturnCore {
+        self.w
+    }
+
+    pub fn gamma(&self) -> &BigInt {
+        &self.gamma
+    }
+
+    pub fn kappa(&self) -> TwoAdicValuation {
+        self.kappa
+    }
+
+    pub fn are_cores_commuting(&self) -> bool {
+        self.gamma.is_zero()
+    }
+
+    /// Evaluates the 4-case exact integer core switch law: d_v A_w(D) = d_w A_v(D) + \Gamma_{v,w}.
+    pub fn evaluate_integer_switch(&self, a_v: &BigInt) -> CoreSwitchResult {
+        let s = TwoAdicValuation::from_bigint(a_v);
+        let kappa = self.kappa;
+
+        match (s, kappa) {
+            (_, TwoAdicValuation::Infinity) => CoreSwitchResult {
+                switch_type: CoreSwitchType::SameCore,
+                incoming_depth: s,
+                core_separation_kappa: TwoAdicValuation::Infinity,
+                outgoing_depth: s,
+                resonance_unit_cancellation: None,
+                resonance_outcome: None,
+            },
+            (TwoAdicValuation::Finite(s_val), TwoAdicValuation::Finite(k_val)) => {
+                if s_val < k_val {
+                    CoreSwitchResult {
+                        switch_type: CoreSwitchType::Inherited,
+                        incoming_depth: s,
+                        core_separation_kappa: kappa,
+                        outgoing_depth: s,
+                        resonance_unit_cancellation: None,
+                        resonance_outcome: None,
+                    }
+                } else if s_val > k_val {
+                    CoreSwitchResult {
+                        switch_type: CoreSwitchType::Reset,
+                        incoming_depth: s,
+                        core_separation_kappa: kappa,
+                        outgoing_depth: TwoAdicValuation::Finite(k_val),
+                        resonance_unit_cancellation: None,
+                        resonance_outcome: None,
+                    }
+                } else {
+                    // Resonant case: s_val == k_val
+                    let d_w = self.w.d_v();
+                    let u = (d_w * a_v) >> k_val;
+                    let g = &self.gamma >> k_val;
+                    let sum = u + g;
+                    let cancellation = TwoAdicValuation::from_bigint(&sum);
+
+                    let (outgoing, extra_bits, outcome) = match cancellation {
+                        TwoAdicValuation::Finite(c) => (
+                            TwoAdicValuation::Finite(k_val + c),
+                            Some(c),
+                            Some(ResonanceOutcome::FiniteGain { extra_bits: c }),
+                        ),
+                        TwoAdicValuation::Infinity => (
+                            TwoAdicValuation::Infinity,
+                            None,
+                            Some(ResonanceOutcome::ExactCore),
+                        ),
+                    };
+
+                    CoreSwitchResult {
+                        switch_type: CoreSwitchType::Resonant,
+                        incoming_depth: s,
+                        core_separation_kappa: kappa,
+                        outgoing_depth: outgoing,
+                        resonance_unit_cancellation: extra_bits,
+                        resonance_outcome: outcome,
+                    }
+                }
+            }
+            (TwoAdicValuation::Infinity, TwoAdicValuation::Finite(k_val)) => CoreSwitchResult {
+                switch_type: CoreSwitchType::Reset,
+                incoming_depth: s,
+                core_separation_kappa: kappa,
+                outgoing_depth: TwoAdicValuation::Finite(k_val),
+                resonance_unit_cancellation: None,
+                resonance_outcome: None,
+            },
+        }
+    }
+}
+

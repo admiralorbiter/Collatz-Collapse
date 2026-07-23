@@ -208,20 +208,50 @@ For any $m \ge 2$ and odd integer $n \equiv 2^m - 1 \pmod{2^m}$:
 
 ### 9.3 Periodic 2-Adic Fixed-Point & Finite-Fuel Dichotomy Theorem
 
+### 9.3 Periodic 2-Adic Fixed-Point & Integer Primitive Form
+
 Let $S: \mathbb{Z}_2^{\text{odd}} \to \mathbb{Z}_2^{\text{odd}}$ be the accelerated Collatz map on odd 2-adic integers.
-Let $w = (a_1, \ldots, a_k) \in (\mathbb{N}^+)^k$, $A = \sum_{i=1}^k a_i$, and $F_w(n) = \frac{3^k n + c_w}{2^A}$.
+For a canonical return macrostep block $v$, define:
+$$F_v(D) = \frac{M_v}{Q_v} D + \beta_v, \qquad M_v = 2^{B_v}, \quad Q_v = 3^{E_v}, \quad d_v = Q_v - M_v > 0 \text{ (odd)}$$
 
-Since $2^A - 3^k$ is odd and non-zero,
-$$x_w^* = \frac{c_w}{2^A - 3^k} \in \mathbb{Z}_2$$
-is the unique 2-adic fixed point of $F_w$, and its exact 2-adic valuation sequence is $w^\infty$.
+Since $Q_v > M_v$ and $\beta_v = c_v > 0$, the unique 2-adic fixed point $\xi_v$ of $F_v$ is strictly negative:
+$$\xi_v = \frac{-\beta_v}{d_v} = \frac{-\beta_v}{Q_v - M_v} = \frac{\beta_v}{M_v - Q_v} < 0$$
 
-For the normalized fixed-point linear form $L_w(n) = \alpha n + \beta = \pm((2^A - 3^k)n - c_w)$ with $\alpha > 0$:
-$$L_w(F_w(n)) = \frac{3^k}{2^A} L_w(n) \implies v_2(L_w(F_w(n))) = v_2(L_w(n)) - A \quad \text{whenever } L_w(n) \neq 0.$$
+The error-transport identity across macrostep repetitions is:
+$$F_v(D) - \xi_v = \frac{M_v}{Q_v} (D - \xi_v) \implies v_2(F_v^r(D) - \xi_v) = v_2(D - \xi_v) - r B_v$$
 
-- **Positive Integer Cycle**: If $x_w^* \in \mathbb{N}^+$ and exact rational replay succeeds, it yields a positive integer periodic orbit ($x_w^* = 1$ for $w = (2)$).
-- **Word-Specific Finite-Fuel Invariant**: If $x_w^* \notin \mathbb{N}^+$, no positive integer realizes $w^\infty$. For every odd positive integer $n \in \mathbb{N}^+_{\text{odd}}$, the valuation $v_2(L_w(n))$ is finite and
-  $$N_{\text{word}}(n) = \max\left(0, \left\lfloor \frac{v_2(L_w(n)) - 1}{A} \right\rfloor\right)$$
-  bounds the number of consecutive complete repetitions of $w$ beginning at $n$.
+To avoid rational division during verification, define the **Integer Primitive Form** $A_v(D)$:
+$$A_v(D) := d_v D + \beta_v$$
+Because $d_v$ is odd, $v_2(D - \xi_v) = v_2(A_v(D))$.
+
+### 9.4 Core Interaction Determinant & Affine Commutator Identity
+
+For two return blocks $v, w$, define the **Core Interaction Determinant**:
+$$\Gamma_{v,w} = d_v \beta_w - d_w \beta_v$$
+
+This invariant satisfies:
+1. **Core Difference Identity:**
+   $$\xi_v - \xi_w = \frac{\Gamma_{v,w}}{d_v d_w} \implies v_2(\xi_v - \xi_w) = v_2(\Gamma_{v,w})$$
+2. **Affine Commutator Identity:**
+   $$F_w(F_v(D)) - F_v(F_w(D)) = -\frac{M_v M_w}{Q_v Q_w} \Gamma_{v,w}$$
+3. **Unification Theorem:**
+   $$\Gamma_{v,w} = 0 \iff \xi_v = \xi_w \iff F_v \circ F_w = F_w \circ F_v \iff v, w \text{ share a common rational affine center.}$$
+
+### 9.5 Integer Core-Switching Law & 4-Case Valuation Budget
+
+Using $A_v(D) = d_v D + \beta_v$ and $A_w(D) = d_w D + \beta_w$, core switching obeys the exact integer identity:
+$$d_v A_w(D) = d_w A_v(D) + \Gamma_{v,w}$$
+
+Let $s = v_2(A_v(D))$ and $\kappa = v_2(\Gamma_{v,w}) \in \mathbb{N} \cup \{\infty\}$. The outgoing depth $s_w = v_2(A_w(D))$ follows four exact cases:
+1. **`SameCore` ($\Gamma_{v,w} = 0, \kappa = \infty$):** $s_w = s$.
+2. **`Inherited` ($s < \kappa$):** $s_w = s$ (precision is too shallow to distinguish cores).
+3. **`Reset` ($s > \kappa$):** $s_w = \kappa$ (switching resets surviving depth to core separation $\kappa$).
+4. **`Resonant` ($s = \kappa$):** Writing $u = \frac{d_w A_v(D)}{2^\kappa}$ and $g = \frac{\Gamma_{v,w}}{2^\kappa}$ (both odd), $s_w = \kappa + v_2(u + g) \ge \kappa + 1$.
+
+### 9.6 Fine–Wilf Symbolic Overlap & Morse–Hedlund Complexity
+
+- **Fine–Wilf Overlap Theorem:** If a concrete trajectory simultaneously shadows two repeated patterns $v^\infty$ and $w^\infty$ over an exact symbolic interval of length $|x| \ge |v| + |w| - \gcd(|v|, |w|)$, then $v$ and $w$ reduce to a common primitive period.
+- **Morse–Hedlund Complexity Bound:** Any infinite aperiodic path over a finite gap alphabet has subword complexity $p(n) \ge n + 1$ for all $n$. Paths with $p(n) \le n$ are eventually periodic and eliminated by positive-integer non-periodicity theorems.
 
 ---
 

@@ -7,7 +7,30 @@ pub mod inversion;
 pub mod lift_kernel;
 pub mod quotient_register;
 pub mod semantic_cylinders;
+pub mod aperiodic_complexity;
+pub mod core_selector;
+pub mod precision_ledger;
+pub mod projective_residues;
+pub mod semantic_bridge;
+pub mod sturmian_graph;
 pub mod symbolic_language;
+
+pub use aperiodic_complexity::{
+    DeterministicBenchmarkGenerators, FactorComplexityAnalyzer, MultiscaleCoverageMetrics,
+    RecurrenceType, SturmianCubeAnalyzer, SubstitutivePotentialFunction,
+};
+pub use sturmian_graph::{
+    SturmianGapEmbedding, SturmianPhaseNode, SturmianTemplateExtractor, SturmianTransitionGraph,
+};
+pub use core_selector::{
+    CanonicalCoreSelector, CoreTransitionReport, PrimitiveCoreSelection, SelectorOutput,
+};
+pub use precision_ledger::{FineWilfBound, PrecisionLedger, SwitchLedgerEntry};
+pub use projective_residues::{
+    detect_constant_suffix, verify_compatible_pair, verify_stabilization_certificate, LiftBlock,
+    PrecisionSchedule, ProjectiveResidue, StabilizationCertificate,
+};
+pub use semantic_bridge::SemanticCoreDistanceBridge;
 pub mod u_block_accelerator;
 pub mod ultrametric_machine;
 pub mod valuation;
@@ -15,7 +38,10 @@ pub mod valuation;
 pub use lift_kernel::{extend_prefix_state, LiftTransition, PrefixLiftState};
 pub use u_block_accelerator::{UBlockAccelerator, UBlockResult};
 pub use affine::{compute_descent_threshold, AffineDiagnostics, AffinePrefix, ValuationSemantics};
-pub use affine_interaction::{AffineInteraction, MacrostepData, TwoAdicValuation};
+pub use affine_interaction::{
+    AffineInteraction, CoreInteractionKernel, CoreSwitchResult, CoreSwitchType, MacrostepData,
+    OddRational2Adic, PeriodicReturnCore, ResonanceOutcome, TwoAdicValuation,
+};
 pub use cross_form_cylinder::{
     recover_broad_cylinder, recover_exact_cylinder, recover_sequence_cylinder,
 };
