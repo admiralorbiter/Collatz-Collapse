@@ -1,0 +1,19 @@
+{
+  "package_name": "sturmian-return-elimination",
+  "version": "1.0.0-rc1",
+  "date": "2026-07-23",
+  "citation": "Bell, Schulz, and Shallit (2024), Consecutive Power Occurrences in Sturmian Words, Comptes Rendus Mathématique, Nov 2024",
+  "gap_alphabet": [1, 2],
+  "node_count": 52,
+  "edge_count": 2482,
+  "min_slack_epsilon_star": 60,
+  "max_cycle_mean_lambda_star": -60.0,
+  "full_sha256_digests": {
+    "ordered_embedding_1_2": "e93f8fc30780fa06b45e2e6c5fec08e9997dff54b0175e71eca9ab7a01a8e50c",
+    "ordered_embedding_2_1": "3a22e0d48807b09601d6134407003d30ce04712d72ad841ab5512b1ab2ab6a24"
+  },
+  "file_size_bytes": {
+    "ordered_embedding_1_2": 39336,
+    "ordered_embedding_2_1": 39337
+  }
+}
