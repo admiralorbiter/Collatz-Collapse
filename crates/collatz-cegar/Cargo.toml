@@ -70,6 +70,30 @@ path = "../../tests/phase73s3f_math_audit.rs"
 name = "phase73s3f_structural_atlas"
 path = "../../tests/phase73s3f_structural_atlas.rs"
 
+[[test]]
+name = "phase73s3g_math_audit"
+path = "../../tests/phase73s3g_math_audit.rs"
+
+[[test]]
+name = "phase73s3g_soundness_gate"
+path = "../../tests/phase73s3g_soundness_gate.rs"
+
+[[test]]
+name = "phase73g4_u8_execution"
+path = "../../tests/phase73g4_u8_execution.rs"
+
+[[test]]
+name = "phase73h0_e3_certification"
+path = "../../tests/phase73h0_e3_certification.rs"
+
+[[test]]
+name = "phase73h0a_all_zero_core"
+path = "../../tests/phase73h0a_all_zero_core.rs"
+
+[[test]]
+name = "phase73h0b_consolidation"
+path = "../../tests/phase73h0b_consolidation.rs"
+
 
 
 

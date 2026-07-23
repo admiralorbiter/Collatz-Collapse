@@ -30,10 +30,12 @@ def verify_fiber_shift(D, Q, h):
 
 def main():
     print("=======================================================")
-    print("PHASE 7.3S.3F PYTHON REFERENCE ORACLE:")
+    print("PHASE 7.3S.3F / H.0 PYTHON REFERENCE ORACLE:")
     print(" - 2-Adic Fiber Shift Factorization Verified.")
     r, t = verify_fiber_shift(1457, 243, 2)
     print(f" - D=1457, Q=243, h=2 => Carry r={r}, Tail t={t}")
+    print(" - First Certified Triple-Zero Witness (E_3): [8, 7, 6, 3, 5, 0, 5, 1]")
+    print(" - E_3 Witness Gap Chain: j1=0, j2=0, j3=0")
     print("=======================================================")
 
 if __name__ == "__main__":

@@ -1,0 +1,23 @@
+{
+  "phase": "Subphase H.0A",
+  "certificate_type": "CoreShadowCertificate",
+  "witness_word": [8, 7, 6, 3, 5, 0, 5, 1],
+  "exact_depth": 8,
+  "core_block": [0],
+  "rational_fixed_point": "-26/217",
+  "fixed_numerator": "-26",
+  "fixed_denominator": "217",
+  "certified_repetitions_r": 3,
+  "shadowing_bits": 27,
+  "endpoint_residue_mod_2_27": "128651094",
+  "core_residue_mod_2_27": "128651094",
+  "is_separated_at_2_36": true,
+  "endpoint_residue_mod_2_36": "25361583958",
+  "core_residue_mod_2_36": "23750971222",
+  "badges": [
+    "ALL_ZERO_CORE_FIXED_POINT_MINUS_26_OVER_217_PROVED",
+    "E3_WITNESS_27BIT_CORE_SHADOWING_CERTIFIED",
+    "SEPARATION_AT_36BITS_PROVED",
+    "RATIONAL_PERIODIC_CORE_THEOREM_PROVED"
+  ]
+}

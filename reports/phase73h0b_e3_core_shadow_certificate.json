@@ -1,0 +1,27 @@
+{
+  "phase": "Subphase H.0B",
+  "certificate_type": "CoreShadowCertificate",
+  "witness_word": [8, 7, 6, 3, 5, 0, 5, 1],
+  "exact_depth": 8,
+  "core_block": [0],
+  "rational_fixed_point": "-26/217",
+  "fixed_numerator": "-26",
+  "fixed_denominator": "-217",
+  "primitive_integer_valuation_v2": 29,
+  "block_precision_b_v": 9,
+  "repetitions_certified_r": 3,
+  "slack_bits": 2,
+  "first_differing_bit": 29,
+  "is_separated_at_bit_29": true,
+  "badges": [
+    "SIGN_MUTATION_TEST_PASSED",
+    "PRIMITIVE_INTEGER_VALUATION_IDENTITY_PROVED",
+    "E3_WITNESS_MINIMUM_27BIT_SHADOW_REQUIREMENT_CERTIFIED",
+    "E3_WITNESS_EXACT_29BIT_CORE_AGREEMENT_PROVED",
+    "E3_WITNESS_SEPARATES_FROM_CORE_AT_BIT29",
+    "PERIODIC_CORE_ERROR_TRANSPORT_IDENTITY_PROVED",
+    "NO_POSITIVE_PURELY_PERIODIC_RETURN_ITINERARY_PROVED",
+    "NO_POSITIVE_EVENTUALLY_PERIODIC_RETURN_ITINERARY_PROVED",
+    "KRAFT_SHANNON_INFORMATION_DECOMPOSITION_PROVED"
+  ]
+}

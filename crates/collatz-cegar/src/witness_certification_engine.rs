@@ -102,4 +102,21 @@ impl WitnessCertificationEngine {
             third_gap_l,
         })
     }
+
+    /// Search U <= 8 to locate and certify the first E_3 triple-zero witness
+    pub fn find_first_triple_zero_witness() -> Option<WitnessCertificate> {
+        let stream_report = crate::streaming_falsification_engine::StreamingFalsificationEngine::run_streaming_falsification(8, 8);
+
+        for lvl in &stream_report.level_reports {
+            for (_endpoint_big, word) in &lvl.one_zero_witness_data {
+                if let Some(cert) = Self::certify_witness(word) {
+                    if cert.is_triple_zero {
+                        return Some(cert);
+                    }
+                }
+            }
+        }
+
+        None
+    }
 }
