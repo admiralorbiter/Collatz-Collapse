@@ -2,7 +2,7 @@ use collatz_affine::{
     classify_guarded_return, compose_guarded_path, CanonicalCylinder, MacrostepData, Q1Quotient,
     ValuationWord,
 };
-use collatz_cegar::UltrametricMachine;
+use collatz_affine::UltrametricMachine;
 use num_bigint::BigUint;
 
 #[test]

@@ -76,7 +76,7 @@ impl InducedVMapEngine {
         let k_opt = Self::t_to_k(t);
 
         let delta = Self::compute_delta(t);
-        if delta < 1 || (delta - 1) % 4 != 0 {
+        if delta < 1 || !(delta - 1).is_multiple_of(4) {
             let val_expr = BigUint::from(231u32) + (BigUint::from(729u32) * t);
             let pow_delta = BigUint::from(1u32) << delta;
             let u_raw = &val_expr / &pow_delta;

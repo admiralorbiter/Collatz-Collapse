@@ -1,6 +1,5 @@
 use collatz_cegar::accelerated_branch_params::AcceleratedBranchParams;
 use collatz_cegar::adaptive_stress_engine::AdaptiveStressEngine;
-use collatz_cegar::backward_fixed_point_probe::BackwardFixedPointProbe;
 use collatz_cegar::extremal_source_search::ExtremalSourceSearchEngine;
 use collatz_cegar::periodic_ghost_atlas::PeriodicGhostAtlas;
 use collatz_cegar::precision_aware_cylinder::Cylinder;

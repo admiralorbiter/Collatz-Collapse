@@ -33,3 +33,45 @@ path = "../../tests/phase73s2b_tree_audit.rs"
 [[test]]
 name = "phase73s2c_tree_audit"
 path = "../../tests/phase73s2c_tree_audit.rs"
+
+[[test]]
+name = "phase73s3_refutation_test"
+path = "../../tests/phase73s3_refutation_test.rs"
+
+[[test]]
+name = "phase73s3b_math_audit"
+path = "../../tests/phase73s3b_math_audit.rs"
+
+[[test]]
+name = "coupled_mutation_test"
+path = "../../tests/coupled_mutation_test.rs"
+
+[[test]]
+name = "phase73s3c_math_audit"
+path = "../../tests/phase73s3c_math_audit.rs"
+
+[[test]]
+name = "phase73s3d_math_audit"
+path = "../../tests/phase73s3d_math_audit.rs"
+
+[[test]]
+name = "phase73s3e_math_audit"
+path = "../../tests/phase73s3e_math_audit.rs"
+
+[[test]]
+name = "phase73s3e_b_math_audit"
+path = "../../tests/phase73s3e_b_math_audit.rs"
+
+[[test]]
+name = "phase73s3f_math_audit"
+path = "../../tests/phase73s3f_math_audit.rs"
+
+[[test]]
+name = "phase73s3f_structural_atlas"
+path = "../../tests/phase73s3f_structural_atlas.rs"
+
+
+
+
+
+

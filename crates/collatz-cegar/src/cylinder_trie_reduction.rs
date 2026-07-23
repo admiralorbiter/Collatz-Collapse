@@ -18,6 +18,12 @@ pub struct CylinderTrie {
     pub provenance: HashMap<Cylinder, Vec<Vec<u64>>>,
 }
 
+impl Default for CylinderTrie {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CylinderTrie {
     pub fn new() -> Self {
         Self {
@@ -76,8 +82,8 @@ impl CylinderTrie {
             Self::compact_node(r);
         }
 
-        let left_end = node.left_0.as_ref().map_or(false, |n| n.is_cylinder_end);
-        let right_end = node.right_1.as_ref().map_or(false, |n| n.is_cylinder_end);
+        let left_end = node.left_0.as_ref().is_some_and(|n| n.is_cylinder_end);
+        let right_end = node.right_1.as_ref().is_some_and(|n| n.is_cylinder_end);
 
         if left_end && right_end {
             node.is_cylinder_end = true;
@@ -129,12 +135,10 @@ impl CylinderTrie {
                 } else {
                     return false;
                 }
+            } else if let Some(ref r) = curr.right_1 {
+                curr = r;
             } else {
-                if let Some(ref r) = curr.right_1 {
-                    curr = r;
-                } else {
-                    return false;
-                }
+                return false;
             }
             bit_idx += 1;
         }

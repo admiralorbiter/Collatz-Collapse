@@ -37,8 +37,8 @@ impl ZeroLiftCegarEngine {
 
             for j in 0..=self.max_gap {
                 let p_j = AcceleratedBranchParams::for_gap(j);
-                let c_j_rem = (&p_j.z_source_residue % modulus_m).to_u64_digits().get(0).cloned().unwrap_or(0);
-                let d_j_rem = (&p_j.z_endpoint % modulus_m).to_u64_digits().get(0).cloned().unwrap_or(0);
+                let c_j_rem = (&p_j.z_source_residue % modulus_m).to_u64_digits().first().cloned().unwrap_or(0);
+                let d_j_rem = (&p_j.z_endpoint % modulus_m).to_u64_digits().first().cloned().unwrap_or(0);
 
                 if d_rem == c_j_rem {
                     let next_rem = d_j_rem;

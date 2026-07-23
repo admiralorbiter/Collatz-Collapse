@@ -36,6 +36,7 @@ impl ScalarLyapunovSolver {
 
     /// Synthesizes non-negative integer residue weights w_r >= 0 over 100% of legal residue transitions.
     /// Emits an ObstructionCycleJson if single-step scalar ranking is mathematically impossible.
+    #[allow(clippy::result_large_err)]
     pub fn solve(&self) -> Result<ScalarLyapunovCertificateJson, ObstructionCycleJson> {
         let modulus = 1u64 << self.modulus_exponent;
         let complete_transitions = reconstruct_complete_residue_transitions(self.modulus_exponent);

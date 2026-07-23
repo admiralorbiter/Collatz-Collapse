@@ -1,18 +1,88 @@
+pub mod abstract_domain;
 pub mod accelerated_branch_params;
+pub mod accelerated_invariant_search;
+pub mod accelerated_lift;
+pub mod accelerated_ranking;
+pub mod accelerated_transition_system;
 pub mod adaptive_stress_engine;
 pub mod adversarial_corpus;
+pub mod alphabet_manifest;
 pub mod backward_approximant_engine;
 pub mod backward_fixed_point_probe;
 pub mod bounded_reachability_probe;
+pub mod closed_walk_analyzer;
+pub mod concretization;
+pub mod canonical_pullback_engine;
+pub mod coupled_invariant_miner;
+pub mod cylinder_partition;
 pub mod cylinder_trie_reduction;
+pub mod destination_refinement_m72;
+pub mod engine;
 pub mod extremal_source_search;
+pub mod global_quotient_theorems;
+pub mod one_zero_quotient_atlas;
+pub mod conditional_audit_engine;
+pub mod conditional_measure_audit;
+pub mod one_zero_section_record;
+pub mod spine_quotient_oracle;
+pub mod shell_carry_engine;
+pub mod streaming_falsification_engine;
+pub mod witness_certification_engine;
+pub mod canonical_fiber_shift;
+pub mod witness_family_atlas;
+pub mod feature_counterexample_search;
+pub mod fixed_point_synthesizer;
+pub mod graph_closure_m72;
+pub mod graph_contraction_solver;
+pub mod guarded_path;
+pub mod guarded_return_classifier;
+pub mod induced_v_map;
+pub mod invariant_falsifier;
+pub mod karp_cycle;
+pub mod lift_digit_engine;
+pub mod non_commuting_cycles;
+pub mod path_semantics;
 pub mod periodic_ghost_atlas;
+pub mod periodic_necklace_analyzer;
 pub mod positive_control_replay_engine;
 pub mod precision_aware_cylinder;
+pub mod product_state_m72;
+pub mod refinement;
+pub mod relational_domain;
+pub mod scalar_lyapunov_solver;
+pub mod sct_engine;
+pub mod semantic_gate;
 pub mod single_pass_grid_traversal;
 pub mod state_coupled_invariant_miner;
 pub mod two_zero_cylinder_characterization;
+pub mod ultrametric_machine;
 pub mod zero_lift_cegar_engine;
+pub mod zero_lift_continuation;
 pub mod zero_lift_endpoint_graph;
+pub mod zero_lift_explorer;
 pub mod zero_output_scc_probe;
 pub mod zero_tail_stress_audit;
+
+// Explicit public re-exports for crate interface compatibility
+pub use accelerated_invariant_search::{AcceleratedInvariantEngine, AcceleratedInvariantSearchResult, AcceleratedInvariantStatus};
+pub use accelerated_lift::{AcceleratedLiftEngine, AcceleratedLiftExtension, AcceleratedPrefixState};
+pub use accelerated_ranking::{AcceleratedRankingEngine, AcceleratedRankingProof, AcceleratedRankingStatus};
+pub use accelerated_transition_system::{AcceleratedEdge, AcceleratedTransitionSystemEngine};
+pub use adversarial_corpus::{AdversarialCorpus, AdversarialRecord, BranchParameters, RecordOrigin, StoppingReason};
+pub use engine::{CegarEngine, CegarEngineConfig, CegarEngineReport};
+pub use extremal_source_search::{ExtremalSearchConfig, ExtremalSearchResult, ExtremalSourceSearchEngine, SymbolicBranchDiagnostics};
+pub use fixed_point_synthesizer::{ExactValuation, FixedPointSynthesisResult, FixedPointSynthesizer};
+pub use guarded_path::{BasedReturnCylinder, GuardCheckpoint, GuardedPathCylinder, StateId, StateMembership};
+pub use induced_v_map::{DyadicBranchNormalForm, InducedVMapEngine, InducedVTransition};
+pub use lift_digit_engine::{InfiniteRealizationStatus, LiftDigitEngine, ZeroLiftChain};
+pub use periodic_ghost_atlas::PeriodicGhostAtlas;
+pub use periodic_necklace_analyzer::{PeriodicNecklaceAnalyzer, PeriodicOrbitData, TopologicalEntropyEngine, ValuationHistogramEntry};
+pub use zero_lift_continuation::{ZeroLiftContinuationEngine, ZeroLiftStepResult};
+pub use zero_lift_explorer::{ZeroLiftExplorer, ZeroLiftWitness};
+
+#[deprecated(note = "Use collatz_affine::UltrametricMachine instead")]
+pub mod legacy_api {
+    pub use crate::periodic_ghost_atlas::PeriodicGhostAtlas;
+    pub use crate::adversarial_corpus::AdversarialCorpus;
+}
+

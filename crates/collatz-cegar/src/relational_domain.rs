@@ -195,6 +195,7 @@ impl SymbolicRelationalSolver {
     }
 
     /// Reruns cycle and ranking analysis over the refined symbolic relational state graph.
+    #[allow(clippy::result_large_err)]
     pub fn extract_next_obstruction(&self) -> Result<(), ObstructionCycleJson> {
         let edges = construct_symbolic_relational_transitions(self.modulus_exponent);
         let graph_hash = compute_canonical_relational_graph_hash(&edges, self.modulus_exponent);

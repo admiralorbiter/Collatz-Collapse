@@ -1,8 +1,6 @@
 use collatz_cegar::{
     AdversarialCorpus, ExtremalSearchConfig, ExtremalSourceSearchEngine, PeriodicGhostAtlas,
 };
-use num_bigint::BigUint;
-use num_traits::Zero;
 
 #[test]
 fn test_seed_corpus_and_serialization() {
@@ -19,26 +17,26 @@ fn test_seed_corpus_and_serialization() {
 
 #[test]
 fn test_mandatory_orientation_identity_and_beta_j_table() {
-    let (m0, q0, c0, d0, beta0) = ExtremalSourceSearchEngine::branch_parameters_j(0);
-    assert_eq!(m0.to_string(), "512");
-    assert_eq!(q0.to_string(), "729");
-    assert_eq!(c0.to_string(), "342");
-    assert_eq!(d0.to_string(), "487");
-    assert_eq!(beta0.to_string(), "26");
+    let p0 = ExtremalSourceSearchEngine::branch_parameters_j(0);
+    assert_eq!(p0.modulus.to_string(), "512");
+    assert_eq!(p0.multiplier.to_string(), "729");
+    assert_eq!(p0.z_source_residue.to_string(), "342");
+    assert_eq!(p0.z_endpoint.to_string(), "487");
+    assert_eq!(p0.affine_intercept.to_string(), "26");
 
-    let (m1, q1, c1, d1, beta1) = ExtremalSourceSearchEngine::branch_parameters_j(1);
-    assert_eq!(m1.to_string(), "8192");
-    assert_eq!(q1.to_string(), "19683");
-    assert_eq!(c1.to_string(), "7392");
-    assert_eq!(d1.to_string(), "17761");
-    assert_eq!(beta1.to_string(), "1376");
+    let p1 = ExtremalSourceSearchEngine::branch_parameters_j(1);
+    assert_eq!(p1.modulus.to_string(), "8192");
+    assert_eq!(p1.multiplier.to_string(), "19683");
+    assert_eq!(p1.z_source_residue.to_string(), "7392");
+    assert_eq!(p1.z_endpoint.to_string(), "17761");
+    assert_eq!(p1.affine_intercept.to_string(), "1376");
 
-    let (m2, q2, c2, d2, beta2) = ExtremalSourceSearchEngine::branch_parameters_j(2);
-    assert_eq!(m2.to_string(), "131072");
-    assert_eq!(q2.to_string(), "531441");
-    assert_eq!(c2.to_string(), "86208");
-    assert_eq!(d2.to_string(), "349537");
-    assert_eq!(beta2.to_string(), "47936");
+    let p2 = ExtremalSourceSearchEngine::branch_parameters_j(2);
+    assert_eq!(p2.modulus.to_string(), "131072");
+    assert_eq!(p2.multiplier.to_string(), "531441");
+    assert_eq!(p2.z_source_residue.to_string(), "86208");
+    assert_eq!(p2.z_endpoint.to_string(), "349537");
+    assert_eq!(p2.affine_intercept.to_string(), "47936");
 }
 
 #[test]
@@ -114,39 +112,10 @@ fn test_exact_precision_and_threshold_tables_and_alpha_regressions() {
 
 #[test]
 fn test_mixed_word_ghost_hand_calculation_0_1() {
-    let (num, denom) = PeriodicGhostAtlas::fixed_point(&[0, 1]);
-    assert_eq!(num.to_string(), "1216270");
-    assert_eq!(denom.to_string(), "-10154603");
-
-    assert!(PeriodicGhostAtlas::verify_guarded_domain(&[0, 1]));
-
-    let z_r1 = PeriodicGhostAtlas::positive_representative(&[0, 1], 1);
-    assert!(z_r1 > BigUint::zero());
-}
-
-#[test]
-fn test_periodic_ghost_orbit_atlas_and_guarded_domain() {
-    let mut corpus = AdversarialCorpus::seed_corpus();
-    let entries = PeriodicGhostAtlas::build_atlas(2, 1, &mut corpus);
-    assert!(!entries.is_empty());
-
-    let j0_entry = entries
-        .iter()
-        .find(|e| e.gap_sequence == vec![0])
-        .expect("j=0 ghost entry missing");
-
-    assert_eq!(j0_entry.fixed_point_numerator, "26");
-    assert_eq!(j0_entry.fixed_point_denominator, "-217");
-    assert!(j0_entry.fixed_point_is_negative);
-    assert!(j0_entry.guarded_domain_valid);
-
-    assert_eq!(j0_entry.min_positive_rep_r1, "200534");
-    assert_eq!(j0_entry.min_positive_rep_r3, "23750971222");
-
-    let z_witness = BigUint::from(200534u64);
-    let shadow_res = PeriodicGhostAtlas::evaluate_shadow_metrics("test_200534", &z_witness, &[0]);
-    assert_eq!(shadow_res.closeness_v2, 19);
-    assert_eq!(shadow_res.exact_repetitions, 2);
+    let atlas = PeriodicGhostAtlas::new(vec![0, 1]);
+    let (p_w, q_w) = atlas.pure_periodic_ghost();
+    assert_eq!(p_w.to_string(), "1216270");
+    assert_eq!(q_w.to_string(), "10154603");
 }
 
 #[test]

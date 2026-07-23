@@ -23,19 +23,19 @@ pub struct ZeroTailProfile {
 
 impl ZeroTailProfile {
     pub fn from_canonical_word(word: &CanonicalGuardedWord) -> Self {
-        let b = word.affine.denominator.bits() as u64 - 1;
+        let b = word.affine.denominator.bits() - 1;
         let ell = if word.source_residue.is_zero() {
             0
         } else {
-            word.source_residue.bits() as u64
+            word.source_residue.bits()
         };
-        let z = if b >= ell { b - ell } else { 0 };
+        let z = b.saturating_sub(ell);
         let ratio = if b > 0 { z as f64 / b as f64 } else { 0.0 };
 
         // 3-Part Diagnostics:
         let q_bits = word.affine.multiplier.bits() as f64 - 1.0;
         let real_drift_ratio = if b > 0 { q_bits / b as f64 } else { 0.0 };
-        let three_adic_endpoint_compat = (&word.endpoint % 243u64).to_u64_digits().get(0).cloned().unwrap_or(0);
+        let three_adic_endpoint_compat = (&word.endpoint % 243u64).to_u64_digits().first().cloned().unwrap_or(0);
 
         ZeroTailProfile {
             word_sequence: word.gap_sequence.clone(),

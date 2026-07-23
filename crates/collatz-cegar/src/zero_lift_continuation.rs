@@ -48,7 +48,7 @@ impl ZeroLiftContinuationEngine {
         let val = BigUint::from(231u32) + (BigUint::from(729u32) * &t);
 
         let delta = val.trailing_zeros().unwrap_or(0);
-        if delta < 1 || (delta - 1) % 4 != 0 {
+        if delta < 1 || !(delta - 1).is_multiple_of(4) {
             return Ok(None);
         }
 

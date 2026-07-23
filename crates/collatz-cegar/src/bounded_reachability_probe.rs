@@ -1,6 +1,6 @@
 use crate::cylinder_trie_reduction::CylinderTrie;
 use crate::extremal_source_search::ExtremalSourceSearchEngine;
-use num_bigint::{BigInt, BigUint};
+use num_bigint::BigUint;
 use serde::{Deserialize, Serialize};
 
 /// Outcome Classification for Bounded Reachability Probe.
@@ -102,7 +102,7 @@ impl BoundedReachabilityProbe {
                     congruences.push(is_cong);
 
                     if is_cong {
-                        let num = p_j.affine.multiplier * &curr_endpoint + BigInt::from(p_j.affine.intercept).to_biguint().unwrap();
+                        let num = p_j.affine.multiplier * &curr_endpoint + p_j.affine.intercept.to_biguint().unwrap();
                         curr_endpoint = num / p_j.affine.denominator;
                         intermediate.push(curr_endpoint.to_string());
                     } else {

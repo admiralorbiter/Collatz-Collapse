@@ -46,9 +46,9 @@ impl AcceleratedBranchParams {
         let t_coordinate_residue = (inv_729 * diff) % &modulus;
 
         // 2. mu_j = (1 - c_j) * M_j^{-1} mod 11
-        let m_mod_11 = (&modulus % 11u32).to_u64_digits().get(0).cloned().unwrap_or(0);
+        let m_mod_11 = (&modulus % 11u32).to_u64_digits().first().cloned().unwrap_or(0);
         let inv_m_11 = Self::mod_inverse_u64(m_mod_11, 11);
-        let c_mod_11 = (&t_coordinate_residue % 11u32).to_u64_digits().get(0).cloned().unwrap_or(0);
+        let c_mod_11 = (&t_coordinate_residue % 11u32).to_u64_digits().first().cloned().unwrap_or(0);
         let one_minus_c = (11 + 1 - (c_mod_11 % 11)) % 11;
         let mu_mod_11 = ((one_minus_c * inv_m_11) % 11) as u8;
 
@@ -135,7 +135,7 @@ impl AcceleratedBranchParams {
         let t_val = BigUint::one() + BigUint::from(11u64) * source_c;
         let val_num = BigUint::from(231u64) + BigUint::from(729u64) * &t_val;
         let val2 = Self::count_trailing_zeros(&val_num);
-        if val2 > 0 && (val2 - 1) % 4 == 0 {
+        if val2 > 0 && (val2 - 1).is_multiple_of(4) {
             Some((val2 - 1) / 4)
         } else {
             None

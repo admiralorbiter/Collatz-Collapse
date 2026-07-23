@@ -117,7 +117,7 @@ impl ExtremalSourceSearchEngine {
     pub fn analyze_single_branch_j(j: u64) -> SymbolicBranchDiagnostics {
         let p = Self::branch_parameters_j(j);
         let precision_b_j = p.precision;
-        let bitlength_c_j = p.z_source_residue.bits() as u64;
+        let bitlength_c_j = p.z_source_residue.bits();
         let zero_tail_z_j = precision_b_j.saturating_sub(bitlength_c_j);
 
         let m_float = Self::log2_biguint(&p.modulus).exp2();
@@ -294,7 +294,7 @@ impl ExtremalSourceSearchEngine {
         let mut current_words: Vec<CanonicalGuardedWord> = Vec::new();
         for j in 0..=config.max_gap_j {
             let word = Self::base_guarded_word(j);
-            let b = word.affine.denominator.bits() as u64 - 1;
+            let b = word.affine.denominator.bits() - 1;
             if b <= config.max_precision_h {
                 min_by_precision.entry(b).or_insert_with(|| word.clone());
                 current_words.push(word);
@@ -306,7 +306,7 @@ impl ExtremalSourceSearchEngine {
             for word in &current_words {
                 for j in 0..=config.max_gap_j {
                     let ext = Self::extend_guarded_word(word, j);
-                    let b = ext.affine.denominator.bits() as u64 - 1;
+                    let b = ext.affine.denominator.bits() - 1;
 
                     if b <= config.max_precision_h {
                         let update = match min_by_precision.get(&b) {
@@ -370,7 +370,7 @@ impl ExtremalSourceSearchEngine {
 
         for (&b_target, word) in &threshold_map {
             let rho_s = &word.source_residue;
-            let actual_b = word.affine.denominator.bits() as u64 - 1;
+            let actual_b = word.affine.denominator.bits() - 1;
             let k_source = Self::z_to_k(rho_s);
             let alpha = Self::compute_growth_density_alpha(b_target, rho_s);
             let alpha_witness = Self::compute_growth_density_alpha_witness(actual_b, rho_s);
@@ -452,7 +452,7 @@ impl ExtremalSourceSearchEngine {
                 let z_val: BigUint = res.min_source_z.parse().unwrap_or_else(|_| BigUint::zero());
                 min_by_target_by_j
                     .entry(res.precision_b)
-                    .or_insert_with(BTreeMap::new)
+                    .or_default()
                     .insert(j_bound, z_val);
             }
         }

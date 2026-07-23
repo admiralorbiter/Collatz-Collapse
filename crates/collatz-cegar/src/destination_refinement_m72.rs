@@ -11,11 +11,7 @@ impl RefinementRequirement {
     /// Incremental precision formula: h_add = max(0, A + q_t - M_curr)
     pub fn compute(m_curr: u32, total_valuation_a: u32, target_q: u32) -> Self {
         let required = total_valuation_a + target_q;
-        let additional = if required > m_curr {
-            required - m_curr
-        } else {
-            0
-        };
+        let additional = required.saturating_sub(m_curr);
 
         Self {
             current_exponent: m_curr,

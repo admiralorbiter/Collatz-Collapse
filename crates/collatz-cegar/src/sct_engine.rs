@@ -200,19 +200,19 @@ impl SctEngine {
     /// Verifies SCT termination property: every idempotent graph contains a strict descending self-edge.
     pub fn check_sct_termination(closure: &[SizeChangeGraph]) -> Result<(), String> {
         for g in closure {
-            if g.is_idempotent() {
-                if !g.has_strict_self_edge() {
+            if g.is_idempotent()
+                && !g.has_strict_self_edge() {
                     return Err(format!(
                         "SCT Termination Violation: Idempotent graph for state {} contains no strict descending self-edge",
                         g.source_node
                     ));
                 }
-            }
         }
         Ok(())
     }
 
     /// Generates sound sct_edge_v1 subordinate certificate for an edge.
+    #[allow(clippy::too_many_arguments)]
     pub fn generate_edge_certificate(
         edge_id: &str,
         source_state: &str,

@@ -27,6 +27,7 @@ impl GraphContractionSolver {
 
     /// Solves difference constraints h(v) - h(u) >= p - q * a_e + margin for all edges e: u -> v.
     /// Emits a verified GraphContractionCertificateJson upon success.
+    #[allow(clippy::result_large_err)]
     pub fn solve(
         &self,
         edges: &[GraphEdge],

@@ -22,8 +22,8 @@ impl StateCoupledInvariantMiner {
         for (d_u, q_u) in endpoints {
             let status = char_engine.evaluate_endpoint_status(d_u);
             if !matches!(status, DoubleZeroStatus::AtLeastTwoZeroLifts { .. }) {
-                let d_rem = (d_u % mod_val).to_u64_digits().get(0).cloned().unwrap_or(0);
-                let q_rem = (q_u % mod_val).to_u64_digits().get(0).cloned().unwrap_or(0);
+                let d_rem = (d_u % mod_val).to_u64_digits().first().cloned().unwrap_or(0);
+                let q_rem = (q_u % mod_val).to_u64_digits().first().cloned().unwrap_or(0);
                 safe_states.insert((d_rem, q_rem));
             }
         }

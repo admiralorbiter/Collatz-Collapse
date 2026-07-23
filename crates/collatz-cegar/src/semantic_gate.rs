@@ -32,11 +32,7 @@ impl CylinderImage {
         target_requested_q: u32,
     ) -> u32 {
         let current_precision = m + h_curr;
-        if target_requested_q + total_valuation_a > current_precision {
-            target_requested_q + total_valuation_a - current_precision
-        } else {
-            0
-        }
+        (target_requested_q + total_valuation_a).saturating_sub(current_precision)
     }
 
     pub fn compute_exact_image(
@@ -61,7 +57,7 @@ impl CylinderImage {
         let num = pow3_k * src_r + c_k;
         let two_a = 1u128 << total_a;
 
-        if num % two_a != 0 {
+        if !num.is_multiple_of(two_a) {
             return Err(format!(
                 "Exact division failure: (3^{k} * {src_r} + {c_k}) mod 2^{total_a} = {} != 0",
                 num % two_a

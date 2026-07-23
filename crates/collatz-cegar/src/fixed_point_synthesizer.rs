@@ -26,6 +26,7 @@ pub enum ExactValuation {
 
 /// Typed Output Classification Artifacts for Phase 6D
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[allow(clippy::large_enum_variant)]
 pub enum FixedPointSynthesisResult {
     InfeasibleAbstractCycle {
         reason: String,
@@ -88,7 +89,7 @@ impl FixedPointSynthesizer {
         let mut prim = vals.to_vec();
         let mut is_repeated = false;
         for len in 1..=n / 2 {
-            if n % len == 0 {
+            if n.is_multiple_of(len) {
                 let unit = &vals[0..len];
                 if vals.chunks(len).all(|chunk| chunk == unit) {
                     prim = unit.to_vec();
@@ -393,9 +394,11 @@ impl FixedPointSynthesizer {
 
     /// Runs Phase 6D automatic fixed-point synthesis over all valuation words up to max_k.
     pub fn run_benchmark_suite(max_k: u32, m: u32) -> Phase6DBenchmarkSummary {
-        let mut summary = Phase6DBenchmarkSummary::default();
-        summary.min_k = 1;
-        summary.max_k = max_k;
+        let mut summary = Phase6DBenchmarkSummary {
+            min_k: 1,
+            max_k,
+            ..Default::default()
+        };
 
         let num_residues = 1u64 << (m - 1);
         let mut unique_classes = std::collections::HashSet::new();
