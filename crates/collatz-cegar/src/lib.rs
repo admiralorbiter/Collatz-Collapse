@@ -76,6 +76,14 @@ pub use accelerated_lift::{AcceleratedLiftEngine, AcceleratedLiftExtension, Acce
 pub use accelerated_invariant_search::{
     AcceleratedInvariantEngine, AcceleratedInvariantSearchResult, AcceleratedInvariantStatus,
 };
+
+pub mod zero_lift_continuation;
+pub mod zero_lift_explorer;
+pub mod invariant_falsifier;
+
+pub use zero_lift_continuation::{ZeroLiftContinuationEngine, ZeroLiftStepResult};
+pub use zero_lift_explorer::{ZeroLiftExplorer, ZeroLiftWitness};
+pub use invariant_falsifier::{InvariantFalsificationResult, InvariantFalsifier};
 pub use periodic_necklace_analyzer::{
     PeriodicNecklaceAnalyzer, PeriodicOrbitData, TopologicalEntropyEngine, ValuationHistogramEntry,
 };

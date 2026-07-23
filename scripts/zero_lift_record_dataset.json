@@ -1,0 +1,281 @@
+[
+  {
+    "start_j": 0,
+    "gap_sequence": [
+      0,
+      0
+    ],
+    "lift_digits": [
+      0,
+      0
+    ],
+    "source_residue": "342",
+    "endpoint_sequence": [
+      "342",
+      "487"
+    ],
+    "odd_multiplier_sequence": [
+      "1",
+      "729"
+    ],
+    "precision_sequence": [
+      9,
+      18
+    ],
+    "quotient_guard": "k = 175165 (mod 2^27)",
+    "zero_suffix_length": 1,
+    "termination_reason": "Endpoint z = 487 left all zero-lift branch domains C_j (j <= 12)",
+    "mod_3_signatures": [
+      18,
+      1
+    ]
+  },
+  {
+    "start_j": 1,
+    "gap_sequence": [
+      1,
+      1
+    ],
+    "lift_digits": [
+      0,
+      0
+    ],
+    "source_residue": "7392",
+    "endpoint_sequence": [
+      "7392",
+      "17761"
+    ],
+    "odd_multiplier_sequence": [
+      "1",
+      "19683"
+    ],
+    "precision_sequence": [
+      13,
+      26
+    ],
+    "quotient_guard": "k = 3784765 (mod 2^35)",
+    "zero_suffix_length": 1,
+    "termination_reason": "Endpoint z = 17761 left all zero-lift branch domains C_j (j <= 12)",
+    "mod_3_signatures": [
+      21,
+      22
+    ]
+  },
+  {
+    "start_j": 2,
+    "gap_sequence": [
+      2,
+      2
+    ],
+    "lift_digits": [
+      0,
+      0
+    ],
+    "source_residue": "86208",
+    "endpoint_sequence": [
+      "86208",
+      "349537"
+    ],
+    "odd_multiplier_sequence": [
+      "1",
+      "531441"
+    ],
+    "precision_sequence": [
+      17,
+      34
+    ],
+    "quotient_guard": "k = 44138557 (mod 2^43)",
+    "zero_suffix_length": 1,
+    "termination_reason": "Endpoint z = 349537 left all zero-lift branch domains C_j (j <= 12)",
+    "mod_3_signatures": [
+      24,
+      22
+    ]
+  },
+  {
+    "start_j": 3,
+    "gap_sequence": [
+      3,
+      3
+    ],
+    "lift_digits": [
+      0,
+      0
+    ],
+    "source_residue": "1764032",
+    "endpoint_sequence": [
+      "1764032",
+      "12069670"
+    ],
+    "odd_multiplier_sequence": [
+      "1",
+      "14348907"
+    ],
+    "precision_sequence": [
+      21,
+      42
+    ],
+    "quotient_guard": "k = 903184445 (mod 2^51)",
+    "zero_suffix_length": 1,
+    "termination_reason": "Endpoint z = 12069670 left all zero-lift branch domains C_j (j <= 12)",
+    "mod_3_signatures": [
+      14,
+      22
+    ]
+  },
+  {
+    "start_j": 4,
+    "gap_sequence": [
+      4,
+      4
+    ],
+    "lift_digits": [
+      0,
+      0
+    ],
+    "source_residue": "14797504",
+    "endpoint_sequence": [
+      "14797504",
+      "170852431"
+    ],
+    "odd_multiplier_sequence": [
+      "1",
+      "387420489"
+    ],
+    "precision_sequence": [
+      25,
+      50
+    ],
+    "quotient_guard": "k = 7576322109 (mod 2^59)",
+    "zero_suffix_length": 1,
+    "termination_reason": "Endpoint z = 170852431 left all zero-lift branch domains C_j (j <= 12)",
+    "mod_3_signatures": [
+      19,
+      22
+    ]
+  },
+  {
+    "start_j": 5,
+    "gap_sequence": [
+      5,
+      5
+    ],
+    "lift_digits": [
+      0,
+      0
+    ],
+    "source_residue": "386648768",
+    "endpoint_sequence": [
+      "386648768",
+      "7533436045"
+    ],
+    "odd_multiplier_sequence": [
+      "1",
+      "10460353203"
+    ],
+    "precision_sequence": [
+      29,
+      58
+    ],
+    "quotient_guard": "k = 197964169277 (mod 2^67)",
+    "zero_suffix_length": 1,
+    "termination_reason": "Endpoint z = 7533436045 left all zero-lift branch domains C_j (j <= 12)",
+    "mod_3_signatures": [
+      20,
+      22
+    ]
+  },
+  {
+    "start_j": 6,
+    "gap_sequence": [
+      6,
+      6
+    ],
+    "lift_digits": [
+      0,
+      0
+    ],
+    "source_residue": "6055250624",
+    "endpoint_sequence": [
+      "6055250624",
+      "199091344495"
+    ],
+    "odd_multiplier_sequence": [
+      "1",
+      "282429536481"
+    ],
+    "precision_sequence": [
+      33,
+      66
+    ],
+    "quotient_guard": "k = 3100288319549 (mod 2^75)",
+    "zero_suffix_length": 1,
+    "termination_reason": "Endpoint z = 199091344495 left all zero-lift branch domains C_j (j <= 12)",
+    "mod_3_signatures": [
+      17,
+      22
+    ]
+  },
+  {
+    "start_j": 7,
+    "gap_sequence": [
+      7,
+      7
+    ],
+    "lift_digits": [
+      0,
+      0
+    ],
+    "source_residue": "114402511552",
+    "endpoint_sequence": [
+      "114402511552",
+      "6347454504925"
+    ],
+    "odd_multiplier_sequence": [
+      "1",
+      "7625597484987"
+    ],
+    "precision_sequence": [
+      37,
+      74
+    ],
+    "quotient_guard": "k = 58574085914685 (mod 2^83)",
+    "zero_suffix_length": 1,
+    "termination_reason": "Endpoint z = 6347454504925 left all zero-lift branch domains C_j (j <= 12)",
+    "mod_3_signatures": [
+      13,
+      22
+    ]
+  },
+  {
+    "start_j": 8,
+    "gap_sequence": [
+      8,
+      8
+    ],
+    "lift_digits": [
+      0,
+      0
+    ],
+    "source_residue": "1166132628160",
+    "endpoint_sequence": [
+      "1166132628160",
+      "109183186843618"
+    ],
+    "odd_multiplier_sequence": [
+      "1",
+      "205891132094649"
+    ],
+    "precision_sequence": [
+      41,
+      82
+    ],
+    "quotient_guard": "k = 597059905617981 (mod 2^91)",
+    "zero_suffix_length": 1,
+    "termination_reason": "Endpoint z = 109183186843618 left all zero-lift branch domains C_j (j <= 12)",
+    "mod_3_signatures": [
+      7,
+      22
+    ]
+  }
+]

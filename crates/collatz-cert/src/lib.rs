@@ -20,7 +20,10 @@ pub mod valuation_countdown;
 pub mod verify;
 pub mod verify_sct;
 
+pub mod zero_lift_verifier;
+
 pub use accelerated_ranking_verifier::{verify_accelerated_invariant_report, verify_phase73d_report};
+pub use zero_lift_verifier::verify_zero_lift_report;
 
 pub use affine_interaction_verifier::verify_phase73a_report;
 pub use batch::{

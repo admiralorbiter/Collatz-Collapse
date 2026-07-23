@@ -7,7 +7,7 @@ The central shift is:
 > Phase 7.2 produced a sound noncommuting guarded-branching core ($u, v$), but raw residue states do not yet provide a compact switching invariant.  
 > Rather than relying on raw residue splitting alone, Phase 7.3 models how closed-walk macrosteps interact through exact fixed-point forms, commutator constants, 2-adic cancellation depth, symbolic return-language dynamics, path-complete graph Lyapunov rankings, and disjunctive transition invariants.
 
-## Documents
+## Canonical Core Documentation
 
 1. `00_research_direction_overview.md`  
    Motivation, primary research questions, symbolic 2-adic shift conjugacy, cancellation gate $x=6, U \equiv 1 \pmod{16}$, and Phase 7.3 sub-phase roadmap.
@@ -21,29 +21,28 @@ The central shift is:
 4. `02_ultrametric_switching_abstraction.md`  
    Phase 7.3B-2 ultrametric cancellation machine ($L_u(n) = 32(11k+3)$, $x = v_2(L_u(n)) \ge 5$, $x' = x-4, U' = 27U$ under $u$; $x' = \gamma - 3, U' = \frac{729U+87}{2^\gamma}$ under $v$).
 
-5. `phase73a_closeout.md`  
-   Formally frozen closeout report for Phase 7.3A (Generic Affine Interaction & Cross-Form Theorem Kernel).
+5. `03_infinite_symbolic_dynamics.md`  
+   Symbolic return language dynamics, 2-adic Cantor homeomorphism, topological entropy ($h_{\text{top}} = \ln 2$), and 2-adic Hausdorff dimension ($d \approx 0.1625357554$).
 
-6. `phase73b_1_closeout.md`  
-   Formally frozen closeout report for Phase 7.3B-1 (Exact $Q_1$ Quotient Reference Machine & Finite Language Uniqueness Theorem).
-
-7. `phase73b_2_closeout.md`  
-   Formally frozen closeout report for Phase 7.3B-2 (Ultrametric Cancellation Register Machine & 5-Stage Refinement Ladder).
-
-8. `phase73c_closeout.md`  
-   Formally frozen closeout report for Phase 7.3C (Symbolic Return Language Dynamics, Lift-Digit Realizability, and 2-Adic Cantor Homeomorphism).
-
-9. `phase73d_closeout.md`  
-   Formally frozen closeout report for Phase 7.3D (Phase Acceleration, Induced $v$-to-$v$ Map, and Multiphase Ranking).
-
-10. `04_certificate_schemas_and_verification.md`  
-   Proof-object schemas (`macrostep_data_v1`, `affine_interaction_v1`, `cross_form_cylinder_recovery_v1`, `quotient_register_transition_v1`, `guarded_return_classification_v1`, `phase73a_verification_report_v1`, `phase73b_verification_report_v1`).
+6. `04_certificate_schemas_and_verification.md`  
+   Proof-object schemas (`macrostep_data_v1`, `affine_interaction_v1`, `cross_form_cylinder_recovery_v1`, `quotient_register_transition_v1`, `guarded_return_classification_v1`, `phase73a_verification_report_v1`, `phase73b_verification_report_v1`, `accelerated_edge_v1`, `zero_lift_record_report_v1`).
 
 7. `05_claims_registry_and_review_gates.md`  
    Candidate claims, theorem-status language, negative outcomes, and milestone review gates (Gates 7.3A through 7.3E).
 
 8. `06_phase72_handoff_and_migration.md`  
    Documentation of the verified Phase 7.2 noncommuting branching core and entry criteria for Phase 7.3.
+
+## Frozen Sub-Phase Closeout Reports
+
+1. `phase73_0_closeout.md` — Semantic Normalization & Composition Specifications.
+2. `phase73a_closeout.md` — Generic Affine Interaction & Cross-Form Theorem Kernel.
+3. `phase73b_1_closeout.md` — Exact $Q_1$ Quotient Reference Machine & Finite Language Uniqueness Theorem.
+4. `phase73b_2_closeout.md` — Ultrametric Cancellation Register Machine & 5-Stage Refinement Ladder.
+5. `phase73c_closeout.md` — Symbolic Return Language Dynamics, Lift-Digit Realizability, and 2-Adic Cantor Homeomorphism.
+6. `phase73d_closeout.md` — Phase Acceleration, Induced $v$-to-$v$ Map, and Multiphase Ranking.
+7. `phase73d_r_closeout.md` — Dyadic Branch Transition System & Accelerated Source-Lift Engine.
+8. `phase73d_r2_closeout.md` — Reachability-Corrected Zero-Tail Semantics, Arbitrarily Long $j=0$ Witness Theorem, and Combined Congruence Solver Equivalence.
 
 ## Benchmark Levels
 

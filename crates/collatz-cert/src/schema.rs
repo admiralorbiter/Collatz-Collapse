@@ -425,3 +425,17 @@ pub struct AcceleratedInvariantReportJson {
     pub status_tag: String,
 }
 
+/// Zero-Lift Record Report Schema v1 (zero_lift_record_report_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ZeroLiftRecordReportJson {
+    pub schema_version: String,
+    pub max_zero_lift_run_length: usize,
+    pub max_start_j_evaluated: u64,
+    pub evaluated_record_witnesses_count: usize,
+    pub verified_deterministic_zero_lift: bool,
+    pub status_tag: String,
+}
+
+
+
