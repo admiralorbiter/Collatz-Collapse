@@ -1,6 +1,12 @@
 use collatz_cegar::accelerated_branch_params::AcceleratedBranchParams;
 use collatz_cegar::adaptive_stress_engine::AdaptiveStressEngine;
+use collatz_cegar::backward_fixed_point_probe::BackwardFixedPointProbe;
 use collatz_cegar::extremal_source_search::ExtremalSourceSearchEngine;
+use collatz_cegar::periodic_ghost_atlas::PeriodicGhostAtlas;
+use collatz_cegar::precision_aware_cylinder::Cylinder;
+use collatz_cegar::zero_lift_cegar_engine::{CegarOutcome, ZeroLiftCegarEngine};
+use collatz_cegar::zero_lift_endpoint_graph::ZeroLiftEndpointGraph;
+use collatz_cegar::zero_output_scc_probe::{TransducerOutcome, ZeroOutputSccProbe};
 use collatz_cegar::zero_tail_stress_audit::ZeroTailProfile;
 use num_bigint::BigUint;
 
@@ -18,6 +24,73 @@ fn test_unconditional_freeze_gate_direct_return_matrix() {
         let d_sim = p.direct_original_gap_return(&p.z_source_residue);
         assert_eq!(d_sim, p.z_endpoint, "Direct return gate failed for j={}", j);
     }
+}
+
+#[test]
+fn test_exact_cylinder_calculus_round_trip_theorem() {
+    let targets = vec![
+        Cylinder::new(BigUint::from(0u64), 5),
+        Cylinder::new(BigUint::from(487u64), 5),
+        Cylinder::new(BigUint::from(17761u64), 9),
+    ];
+
+    for target in &targets {
+        for j in 0..=3 {
+            let pred = Cylinder::pre_j(target, j);
+            let succ = pred.post_j(j).expect("Post_j should succeed on Pre_j output");
+            assert_eq!(succ.precision, target.precision);
+            assert_eq!(succ.residue, target.residue);
+        }
+    }
+}
+
+#[test]
+fn test_coherent_canonical_shift_mutation() {
+    for j in 0..=5 {
+        let p = AcceleratedBranchParams::for_gap(j);
+        let c_corrupt = &p.z_source_residue + &p.modulus;
+        let d_corrupt = &p.z_endpoint + &p.multiplier;
+
+        // Mutation satisfies branch cylinder and affine identity, but violates canonical residue bound 0 <= C_j < M_j
+        assert!(c_corrupt >= p.modulus);
+        let direct_ret = p.direct_original_gap_return(&c_corrupt);
+        assert_eq!(direct_ret, d_corrupt);
+    }
+}
+
+#[test]
+fn test_eventual_zero_endpoint_reduction_lemma_genuine_prefix() {
+    let graph = ZeroLiftEndpointGraph::new(10);
+    
+    // Genuine canonical prefix u = (0, 0, 7)
+    let w0 = ExtremalSourceSearchEngine::base_guarded_word(0);
+    let w00 = ExtremalSourceSearchEngine::extend_guarded_word(&w0, 0);
+    let w007 = ExtremalSourceSearchEngine::extend_guarded_word(&w00, 7);
+    
+    let d_u = &w007.endpoint;
+    assert_eq!(
+        d_u,
+        &"2487743142969238870".parse::<BigUint>().unwrap()
+    );
+    
+    // Extension by j = 0 produces true zero lift
+    assert!(graph.is_zero_lift(d_u, 0));
+    
+    let d_u0_calculated = graph.zero_lift_successor(d_u, 0);
+    let w0070 = ExtremalSourceSearchEngine::extend_guarded_word(&w007, 0);
+    assert_eq!(d_u0_calculated, w0070.endpoint);
+    assert_eq!(
+        d_u0_calculated,
+        "3542118654735498313".parse::<BigUint>().unwrap()
+    );
+}
+
+#[test]
+fn test_zero_lift_cegar_engine_probe() {
+    let cegar = ZeroLiftCegarEngine::new(9, 4);
+    let (outcome, nodes, _edges) = cegar.run_cegar_probe();
+    assert!(nodes > 0);
+    assert_eq!(outcome, CegarOutcome::AbstractionRedesignRequired);
 }
 
 #[test]
@@ -42,6 +115,25 @@ fn test_perfect_authoritative_branch_parameter_regressions() {
         assert_eq!(p.z_endpoint, BigUint::from(d_z_exp));
         assert_eq!(p.affine_intercept, num_bigint::BigInt::from(beta_exp));
     }
+}
+
+#[test]
+fn test_eventually_periodic_ghost_source_density_bound() {
+    let atlas = PeriodicGhostAtlas::new(vec![0]);
+    let profile = atlas.eventually_periodic_ghost(&[1, 2, 4]);
+    assert!(profile.total_high_zero_bits <= 5);
+    assert!(profile.real_drift_ratio > 0.0);
+}
+
+#[test]
+fn test_zero_output_scc_probe_classification() {
+    let probe = ZeroOutputSccProbe::new(1, 8);
+    let (outcome, nodes, _edges) = probe.analyze_zero_output_subgraph();
+    assert!(nodes > 0);
+    assert!(
+        outcome == TransducerOutcome::FiniteEventualZeroQuotientFound
+            || outcome == TransducerOutcome::ZeroOutputSccsClassified
+    );
 }
 
 #[test]
