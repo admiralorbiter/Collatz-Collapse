@@ -56,10 +56,26 @@ pub use relational_domain::{
 pub use scalar_lyapunov_solver::ScalarLyapunovSolver;
 pub use sct_engine::{RelationValue, SctEngine, SizeChangeGraph};
 pub use semantic_gate::{CylinderImage, SemanticGate, WordForcingStatus};
+pub mod induced_v_map;
+pub mod accelerated_ranking;
 pub mod lift_digit_engine;
 pub mod periodic_necklace_analyzer;
 
+pub use induced_v_map::{DyadicBranchNormalForm, InducedVMapEngine, InducedVTransition};
+pub use accelerated_ranking::{
+    AcceleratedRankingEngine, AcceleratedRankingProof, AcceleratedRankingStatus,
+};
 pub use lift_digit_engine::{InfiniteRealizationStatus, LiftDigitEngine, ZeroLiftChain};
+
+pub mod accelerated_transition_system;
+pub mod accelerated_lift;
+pub mod accelerated_invariant_search;
+
+pub use accelerated_transition_system::{AcceleratedEdge, AcceleratedTransitionSystemEngine};
+pub use accelerated_lift::{AcceleratedLiftEngine, AcceleratedLiftExtension, AcceleratedPrefixState};
+pub use accelerated_invariant_search::{
+    AcceleratedInvariantEngine, AcceleratedInvariantSearchResult, AcceleratedInvariantStatus,
+};
 pub use periodic_necklace_analyzer::{
     PeriodicNecklaceAnalyzer, PeriodicOrbitData, TopologicalEntropyEngine, ValuationHistogramEntry,
 };

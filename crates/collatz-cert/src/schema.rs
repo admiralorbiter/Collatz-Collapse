@@ -374,3 +374,54 @@ pub struct Phase73cVerificationReportJson {
     pub word_classifications: Vec<SymbolicWordClassificationJson>,
     pub all_guards_cross_validated: bool,
 }
+
+/// Accelerated Lexicographic Certificate Schema v1 (accelerated_lexicographic_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AcceleratedLexicographicCertificateJson {
+    pub schema_version: String,
+    pub initial_t: String,
+    pub delta: u64,
+    pub u_step_count_j: u64,
+    pub next_unit: String,
+    pub next_t: Option<String>,
+    pub q_signature_mod27: u32,
+}
+
+/// Phase 7.3D Verification Report Schema v1 (phase73d_verification_report_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Phase73dVerificationReportJson {
+    pub schema_version: String,
+    pub total_evaluated_transitions: usize,
+    pub max_intervening_u_steps: u64,
+    pub verified_u_countdown_ranking: bool,
+    pub status_tag: String,
+}
+
+/// Accelerated Edge Schema v1 (accelerated_edge_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AcceleratedEdgeJson {
+    pub schema_version: String,
+    pub source_gap: u64,
+    pub target_gap: u64,
+    pub source_parameter_residue: String,
+    pub source_parameter_modulus: String,
+    pub target_parameter_offset: String,
+    pub target_parameter_multiplier: String,
+    pub minimum_free_parameter: String,
+}
+
+/// Accelerated Invariant Report Schema v1 (accelerated_invariant_report_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AcceleratedInvariantReportJson {
+    pub schema_version: String,
+    pub total_edges_verified: usize,
+    pub max_gap_evaluated: u64,
+    pub survivor_measure_depth_1: String,
+    pub verified_bounded_analysis: bool,
+    pub status_tag: String,
+}
+

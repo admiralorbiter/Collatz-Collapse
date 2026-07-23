@@ -22,10 +22,10 @@ Phase 7.3 replaces heuristic residue refinement with an **exact integer referenc
 1. **Exact Reference Semantics**: What is the minimal exact integer register machine governing based returns to $Q_1$?
 2. **Quotient Simulation**: Is the ultrametric single-coordinate abstraction a sound simulation quotient of the exact $k$-machine?
 3. **Finite vs. Infinite Language**: Is the finite return language $L_{\text{finite}} = \{u,v\}^*$, and what structural constraints govern the infinite positive realization language $L_{\text{positive},\omega}$?
-4. **Ultimately Periodic Exclusion**: Can any positive integer realize an ultimately periodic infinite $u/v$ switching sequence?
-5. **2-Adic IFS Fractal Geometry**: What are the 2-adic Haar measure and Hausdorff dimension of the set of states supporting infinite $u/v$ switching?
-6. **Residue-Lifting Transducer**: Can the positive integer realization problem be reduced to an eventual-zero output property on a binary residue-lifting transducer?
-7. **3-Adic Branch History Signal**: Does the output coordinate retain a strong 3-adic branch history signal suitable for lexicographic/multiphase termination rankings?
+4. **Ultimately Periodic Exclusion**: Can any positive integer realize an ultimately periodic infinite $u/v$ switching sequence? (`CLM-P7X-PERIODIC-DIVERGENCE-001`: **No**, all fixed points $k^*_w < 0$ and pullbacks $g_p(k^*_w) < 0$ are negative rational 2-adics).
+5. **2-Adic Cantor Coding & Conjugacy**: Is the piecewise quotient map $(G_\infty, T)$ conjugate to the full binary shift $(\{u,v\}^\mathbb{N}, \sigma)$ with $h_{\text{top}} = \ln 2$ and Hausdorff dimension $d \approx 0.1625357554$? (**Yes**).
+6. **Lift-Digit Realizability & Deterministic $D(y)$ Engine**: Can positive non-negative integer realizability be reduced to an eventual-zero output property on a deterministic endpoint map $D(y)$? (`CLM-P7X-ZERO-LIFT-DETERMINISM-001`: **Yes**).
+7. **Zero-Cycle-Free CEGAR Subsystem**: Does a sound finite overapproximation graph of endpoint $y_s$ without zero-lift cycles prove source-height divergence $M_r \to \infty$? (`CLM-P7X-ZERO-CYCLE-FREE-CEGAR-001`: **Yes**).
 
 ---
 
@@ -62,25 +62,26 @@ $$\text{V-return: guard } k \equiv 61 \pmod{512}, \quad k' = \frac{729k + 75}{51
 1. **Finite Full-Return Language Theorem**:
    $$\forall s \in \{u,v\}^*, \quad s \text{ has a nonempty positive guarded return cylinder in } Q_1. \implies L_{\text{finite}} = \{u,v\}^*$$
 
-2. **No Ultimately Periodic Positive Switching Path**:
-   No positive integer realizes an ultimately periodic infinite $u/v$ path ($\alpha \beta^\omega$). Every composite macrostep $\beta$ is real-expanding ($a_\beta > b_\beta > 0, c_\beta > 0$), forcing its unique fixed point $n_\beta^* < 0$. Consequently, $L_{\text{positive},\omega}$ is either empty or non-$\omega$-regular.
+2. **Exclusion of Ultimately Periodic Switching**:
+   No positive integer realizes an ultimately periodic infinite $u/v$ path ($p w^\omega$). Every composite macrostep $w$ has fixed point $k^*_w = \frac{\eta_w}{2^{A_w} - a_w} < 0$. All pullbacks $g_p(k^*_w) < 0$ preserve strict negativity (`CLM-P7X-PERIODIC-DIVERGENCE-001`).
 
-3. **2-Adic Fractal Geometry**:
-   - 2-adic Haar measure: $\mu(X) = 0$
-   - 2-adic Hausdorff dimension: $s \approx 0.1625357554$, unique real solution to $2^{-4s} + 2^{-9s} = 1$.
+3. **Lift-Digit Realizability Theorem**:
+   An infinite stream $\omega$ codes a non-negative integer $\alpha_\omega \in \mathbb{Z}_{\ge 0}$ if and only if its lift sequence $(\lambda_j)$ is eventually zero (`CLM-P7X-LIFT-DIGIT-REALIZABILITY-001`).
 
-4. **Residue-Lifting Transducer**:
-   Transforms the positive realization problem from 2-adic path existence to asking whether the binary output of a residue-lifting transducer is eventually zero.
+4. **Deterministic Partial Endpoint Map $D(y)$**:
+   $$\tau_p(s) = 0 \iff y_s \equiv g_p \pmod{2^{A_p}}$$
+   where $y_s = T_s(r_s)$. Since $G_u = 7 \pmod{16}$ and $G_v = 61 \pmod{512}$ are disjoint, the zero-lift subsystem is partial and deterministic (`CLM-P7X-ZERO-LIFT-DETERMINISM-001`):
+   $$D(y) = \begin{cases} \frac{27y+3}{16}, & y \equiv 7 \pmod{16} \\ \frac{729y+75}{512}, & y \equiv 61 \pmod{512} \\ \text{undefined}, & \text{otherwise} \end{cases}$$
 
 ---
 
 ## 6. Revised Sub-Phase Roadmap
 
 ```text
-Phase 7.3-0: Semantic Normalization & Composition Conventions
-Phase 7.3A:  Algebra & Exact Reference Semantics (k-machine, n/k/L_u equivalence, periodic exclusion)
-Phase 7.3B:  Proved Quotient Abstraction & 3-Adic Signal (x-partitions, simulation theorem, U ≡ 81 mod 256)
-Phase 7.3C:  Infinite Symbolic Dynamics & Transducer (finite full shift, transducer eventual zero, Haar 0, s ≈ 0.1625, M_r bounds)
-Phase 7.3D:  Reordered Proof System Hierarchy (source height -> monotonicity -> lexicographic/multiphase -> disjunctive -> path-complete -> SCT)
+Phase 7.3-0: Semantic Normalization & Composition Conventions (PASSED)
+Phase 7.3A:  Algebra & Exact Reference Semantics (PASSED)
+Phase 7.3B:  Proved Quotient Abstraction & Ultrametric Machine (PASSED)
+Phase 7.3C:  Symbolic Return Language, Cantor Homeomorphism & Lift Digits (PASSED)
+Phase 7.3D:  Zero-Output Lasso Elimination for D(y) & Source-Height Divergence M_r -> ∞
 Phase 7.3E:  Target Expansion Discipline (Target A -> Target B -> Target C)
 ```

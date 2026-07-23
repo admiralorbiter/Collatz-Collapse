@@ -4,12 +4,16 @@ pub mod cross_form_cylinder;
 pub mod execution_sequence;
 pub mod guarded_return_classifier;
 pub mod inversion;
+pub mod lift_kernel;
 pub mod quotient_register;
 pub mod semantic_cylinders;
 pub mod symbolic_language;
+pub mod u_block_accelerator;
 pub mod ultrametric_machine;
 pub mod valuation;
 
+pub use lift_kernel::{extend_prefix_state, LiftTransition, PrefixLiftState};
+pub use u_block_accelerator::{UBlockAccelerator, UBlockResult};
 pub use affine::{compute_descent_threshold, AffineDiagnostics, AffinePrefix, ValuationSemantics};
 pub use affine_interaction::{AffineInteraction, MacrostepData, TwoAdicValuation};
 pub use cross_form_cylinder::{

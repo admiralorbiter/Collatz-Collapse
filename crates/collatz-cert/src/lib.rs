@@ -1,5 +1,6 @@
 #![allow(clippy::all)]
 
+pub mod accelerated_ranking_verifier;
 pub mod affine_interaction_verifier;
 pub mod batch;
 pub mod descent;
@@ -19,6 +20,8 @@ pub mod valuation_countdown;
 pub mod verify;
 pub mod verify_sct;
 
+pub use accelerated_ranking_verifier::{verify_accelerated_invariant_report, verify_phase73d_report};
+
 pub use affine_interaction_verifier::verify_phase73a_report;
 pub use batch::{
     export_certificate_bundle, export_manifest, verify_certificate_bundle, BundleManifest,
@@ -30,6 +33,7 @@ pub use graph_contraction::{
 };
 pub use guarded_path_verifier::verify_guarded_path_certificate;
 pub use lean_export::{
+    export_lean4_accelerated_invariant_theorem, export_lean4_accelerated_theorem,
     export_lean4_affine_interaction_theorem, export_lean4_quotient_register_theorem,
     export_lean4_sct_ranking_theorem, export_lean4_symbolic_language_theorem, export_lean4_theorem,
     export_lean4_ultrametric_theorem,
