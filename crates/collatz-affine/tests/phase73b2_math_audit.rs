@@ -56,7 +56,10 @@ fn test_v_four_outcomes_benchmarks() {
         let outcome = UltrametricMachine::step_v_resonant(&state);
         match (expected_name, outcome) {
             ("Nonintegral", UltrametricStepOutcome::NonIntegral) => {}
-            ("IntegralEvenOutsideQ1", UltrametricStepOutcome::IntegralEvenOutsideQ1 { image_x }) => {
+            (
+                "IntegralEvenOutsideQ1",
+                UltrametricStepOutcome::IntegralEvenOutsideQ1 { image_x },
+            ) => {
                 assert_eq!(image_x, 0);
             }
             (

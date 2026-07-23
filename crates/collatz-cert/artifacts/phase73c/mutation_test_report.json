@@ -1,0 +1,69 @@
+{
+  "mutated_fixtures_rejected": "10/10",
+  "mutations": [
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt word valuation element",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt eta constant",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt guard_residue",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt guard_modulus_exponent",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt least_source_n",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt is_zero_lift flag",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt lift_digit string",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt total_nonempty_words count",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Corrupt schema_version",
+      "passed": true
+    },
+    {
+      "actual_result": "REJECTED",
+      "expected_result": "REJECTED",
+      "mutation_description": "Set all_guards_cross_validated to false",
+      "passed": true
+    }
+  ],
+  "schema_version": "mutation_test_report_phase73c_v1",
+  "unexpected_accepts": 0,
+  "unexpected_rejects": 0,
+  "valid_fixtures_accepted": "1/1"
+}

@@ -30,7 +30,10 @@ The central shift is:
 7. `phase73b_2_closeout.md`  
    Formally frozen closeout report for Phase 7.3B-2 (Ultrametric Cancellation Register Machine & 5-Stage Refinement Ladder).
 
-8. `04_certificate_schemas_and_verification.md`  
+8. `phase73c_closeout.md`  
+   Formally frozen closeout report for Phase 7.3C (Symbolic Return Language Dynamics, Lift-Digit Realizability, and 2-Adic Cantor Homeomorphism).
+
+9. `04_certificate_schemas_and_verification.md`  
    Proof-object schemas (`macrostep_data_v1`, `affine_interaction_v1`, `cross_form_cylinder_recovery_v1`, `quotient_register_transition_v1`, `guarded_return_classification_v1`, `phase73a_verification_report_v1`, `phase73b_verification_report_v1`).
 
 7. `05_claims_registry_and_review_gates.md`  

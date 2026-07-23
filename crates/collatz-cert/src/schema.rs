@@ -348,3 +348,29 @@ pub struct Phase73b2VerificationReportJson {
     pub transitions: Vec<UltrametricStateTransitionJson>,
     pub all_commuting_diagrams_verified: bool,
 }
+
+/// Symbolic Word Classification Schema v1 (symbolic_word_classification_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SymbolicWordClassificationJson {
+    pub schema_version: String,
+    pub valuation_word: Vec<u32>,
+    pub eta: String,
+    pub guard_residue: String,
+    pub guard_modulus_exponent: u64,
+    pub least_source_n: String,
+    pub is_zero_lift: bool,
+    pub lift_digit: String,
+    pub primitive_root: Vec<u32>,
+    pub repetition_count: usize,
+}
+
+/// Phase 7.3C Verification Report Schema v1 (phase73c_verification_report_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Phase73cVerificationReportJson {
+    pub schema_version: String,
+    pub total_nonempty_words: usize,
+    pub word_classifications: Vec<SymbolicWordClassificationJson>,
+    pub all_guards_cross_validated: bool,
+}

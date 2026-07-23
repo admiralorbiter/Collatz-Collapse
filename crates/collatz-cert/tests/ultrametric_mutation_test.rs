@@ -7,7 +7,6 @@ use std::fs;
 use std::path::Path;
 
 fn build_valid_phase73b_2_report() -> Phase73b2VerificationReportJson {
-
     // k = 7 (n = 231) => u returns next_k = 12 (n' = 391)
     let q_7 = Q1Quotient::from_k(BigUint::from(7u32));
     let state_7 = ConcreteUltrametricState::from_q1_quotient(&q_7);

@@ -208,6 +208,32 @@ end Phase73B2\n"
     )
 }
 
+/// Generates formal Lean 4 theorems over Int (Z) for Phase 7.3C symbolic lift digits.
+pub fn export_lean4_symbolic_language_theorem() -> String {
+    format!(
+        "-- Formal Lean 4 Theorem Suite for Phase 7.3C Symbolic Language & Lift Digits\n\
+import Mathlib.Data.Int.Basic\n\
+import Mathlib.Tactic.Ring\n\
+import Mathlib.Tactic.Omega\n\
+import Mathlib.Tactic.Linarith\n\
+\n\
+namespace Phase73C\n\
+\n\
+-- 1. Lift-Digit Nesting Identity over Z: r_sp = r_s + lambda * 2^{{A(s)}}\n\
+theorem lift_digit_nesting_identity (r_s r_sp lambda two_A : ℤ) (h_nest : r_sp = r_s + lambda * two_A) :\n\
+    r_sp - r_s = lambda * two_A := by\n\
+  linarith\n\
+\n\
+-- 2. Periodic Rational Fixed-Point Identity over Z: k_w^* * (2^{{A_w}} - a_w) = eta_w\n\
+theorem periodic_rational_fixed_point_identity (eta_w a_w two_A k_star : ℤ)\n\
+    (h_fp : (two_A - a_w) * k_star = eta_w) :\n\
+    two_A * k_star = a_w * k_star + eta_w := by\n\
+  linarith\n\
+\n\
+end Phase73C\n"
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -253,6 +279,15 @@ mod tests {
         assert!(lean_code.contains("theorem quotient_to_ultrametric_identity"));
         assert!(lean_code.contains("theorem u_ultrametric_step_identity"));
         assert!(lean_code.contains("theorem v_resonant_ultrametric_step_identity"));
+        assert!(!lean_code.contains("sorry"));
+        assert!(!lean_code.contains("admit"));
+    }
+
+    #[test]
+    fn test_export_lean4_symbolic_language_theorem_valid() {
+        let lean_code = export_lean4_symbolic_language_theorem();
+        assert!(lean_code.contains("theorem lift_digit_nesting_identity"));
+        assert!(lean_code.contains("theorem periodic_rational_fixed_point_identity"));
         assert!(!lean_code.contains("sorry"));
         assert!(!lean_code.contains("admit"));
     }

@@ -63,6 +63,31 @@ impl ValuationWord {
         self.valuations.push(val);
         Ok(())
     }
+
+    /// Returns elements as Vec<u32>.
+    pub fn elements(&self) -> Vec<u32> {
+        self.valuations.iter().map(|&x| x as u32).collect()
+    }
+
+    /// Computes primitive root and repetition count.
+    #[allow(clippy::manual_is_multiple_of)]
+    pub fn primitive_root(&self) -> (Self, usize) {
+        let n = self.valuations.len();
+        if n == 0 {
+            return (self.clone(), 1);
+        }
+        for len in 1..=n {
+            if (n % len) == 0 {
+                let chunk = &self.valuations[..len];
+                let is_repeat = (0..n).step_by(len).all(|i| &self.valuations[i..i + len] == chunk);
+                if is_repeat {
+                    let root = Self::new(chunk.to_vec()).unwrap();
+                    return (root, n / len);
+                }
+            }
+        }
+        (self.clone(), 1)
+    }
 }
 
 #[cfg(test)]

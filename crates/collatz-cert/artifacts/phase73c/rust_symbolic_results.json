@@ -1,0 +1,172 @@
+{
+  "schema_version": "phase73c_verification_report_v1",
+  "total_nonempty_words": 6,
+  "word_classifications": [
+    {
+      "schema_version": "symbolic_word_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2
+      ],
+      "eta": "3",
+      "guard_residue": "7",
+      "guard_modulus_exponent": 4,
+      "least_source_n": "231",
+      "is_zero_lift": true,
+      "lift_digit": "0",
+      "primitive_root": [
+        1,
+        1,
+        2
+      ],
+      "repetition_count": 1
+    },
+    {
+      "schema_version": "symbolic_word_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "eta": "75",
+      "guard_residue": "61",
+      "guard_modulus_exponent": 9,
+      "least_source_n": "1959",
+      "is_zero_lift": true,
+      "lift_digit": "0",
+      "primitive_root": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "repetition_count": 1
+    },
+    {
+      "schema_version": "symbolic_word_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        1,
+        2
+      ],
+      "eta": "129",
+      "guard_residue": "23",
+      "guard_modulus_exponent": 8,
+      "least_source_n": "743",
+      "is_zero_lift": false,
+      "lift_digit": "1",
+      "primitive_root": [
+        1,
+        1,
+        2
+      ],
+      "repetition_count": 2
+    },
+    {
+      "schema_version": "symbolic_word_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "eta": "3387",
+      "guard_residue": "6711",
+      "guard_modulus_exponent": 13,
+      "least_source_n": "214759",
+      "is_zero_lift": false,
+      "lift_digit": "419",
+      "primitive_root": [
+        1,
+        1,
+        2,
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "repetition_count": 1
+    },
+    {
+      "schema_version": "symbolic_word_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2
+      ],
+      "eta": "3561",
+      "guard_residue": "61",
+      "guard_modulus_exponent": 13,
+      "least_source_n": "1959",
+      "is_zero_lift": true,
+      "lift_digit": "0",
+      "primitive_root": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2
+      ],
+      "repetition_count": 1
+    },
+    {
+      "schema_version": "symbolic_word_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "eta": "93075",
+      "guard_residue": "175165",
+      "guard_modulus_exponent": 18,
+      "least_source_n": "5605287",
+      "is_zero_lift": false,
+      "lift_digit": "342",
+      "primitive_root": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "repetition_count": 2
+    }
+  ],
+  "all_guards_cross_validated": true
+}

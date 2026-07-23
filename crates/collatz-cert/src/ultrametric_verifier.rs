@@ -1,8 +1,8 @@
 use crate::schema::Phase73b2VerificationReportJson;
 use crate::VerificationError;
 use collatz_affine::{
-    ConcreteUltrametricState, MacrostepData, Q1Quotient, UltrametricMachine, UltrametricStepOutcome,
-    ValuationWord,
+    ConcreteUltrametricState, MacrostepData, Q1Quotient, UltrametricMachine,
+    UltrametricStepOutcome, ValuationWord,
 };
 use num_bigint::BigUint;
 

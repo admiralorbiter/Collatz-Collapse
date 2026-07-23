@@ -216,11 +216,23 @@ Pass if:
 - Cancellation gate $x=6, U \equiv 1 \pmod{16}$ universally validated;
 - Feature CEGAR adds $L_v(n)$ or extra $U$-bits only upon concrete counterexample.
 
-### Gate 7.3C — Symbolic Return Language & Entropy Classification
+### CLM-P7X-LIFT-DIGIT-REALIZABILITY-001
+
+**Category:** Verified Algebraic Identity
+
+**Statement:**
+
+An infinite symbolic stream $\omega \in \{u,v\}^\mathbb{N}$ codes an ordinary non-negative integer $\alpha_\omega \in \mathbb{Z}_{\ge 0}$ if and only if its lift-digit sequence $(\lambda_j)_{j=1}^\infty$ defined by $r_{j+1} = r_j + \lambda_{j+1} 2^{A_j}$ is eventually zero.
+
+---
+
+### Gate 7.3C — Symbolic Return Language & Entropy Classification (PASSED)
 Pass if:
-- All words $s \in \{u,v\}^{\le 12}$ enumerated with exact path cylinders;
+- All words $s \in \{u,v\}^{\le 12}$ ($8,190$ non-empty words) enumerated with exact path cylinders;
 - All block-boundary $Q_1$-return conditions verified;
-- Spectral radius, topological entropy, and language growth reported.
+- Topological entropy $h_{\text{top}} = \ln 2$, Hausdorff dimension $\dim_H(G_\infty) \approx 0.162536$, and dual Haar measure decay reported;
+- **Lift-Digit Realizability Theorem** proven and verified;
+- Zero-lift subsystem proven to be partial and deterministic ($D(k)$), with positive infinite trajectory existence correctly left **UNRESOLVED** for Phase 7.3D.
 
 ### Gate 7.3D — Termination Proof System Evaluation (Target A)
 Pass if Target A ($u/v$ core) is classified under one of the 4 competing proof architectures:

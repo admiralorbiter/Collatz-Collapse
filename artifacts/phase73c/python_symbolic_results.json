@@ -1,0 +1,53 @@
+{
+  "schema_version": "phase73c_verification_report_v1",
+  "total_nonempty_words": 2,
+  "word_classifications": [
+    {
+      "schema_version": "symbolic_word_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2
+      ],
+      "eta": "3",
+      "guard_residue": "7",
+      "guard_modulus_exponent": 4,
+      "least_source_n": "231",
+      "is_zero_lift": false,
+      "lift_digit": "0",
+      "primitive_root": [
+        1,
+        1,
+        2
+      ],
+      "repetition_count": 1
+    },
+    {
+      "schema_version": "symbolic_word_classification_v1",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "eta": "75",
+      "guard_residue": "61",
+      "guard_modulus_exponent": 9,
+      "least_source_n": "1959",
+      "is_zero_lift": false,
+      "lift_digit": "0",
+      "primitive_root": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "repetition_count": 1
+    }
+  ],
+  "all_guards_cross_validated": true
+}

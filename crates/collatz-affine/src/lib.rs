@@ -6,6 +6,7 @@ pub mod guarded_return_classifier;
 pub mod inversion;
 pub mod quotient_register;
 pub mod semantic_cylinders;
+pub mod symbolic_language;
 pub mod ultrametric_machine;
 pub mod valuation;
 
@@ -28,6 +29,7 @@ pub use quotient_register::{
     Q1_RESIDUE,
 };
 pub use semantic_cylinders::{CanonicalCylinder, ExactWordCylinder};
+pub use symbolic_language::{SymbolicLanguageEnumerator, SymbolicWordData};
 pub use ultrametric_machine::{
     positive_integer_realization, AbstractEnabledness, AbstractUltrametricState,
     ConcreteUltrametricState, UltrametricMachine, UltrametricStepOutcome, UnitResidue,
