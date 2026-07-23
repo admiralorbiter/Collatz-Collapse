@@ -92,3 +92,12 @@ pub use ultrametric_machine::{
     ConcreteUltrametricState, UltrametricMachine, UltrametricStepOutcome, UnitResidue,
     ValuationRegion,
 };
+
+pub mod adversarial_corpus;
+pub mod extremal_source_search;
+pub mod periodic_ghost_atlas;
+
+pub use adversarial_corpus::{AdversarialCorpus, AdversarialRecord, BranchParameters, RecordOrigin, StoppingReason};
+pub use extremal_source_search::{ExtremalSearchConfig, ExtremalSearchResult, ExtremalSourceSearchEngine};
+pub use periodic_ghost_atlas::{GhostOrbitEntry, PeriodicGhostAtlas, PeriodicOrbitClass, ShadowEvaluationResult};
+

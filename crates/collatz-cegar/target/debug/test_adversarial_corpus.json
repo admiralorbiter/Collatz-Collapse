@@ -1,0 +1,127 @@
+{
+  "records": [
+    {
+      "id": "seed_r1_pure_zero_200534",
+      "origin": "ExistingRegression",
+      "gap_sequence": [
+        "j=0",
+        "j=0"
+      ],
+      "flattened_uv_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "total_precision": 18,
+      "source_residue": "200534",
+      "endpoint_sequence": [
+        "200534",
+        "285526",
+        "406540"
+      ],
+      "lift_blocks": [
+        0,
+        0
+      ],
+      "branch_parameters": {
+        "a_composite": "531441",
+        "b_composite": "19006",
+        "shift_composite": 18
+      },
+      "periodic_shadow_word": [
+        "j=0"
+      ],
+      "periodic_shadow_length": 2,
+      "mod_3_signatures": [
+        1,
+        1,
+        1
+      ],
+      "stopping_reason": "EndpointResidueDisjoint",
+      "is_exact": true,
+      "generation_bounds": "exact_r2_N18",
+      "dedup_key": "seed_r1_200534"
+    },
+    {
+      "id": "seed_r3_pure_zero_23750971222",
+      "origin": "ExistingRegression",
+      "gap_sequence": [
+        "j=0",
+        "j=0",
+        "j=0",
+        "j=0"
+      ],
+      "flattened_uv_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "total_precision": 36,
+      "source_residue": "23750971222",
+      "endpoint_sequence": [
+        "23750971222",
+        "33827150174",
+        "48184852932",
+        "68635874298"
+      ],
+      "lift_blocks": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "branch_parameters": {
+        "a_composite": "282429536481",
+        "b_composite": "123456789",
+        "shift_composite": 36
+      },
+      "periodic_shadow_word": [
+        "j=0"
+      ],
+      "periodic_shadow_length": 4,
+      "mod_3_signatures": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "stopping_reason": "EndpointResidueDisjoint",
+      "is_exact": true,
+      "generation_bounds": "exact_r4_N36",
+      "dedup_key": "seed_r3_23750971222"
+    }
+  ],
+  "source_commit": "0.1.0",
+  "config_hash": "phase73s_v1_baseline",
+  "timestamp": "2026-07-22T22:00:00Z"
+}

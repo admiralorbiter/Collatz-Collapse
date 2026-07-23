@@ -73,6 +73,9 @@ $$\text{V-return: guard } k \equiv 61 \pmod{512}, \quad k' = \frac{729k + 75}{51
    where $y_s = T_s(r_s)$. Since $G_u = 7 \pmod{16}$ and $G_v = 61 \pmod{512}$ are disjoint, the zero-lift subsystem is partial and deterministic (`CLM-P7X-ZERO-LIFT-DETERMINISM-001`):
    $$D(y) = \begin{cases} \frac{27y+3}{16}, & y \equiv 7 \pmod{16} \\ \frac{729y+75}{512}, & y \equiv 61 \pmod{512} \\ \text{undefined}, & \text{otherwise} \end{cases}$$
 
+5. **Periodic Ghost Orbit Shadowing & TCS Structural Division**:
+   Arbitrarily long finite positive behavior can shadow negative 2-adic periodic orbits $z_w^* < 0$. This explains why finite-depth searches fail and why scalar forward ranking functions are invalid. Matches the TCS 1-variable loop termination division: cyclic traces are manageable while self-avoiding infinite traces form the hard generalized-Collatz core (`CLM-P7X-GHOST-ORBIT-SHADOWING-001`).
+
 ---
 
 ## 6. Revised Sub-Phase Roadmap
@@ -82,6 +85,7 @@ Phase 7.3-0: Semantic Normalization & Composition Conventions (PASSED)
 Phase 7.3A:  Algebra & Exact Reference Semantics (PASSED)
 Phase 7.3B:  Proved Quotient Abstraction & Ultrametric Machine (PASSED)
 Phase 7.3C:  Symbolic Return Language, Cantor Homeomorphism & Lift Digits (PASSED)
-Phase 7.3D:  Zero-Output Lasso Elimination for D(y) & Source-Height Divergence M_r -> ∞
+Phase 7.3D:  Reachability-Corrected Zero-Tail Semantics & Successor Solver (PASSED)
+Phase 7.3S:  Gap-Closure Strategy Tournament & Shortcut Audit (Phase 7.3S.1 COMPLETE / FROZEN)
 Phase 7.3E:  Target Expansion Discipline (Target A -> Target B -> Target C)
 ```

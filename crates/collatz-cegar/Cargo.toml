@@ -18,3 +18,8 @@ serde_json.workspace = true
 sha2.workspace = true
 thiserror.workspace = true
 
+[[test]]
+name = "phase73s1_math_audit"
+path = "../../tests/phase73s1_math_audit.rs"
+
+

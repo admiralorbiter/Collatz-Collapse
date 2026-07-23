@@ -8,7 +8,7 @@ The documentation is organized into two primary folders:
 
 ## 1. Active Documentation (`docs/active/`)
 
-The `docs/active/` folder contains the **11 canonical living documents** representing the current active mathematical theory, software architecture, claims registry, and proof engine:
+The `docs/active/` folder contains the **12 canonical living documents** representing the current active mathematical theory, software architecture, claims registry, and proof engine:
 
 1. **[00_overview_and_roadmap.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/active/00_overview_and_roadmap.md)** — Master overview, project roadmap, and phase organization.
 2. **[01_mathematical_foundation.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/active/01_mathematical_foundation.md)** — Core Collatz arithmetic definitions and valuation theory.
@@ -21,6 +21,7 @@ The `docs/active/` folder contains the **11 canonical living documents** represe
 9. **[08_certificate_schemas_and_verification.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/active/08_certificate_schemas_and_verification.md)** — Proof-object JSON schemas and independent verifiers (`collatz-cert`).
 10. **[09_claims_registry_and_review_gates.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/active/09_claims_registry_and_review_gates.md)** — Complete claims registry, theorem statuses, retractions, and review gates.
 11. **[10_lean_vertical_slice.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/active/10_lean_vertical_slice.md)** — Lean 4 formalization interface and theorem generation.
+12. **[11_phase73s_gap_closure_strategy_tournament.md](file:///c:/Users/admir/Github/Collatz-Collapse/docs/active/11_phase73s_gap_closure_strategy_tournament.md)** — Phase 7.3S strategy tournament, 2-adic transducers, rational rigidity, and shortcut audit.
 
 ---
 
