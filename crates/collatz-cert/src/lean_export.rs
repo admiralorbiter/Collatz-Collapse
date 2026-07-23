@@ -88,8 +88,6 @@ theorem countdown_decrement_identity (k u : ℕ) (h_u : u % 2 = 1) :\n\
     )
 }
 
-
-
 #[cfg(test)]
 mod tests {
     use super::*;

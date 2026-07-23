@@ -74,7 +74,15 @@ impl UnresolvedAutomaton {
             let mut visited = HashSet::new();
             visited.insert(start_state);
 
-            self.dfs_cycles(start_state, start_state, &mut path_states, &mut path_vals, &mut visited, &mut cycles, log2_3);
+            self.dfs_cycles(
+                start_state,
+                start_state,
+                &mut path_states,
+                &mut path_vals,
+                &mut visited,
+                &mut cycles,
+                log2_3,
+            );
         }
 
         cycles
@@ -112,7 +120,15 @@ impl UnresolvedAutomaton {
                     path_states.push(next_state);
                     path_vals.push(val);
 
-                    self.dfs_cycles(next_state, target_state, path_states, path_vals, visited, cycles, log2_3);
+                    self.dfs_cycles(
+                        next_state,
+                        target_state,
+                        path_states,
+                        path_vals,
+                        visited,
+                        cycles,
+                        log2_3,
+                    );
 
                     path_vals.pop();
                     path_states.pop();

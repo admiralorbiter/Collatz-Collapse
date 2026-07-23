@@ -15,7 +15,6 @@ pub const MAX_VALUATION_STEP: u32 = 255;
 pub const MAX_TOTAL_TWOS: u64 = 4096;
 pub const MAX_MODULUS_EXPONENT: u64 = 4096;
 
-
 fn parse_bounded_biguint(s: &str) -> Result<BigUint, VerificationError> {
     if s.len() > MAX_DIGITS {
         return Err(VerificationError::MaxDigitsExceeded {
@@ -38,22 +37,31 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
     }
 
     if cert.valuation_word.is_empty() {
-        return Err(VerificationError::InvalidValuationWord("Valuation word cannot be empty".to_string()));
+        return Err(VerificationError::InvalidValuationWord(
+            "Valuation word cannot be empty".to_string(),
+        ));
     }
 
     if cert.modulus_exponent > MAX_MODULUS_EXPONENT {
-        return Err(VerificationError::InvalidValuationWord(format!("Modulus exponent {} exceeds limit {}", cert.modulus_exponent, MAX_MODULUS_EXPONENT)));
+        return Err(VerificationError::InvalidValuationWord(format!(
+            "Modulus exponent {} exceeds limit {}",
+            cert.modulus_exponent, MAX_MODULUS_EXPONENT
+        )));
     }
 
     for &a_i in &cert.valuation_word {
         if a_i == 0 {
-            return Err(VerificationError::InvalidValuationWord("Valuation a_i cannot be zero".to_string()));
+            return Err(VerificationError::InvalidValuationWord(
+                "Valuation a_i cannot be zero".to_string(),
+            ));
         }
         if a_i > MAX_VALUATION_STEP {
-            return Err(VerificationError::InvalidValuationWord(format!("Valuation step {} exceeds limit {}", a_i, MAX_VALUATION_STEP)));
+            return Err(VerificationError::InvalidValuationWord(format!(
+                "Valuation step {} exceeds limit {}",
+                a_i, MAX_VALUATION_STEP
+            )));
         }
     }
-
 
     let word = ValuationWord::from_u32_slice(&cert.valuation_word)
         .map_err(|e| VerificationError::InvalidValuationWord(e.to_string()))?;
@@ -67,13 +75,19 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         });
     }
 
-    let semantics = match cert.valuation_semantics.as_deref().unwrap_or("terminal_at_least") {
+    let semantics = match cert
+        .valuation_semantics
+        .as_deref()
+        .unwrap_or("terminal_at_least")
+    {
         "exact_word" => ValuationSemantics::ExactWord,
         "terminal_at_least" => ValuationSemantics::TerminalAtLeast,
-        other => return Err(VerificationError::SchemaMismatch {
-            expected: "exact_word or terminal_at_least".to_string(),
-            found: other.to_string(),
-        }),
+        other => {
+            return Err(VerificationError::SchemaMismatch {
+                expected: "exact_word or terminal_at_least".to_string(),
+                found: other.to_string(),
+            })
+        }
     };
 
     let expected_mod_exponent = match semantics {
@@ -111,7 +125,11 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
     let computed_residue = match semantics {
         ValuationSemantics::TerminalAtLeast => solve_starting_residue_broad(&c_k, k, computed_a_k),
         ValuationSemantics::ExactWord => solve_starting_residue_exact(&c_k, k, computed_a_k),
-    }.map_err(|e| VerificationError::ResidueMismatch { declared: cert.starting_residue.clone(), computed: e.to_string() })?;
+    }
+    .map_err(|e| VerificationError::ResidueMismatch {
+        declared: cert.starting_residue.clone(),
+        computed: e.to_string(),
+    })?;
 
     let declared_residue = parse_bounded_biguint(&cert.starting_residue)?;
 
@@ -158,7 +176,10 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         iterations += 1;
         if iterations > MAX_EXCEPTIONS_CHECKED {
             return Err(VerificationError::ExceptionVerificationFailed {
-                integer: format!("Exception check count exceeded safety limit of {}", MAX_EXCEPTIONS_CHECKED),
+                integer: format!(
+                    "Exception check count exceeded safety limit of {}",
+                    MAX_EXCEPTIONS_CHECKED
+                ),
             });
         }
 
@@ -166,8 +187,10 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         let mut descended = false;
 
         for _ in 0..k {
-            let step = odd_step(&val)
-                .map_err(|_| VerificationError::ExceptionVerificationFailed { integer: e.to_string() })?;
+            let step =
+                odd_step(&val).map_err(|_| VerificationError::ExceptionVerificationFailed {
+                    integer: e.to_string(),
+                })?;
             val = step.to;
             if val < e || val.is_one() {
                 descended = true;
@@ -176,7 +199,9 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
         }
 
         if !descended {
-            return Err(VerificationError::ExceptionVerificationFailed { integer: e.to_string() });
+            return Err(VerificationError::ExceptionVerificationFailed {
+                integer: e.to_string(),
+            });
         }
 
         e += &modulus;
@@ -186,7 +211,9 @@ pub fn verify_descent_certificate(cert: &DescentCertificateJson) -> Result<(), V
 }
 
 /// Pure-Rust independent verifier function for TailDescentCertificateJson.
-pub fn verify_tail_descent_certificate(cert: &TailDescentCertificateJson) -> Result<(), VerificationError> {
+pub fn verify_tail_descent_certificate(
+    cert: &TailDescentCertificateJson,
+) -> Result<(), VerificationError> {
     if cert.schema_version != "tail_descent_v1" {
         return Err(VerificationError::SchemaMismatch {
             expected: "tail_descent_v1".to_string(),
@@ -195,7 +222,9 @@ pub fn verify_tail_descent_certificate(cert: &TailDescentCertificateJson) -> Res
     }
 
     if cert.prefix_word.is_empty() {
-        return Err(VerificationError::InvalidValuationWord("Prefix valuation word cannot be empty".to_string()));
+        return Err(VerificationError::InvalidValuationWord(
+            "Prefix valuation word cannot be empty".to_string(),
+        ));
     }
 
     let word = ValuationWord::from_u32_slice(&cert.prefix_word)
@@ -259,11 +288,12 @@ mod tests {
 
     #[test]
     fn test_verify_exact_word_descent_certificate() {
-        use collatz_affine::ValuationSemantics;
         use crate::descent::generate_descent_certificate_with_semantics;
+        use collatz_affine::ValuationSemantics;
 
         let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).unwrap();
-        let cert = generate_descent_certificate_with_semantics(word, ValuationSemantics::ExactWord).unwrap();
+        let cert = generate_descent_certificate_with_semantics(word, ValuationSemantics::ExactWord)
+            .unwrap();
         assert_eq!(cert.starting_residue, "295");
         assert_eq!(cert.modulus_exponent, 9);
         assert_eq!(cert.valuation_semantics, Some("exact_word".to_string()));
@@ -326,5 +356,3 @@ mod tests {
         assert!(res.is_err());
     }
 }
-
-

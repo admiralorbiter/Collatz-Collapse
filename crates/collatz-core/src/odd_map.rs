@@ -11,7 +11,7 @@ pub struct OddStep<N> {
 }
 
 /// Computes a single accelerated odd-only step S(n) for BigUint.
-/// 
+///
 /// Precondition: `n` MUST be an odd positive integer (n & 1 == 1).
 /// Returns CoreError::EvenInput if `n` is even.
 pub fn odd_step(n: &BigUint) -> Result<OddStep<BigUint>, CoreError> {
@@ -36,14 +36,18 @@ pub fn odd_step(n: &BigUint) -> Result<OddStep<BigUint>, CoreError> {
 }
 
 /// Fast Tier 0 u128 implementation of accelerated odd-only step.
-/// 
+///
 /// Precondition: `n` MUST be an odd positive integer (n & 1 == 1).
+#[allow(clippy::manual_is_multiple_of)]
 pub fn odd_step_u128(n: u128) -> Result<OddStep<u128>, CoreError> {
     if n == 0 || n % 2 == 0 {
         return Err(CoreError::EvenInput(n.to_string()));
     }
 
-    let temp = n.checked_mul(3).and_then(|v| v.checked_add(1)).ok_or(CoreError::Overflow)?;
+    let temp = n
+        .checked_mul(3)
+        .and_then(|v| v.checked_add(1))
+        .ok_or(CoreError::Overflow)?;
 
     let valuation = temp.trailing_zeros();
     if valuation == 0 {

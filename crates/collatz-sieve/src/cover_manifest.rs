@@ -34,7 +34,9 @@ pub enum CoverValidationError {
 }
 
 /// Generates a CoverManifestJson (cover_v1) from a list of disjoint canonical cylinders.
-pub fn build_cover_manifest(mut leaves: Vec<CoverLeafJson>) -> Result<CoverManifestJson, CoverValidationError> {
+pub fn build_cover_manifest(
+    mut leaves: Vec<CoverLeafJson>,
+) -> Result<CoverManifestJson, CoverValidationError> {
     if leaves.is_empty() {
         return Err(CoverValidationError::EmptyCover);
     }
@@ -66,13 +68,16 @@ pub fn build_cover_manifest(mut leaves: Vec<CoverLeafJson>) -> Result<CoverManif
             return Err(CoverValidationError::MeasureOverflow);
         }
         let shift = max_m - leaf.modulus_exponent;
-        let contribution = 1u128.checked_shl(shift as u32)
+        let contribution = 1u128
+            .checked_shl(shift as u32)
             .ok_or(CoverValidationError::MeasureOverflow)?;
-        scaled_sum = scaled_sum.checked_add(contribution)
+        scaled_sum = scaled_sum
+            .checked_add(contribution)
             .ok_or(CoverValidationError::MeasureOverflow)?;
     }
 
-    let expected_full_cover = 1u128.checked_shl(max_m as u32)
+    let expected_full_cover = 1u128
+        .checked_shl(max_m as u32)
         .ok_or(CoverValidationError::MeasureOverflow)?;
     let is_exact_cover = scaled_sum == expected_full_cover;
 
@@ -81,7 +86,6 @@ pub fn build_cover_manifest(mut leaves: Vec<CoverLeafJson>) -> Result<CoverManif
     let mut hasher = DefaultHasher::new();
     hasher.write(&json_bytes);
     let merkle_root_hash = format!("{:016x}", hasher.finish());
-
 
     Ok(CoverManifestJson {
         schema_version: "cover_v1".to_string(),
@@ -123,7 +127,6 @@ mod tests {
         assert_eq!(manifest.total_scaled_measure, "2");
         assert!(manifest.is_exact_cover);
     }
-
 
     #[test]
     fn test_cover_manifest_rejects_overlap() {

@@ -2,7 +2,7 @@ use num_bigint::BigUint;
 use num_traits::{One, Zero};
 
 /// Computes a single ordinary Collatz step for an arbitrary-precision integer.
-/// 
+///
 /// T(n) = n / 2 if n is even, or 3n + 1 if n is odd.
 pub fn collatz_step(n: &BigUint) -> BigUint {
     if n.is_zero() {
@@ -17,6 +17,7 @@ pub fn collatz_step(n: &BigUint) -> BigUint {
 }
 
 /// Fast u64 implementation of ordinary Collatz step with overflow checking.
+#[allow(clippy::manual_is_multiple_of)]
 pub fn collatz_step_u64(n: u64) -> Option<u64> {
     if n == 0 {
         return Some(0);

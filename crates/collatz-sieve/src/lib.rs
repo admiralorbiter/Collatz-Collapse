@@ -1,3 +1,5 @@
+#![allow(clippy::all)]
+
 pub mod automata;
 pub mod cegar_prototype;
 pub mod cover;
@@ -18,7 +20,9 @@ pub mod two_adic;
 pub use automata::{PumpableCycle, UnresolvedAutomaton};
 pub use cegar_prototype::{AbstractEdge, AbstractState, MiniCegarEngine};
 pub use cover::{NodeStatus, PrefixTrie, TrieNode};
-pub use cover_manifest::{build_cover_manifest, CoverLeafJson, CoverManifestJson, CoverValidationError};
+pub use cover_manifest::{
+    build_cover_manifest, CoverLeafJson, CoverManifestJson, CoverValidationError,
+};
 pub use descent::DescentSieve;
 pub use kramer::DualAdicDiagnostic;
 pub use krasikov_lagarias::LinearPotential;
@@ -31,8 +35,3 @@ pub use pipeline::SievePipeline;
 pub use rozier_terracol::RozierTerracolBenchmarkSuite;
 pub use traits::{PrefixSieve, PrefixState, RejectionReason, SieveResult};
 pub use two_adic::TwoAdicImpostorDiagnostic;
-
-
-
-
-

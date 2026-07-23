@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use num_bigint::BigUint;
 use num_traits::One;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -42,11 +42,15 @@ pub fn verify_valuation_countdown_certificate(
     }
 
     if cert.transition_valuation != 1 {
-        return Err(ValuationCountdownError::InvalidValuation(cert.transition_valuation));
+        return Err(ValuationCountdownError::InvalidValuation(
+            cert.transition_valuation,
+        ));
     }
 
     if cert.decrement_step == 0 {
-        return Err(ValuationCountdownError::InvalidDecrement(cert.decrement_step));
+        return Err(ValuationCountdownError::InvalidDecrement(
+            cert.decrement_step,
+        ));
     }
 
     // Algebraically verify identity v2(S(n)+1) = v2(n+1) - 1 across concrete samples n = 15, 31, 47, 63
@@ -56,22 +60,22 @@ pub fn verify_valuation_countdown_certificate(
 
     for k in 0..10u32 {
         let n = &base_r + BigUint::from(k) * &modulus;
-        
+
         // S(n) = (3n + 1) / 2
         let sn = (BigUint::from(3u32) * &n + BigUint::one()) >> 1;
-        
+
         let one = BigUint::from(1u32);
         let n_plus_1: BigUint = &n + &one;
         let sn_plus_1: BigUint = &sn + &one;
-        
+
         let v2_n_plus_1: u64 = n_plus_1.trailing_zeros().unwrap_or(0);
         let v2_sn_plus_1: u64 = sn_plus_1.trailing_zeros().unwrap_or(0);
 
-
         if v2_sn_plus_1 + 1 != v2_n_plus_1 {
-            return Err(ValuationCountdownError::IdentityVerificationFailed(n.to_string()));
+            return Err(ValuationCountdownError::IdentityVerificationFailed(
+                n.to_string(),
+            ));
         }
-
     }
 
     Ok(())

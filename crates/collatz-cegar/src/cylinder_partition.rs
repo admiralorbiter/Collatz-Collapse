@@ -75,15 +75,9 @@ mod tests {
 
     #[test]
     fn test_cylinder_partition_building() {
-        let cert = CylinderPartitionEngine::build_partition(
-            "PART-001",
-            "Q1",
-            7,
-            5,
-            4,
-            3,
-            |t| format!("Q_target_{t}"),
-        );
+        let cert = CylinderPartitionEngine::build_partition("PART-001", "Q1", 7, 5, 4, 3, |t| {
+            format!("Q_target_{t}")
+        });
 
         assert_eq!(cert.schema_version, "cylinder_partition_v1");
         assert_eq!(cert.subguards.len(), 8);

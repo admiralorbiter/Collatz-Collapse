@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
 use num_bigint::{BigInt, BigUint};
-use num_traits::{Zero, One};
-use sha2::{Sha256, Digest};
+use num_traits::{One, Zero};
+use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 use std::str::FromStr;
 
@@ -118,10 +118,12 @@ pub fn verify_graph_contraction_certificate(
         });
     }
 
-    let p = BigUint::from_str(&cert.log2_3_upper_bound.numerator)
-        .map_err(|_| GraphContractionError::ParseIntError(cert.log2_3_upper_bound.numerator.clone()))?;
-    let q = usize::from_str(&cert.log2_3_upper_bound.denominator)
-        .map_err(|_| GraphContractionError::ParseIntError(cert.log2_3_upper_bound.denominator.clone()))?;
+    let p = BigUint::from_str(&cert.log2_3_upper_bound.numerator).map_err(|_| {
+        GraphContractionError::ParseIntError(cert.log2_3_upper_bound.numerator.clone())
+    })?;
+    let q = usize::from_str(&cert.log2_3_upper_bound.denominator).map_err(|_| {
+        GraphContractionError::ParseIntError(cert.log2_3_upper_bound.denominator.clone())
+    })?;
 
     // Step 1: Verify exact integer log bound 2^p > 3^q
 
@@ -139,7 +141,9 @@ pub fn verify_graph_contraction_certificate(
     let margin = BigInt::from_str(&cert.strict_margin)
         .map_err(|_| GraphContractionError::ParseIntError(cert.strict_margin.clone()))?;
     if margin <= BigInt::zero() {
-        return Err(GraphContractionError::InvalidMargin(cert.strict_margin.clone()));
+        return Err(GraphContractionError::InvalidMargin(
+            cert.strict_margin.clone(),
+        ));
     }
 
     let p_big = BigInt::from_biguint(num_bigint::Sign::Plus, p.clone());
@@ -147,9 +151,13 @@ pub fn verify_graph_contraction_certificate(
 
     // Step 3: Verify potential inequality h(v) - h(u) >= p - q * a_e + margin for all legal edges
     for edge in edges {
-        let h_u_str = cert.vertex_potentials.get(&edge.u)
+        let h_u_str = cert
+            .vertex_potentials
+            .get(&edge.u)
             .ok_or_else(|| GraphContractionError::MissingPotential(edge.u.clone()))?;
-        let h_v_str = cert.vertex_potentials.get(&edge.v)
+        let h_v_str = cert
+            .vertex_potentials
+            .get(&edge.v)
             .ok_or_else(|| GraphContractionError::MissingPotential(edge.v.clone()))?;
 
         let h_u = BigInt::from_str(h_u_str)
@@ -193,7 +201,6 @@ mod tests {
         let vertices = vec!["1".to_string(), "3".to_string()];
         let canonical_hash = compute_canonical_graph_hash(&edges, &vertices);
 
-
         let cert = GraphContractionCertificateJson {
             schema_version: "graph_contraction_v1".to_string(),
             graph_hash: canonical_hash,
@@ -209,4 +216,3 @@ mod tests {
         assert!(verify_graph_contraction_certificate(&cert, &edges).is_ok());
     }
 }
-

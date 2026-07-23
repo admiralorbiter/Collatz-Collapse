@@ -1,3 +1,4 @@
+#[allow(unused_imports)]
 use num_bigint::BigUint;
 use serde::{Deserialize, Serialize};
 
@@ -5,10 +6,18 @@ use serde::{Deserialize, Serialize};
 pub enum FeatureRelationKind {
     StrictDecrease,
     NonIncrease,
-    ConstantReset { bound: String },
-    AffineBound { multiplier: String, offset: String },
+    ConstantReset {
+        bound: String,
+    },
+    AffineBound {
+        multiplier: String,
+        offset: String,
+    },
     Incomparable,
-    Refuted { witness: String, minimality_status: String },
+    Refuted {
+        witness: String,
+        minimality_status: String,
+    },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

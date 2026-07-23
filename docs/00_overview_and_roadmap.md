@@ -91,11 +91,12 @@ Phase 6: Macrocycle Invariant Synthesis & 2-Adic Fixed-Point Dichotomy [COMPLETE
 Phase 7: Full 2-Adic Language Invariant Synthesis & System-Level Integration [IN PROGRESS]
    ├── Phase 7.1: Bounded Semantic Refinement & Invalid Target Audit [COMPLETE]
    ├── Phase 7.2: Guarded Benchmark Graph & Noncommuting Branching Discovery [COMPLETE]
-   ├── Phase 7.3A: Generic Affine Interaction & Symbolic Theorem Kernel
-   ├── Phase 7.3B: Minimal Single-Coordinate Ultrametric Register Machine
-   ├── Phase 7.3C: Symbolic Return-Language & Entropy Probe
-   ├── Phase 7.3D: Competing Proof Systems (Graph Lyapunov, Disjunctive Invariants, Lexicographic, SCT)
-   ├── Phase 7.3E: Target Expansion (Minimal u/v Core -> Target B -> Target C)
+   ├── Phase 7.3-0: Semantic Normalization & Sequence Composition Conventions
+   ├── Phase 7.3A: Exact Integer Register Reference Semantics & Periodic Exclusion
+   ├── Phase 7.3B: Proved Quotient Abstraction & 3-Adic Branch History Signal
+   ├── Phase 7.3C: Infinite Symbolic Dynamics, Transducer & 2-Adic Fractal Geometry
+   ├── Phase 7.3D: Reordered Proof Hierarchy & Certificate Schema Enforcements
+   ├── Phase 7.3E: Target Expansion Discipline (Target A -> Target B -> Target C)
    └── Phase 7.4: Expanded Word Libraries & Interaction Spectrum at Scale
         │
 Phase 8: Diophantine Cycle Bounds & SAT/LRAT Proof Production
@@ -137,4 +138,3 @@ To enforce scientific discipline and prevent over-broad claims, all project stat
 | **Empirical Observation** | Sampled computational measurements | Sampled DFA prefix acyclicity ($V=2349, E=2348$), SIS weights |
 | **Conjecture** | Unproven mathematical hypotheses | General Collatz conjecture, global regular language non-existence |
 | **Planned Capability** | Features scheduled for future execution | Phase 5 Polyhedral CEGAR, Phase 8 LRAT proof generation |
-

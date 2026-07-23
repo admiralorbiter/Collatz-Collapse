@@ -198,5 +198,27 @@ pub struct BuchiEmptinessCertificateJson {
     pub verifier_recomputation_required: bool,
 }
 
+/// Normalized macro sequence step for left-to-right sequence execution schemas (left_to_right_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SequenceStepJson {
+    pub symbol: String,
+    pub valuation_word: Vec<u32>,
+}
 
-
+/// Guarded Path Certificate Schema v1 (guarded_path_v1)
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GuardedPathCertificateJson {
+    pub schema_version: String,
+    pub execution_semantics: String,
+    pub steps: Vec<SequenceStepJson>,
+    pub flattened_valuation_word: Vec<u32>,
+    pub base_state_residue: String,
+    pub base_state_modulus_exponent: u64,
+    pub path_source_residue: String,
+    pub path_source_modulus_exponent: u64,
+    pub composite_multiplier: String,
+    pub composite_constant: String,
+    pub composite_denominator: String,
+}

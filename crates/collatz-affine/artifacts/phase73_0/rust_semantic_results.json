@@ -1,0 +1,56 @@
+{
+  "commutator_constant_diff": "5568",
+  "execution_semantics": "left_to_right_v1",
+  "sequence_uv": {
+    "affine_form": {
+      "constant": "27947",
+      "k": 9,
+      "total_twos": 13
+    },
+    "exact_word_cylinder": {
+      "modulus_exponent": 14,
+      "residue": "1767"
+    },
+    "flattened_word": [
+      1,
+      1,
+      2,
+      1,
+      1,
+      2,
+      1,
+      2,
+      2
+    ],
+    "guarded_path_cylinder": {
+      "modulus_exponent": 18,
+      "residue": "214759"
+    }
+  },
+  "sequence_vu": {
+    "affine_form": {
+      "constant": "33515",
+      "k": 9,
+      "total_twos": 13
+    },
+    "exact_word_cylinder": {
+      "modulus_exponent": 14,
+      "residue": "1959"
+    },
+    "flattened_word": [
+      1,
+      1,
+      2,
+      1,
+      2,
+      2,
+      1,
+      1,
+      2
+    ],
+    "guarded_path_cylinder": {
+      "modulus_exponent": 18,
+      "residue": "1959"
+    }
+  }
+}

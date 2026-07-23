@@ -91,7 +91,10 @@ impl MeasureTrie {
     /// Returns the exact canonical union measure as a BigRational in [0, 1].
     pub fn canonical_union_measure(&self) -> BigRational {
         let m = self.root.compute_measure(0);
-        debug_assert!(m <= BigRational::one(), "Canonical union measure cannot exceed 1.0");
+        debug_assert!(
+            m <= BigRational::one(),
+            "Canonical union measure cannot exceed 1.0"
+        );
         m
     }
 }
@@ -109,7 +112,10 @@ mod tests {
         trie.insert(&BigUint::from(7u32), 3);
 
         // Each covers 1/4 of odd integers. Total = 1/2.
-        assert_eq!(trie.canonical_union_measure(), BigRational::new(1u32.into(), 2u32.into()));
+        assert_eq!(
+            trie.canonical_union_measure(),
+            BigRational::new(1u32.into(), 2u32.into())
+        );
     }
 
     #[test]
@@ -121,7 +127,10 @@ mod tests {
         trie.insert(&BigUint::from(7u32), 3);
 
         // Union measure should be exactly 1/2.
-        assert_eq!(trie.canonical_union_measure(), BigRational::new(1u32.into(), 2u32.into()));
+        assert_eq!(
+            trie.canonical_union_measure(),
+            BigRational::new(1u32.into(), 2u32.into())
+        );
     }
 
     #[test]
@@ -130,6 +139,9 @@ mod tests {
         // 3 mod 8 (011_2) and 7 mod 8 (111_2) merge to 3 mod 4 (11_2)
         trie.insert(&BigUint::from(3u32), 3);
         trie.insert(&BigUint::from(7u32), 3);
-        assert_eq!(trie.canonical_union_measure(), BigRational::new(1u32.into(), 2u32.into()));
+        assert_eq!(
+            trie.canonical_union_measure(),
+            BigRational::new(1u32.into(), 2u32.into())
+        );
     }
 }

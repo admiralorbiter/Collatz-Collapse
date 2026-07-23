@@ -1,3 +1,5 @@
+#![allow(clippy::manual_is_multiple_of)]
+
 use collatz_cegar::non_commuting_cycles::NonCommutingCycleAnalyzer;
 use collatz_cegar::semantic_gate::{CylinderImage, SemanticGate, WordForcingStatus};
 

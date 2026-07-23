@@ -12,10 +12,14 @@ pub fn generate_descent_certificate_with_semantics(
     let prefix = AffinePrefix::from_valuation_word(word.clone()).map_err(|e| e.to_string())?;
 
     if !prefix.is_multiplicative_contracting() {
-        return Err("Valuation word is not multiplicatively contracting (2^A_k <= 3^k)".to_string());
+        return Err(
+            "Valuation word is not multiplicatively contracting (2^A_k <= 3^k)".to_string(),
+        );
     }
 
-    let threshold = prefix.compute_descent_threshold().ok_or("Failed to compute descent threshold")?;
+    let threshold = prefix
+        .compute_descent_threshold()
+        .ok_or("Failed to compute descent threshold")?;
     let (starting_residue, mod_exponent) = prefix
         .starting_residue_for_semantics(semantics)
         .map_err(|e| e.to_string())?;
@@ -47,7 +51,10 @@ pub fn generate_descent_certificate_with_semantics(
         }
 
         if !descended {
-            return Err(format!("Exception {} failed concrete descent verification", current));
+            return Err(format!(
+                "Exception {} failed concrete descent verification",
+                current
+            ));
         }
 
         exceptions.push(current.to_string());

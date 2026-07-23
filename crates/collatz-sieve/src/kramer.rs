@@ -27,7 +27,11 @@ impl DualAdicDiagnostic {
         let k_float = k as f64;
         let a_float = a_k as f64;
         let raw_debt = k_float * 3.0f64.log2() - a_float;
-        let predicted_real_drift = if k > 0 { raw_debt / k_float.sqrt() } else { 0.0 };
+        let predicted_real_drift = if k > 0 {
+            raw_debt / k_float.sqrt()
+        } else {
+            0.0
+        };
 
         Self {
             z2_residue: prefix.starting_residue.clone(),

@@ -1,9 +1,9 @@
+use crate::concretization::ConcretizationEngine;
 use collatz_affine::{AffinePrefix, ValuationWord};
 use collatz_cert::macrocycle_theorem::{
     compute_proof_artifact_hash, CountdownSpecJson, FiniteFuelMacrocycleCertificateJson,
     FixedPointJson, FixedPointLinearFormJson, ProofArtifactRefJson,
 };
-use crate::concretization::ConcretizationEngine;
 use num_bigint::{BigInt, BigUint, ToBigInt};
 use num_traits::{One, Signed, ToPrimitive, Zero};
 
@@ -194,7 +194,8 @@ impl FixedPointSynthesizer {
         m: u32,
     ) -> FixedPointSynthesisResult {
         // Step 1: One-Lap Concretization Gate on ORIGINAL candidate
-        let sol1 = match ConcretizationEngine::solve_multi_lap_cycle(raw_valuations, start_r, m, 1) {
+        let sol1 = match ConcretizationEngine::solve_multi_lap_cycle(raw_valuations, start_r, m, 1)
+        {
             Ok(sol) if sol.is_satisfiable => sol,
             Ok(_) => {
                 return FixedPointSynthesisResult::InfeasibleAbstractCycle {
@@ -208,7 +209,7 @@ impl FixedPointSynthesizer {
             }
         };
 
-        let u_vals_orig: Vec<u32> = raw_valuations.iter().map(|&v| v as u32).collect();
+        let _u_vals_orig: Vec<u32> = raw_valuations.iter().map(|&v| v as u32).collect();
         let word_orig = match ValuationWord::new(raw_valuations.to_vec()) {
             Ok(w) => w,
             Err(e) => {
@@ -249,7 +250,10 @@ impl FixedPointSynthesizer {
                 start_residue: start_r,
                 end_residue: end_r,
                 modulus,
-                reason: format!("Return congruence (2^A - 3^k)r_0 - c_w == 0 mod 2^{} fails", m),
+                reason: format!(
+                    "Return congruence (2^A - 3^k)r_0 - c_w == 0 mod 2^{} fails",
+                    m
+                ),
             };
         }
 
@@ -325,10 +329,7 @@ impl FixedPointSynthesizer {
                 "CLM-FINITE-FUEL-{}-{}:word={:?}:witness={}",
                 a, k, u_vals, sol1.smallest_positive_witness
             );
-            let claim2 = format!(
-                "CLM-NO-POSITIVE-INFINITE-{}-{}:fp={}",
-                a, k, x_star_str
-            );
+            let claim2 = format!("CLM-NO-POSITIVE-INFINITE-{}-{}:fp={}", a, k, x_star_str);
 
             let hash1 = compute_proof_artifact_hash(&claim1);
             let hash2 = compute_proof_artifact_hash(&claim2);
@@ -367,7 +368,8 @@ impl FixedPointSynthesizer {
                     return_state_offset: m,
                     valuation_drop_per_lap: a,
                     word_repetitions_definition: "floor((v2(alpha*n+beta)-1)/A)".to_string(),
-                    return_state_repetitions_definition: "floor((v2(alpha*n+beta)-m)/A)".to_string(),
+                    return_state_repetitions_definition: "floor((v2(alpha*n+beta)-m)/A)"
+                        .to_string(),
                 },
                 one_lap_witness: sol1.smallest_positive_witness.to_string(),
                 finite_repetition_proof: ProofArtifactRefJson {
@@ -377,11 +379,13 @@ impl FixedPointSynthesizer {
                 },
                 infinite_realization_proof: ProofArtifactRefJson {
                     claim_id: format!("CLM-NO-POSITIVE-INFINITE-{}-{}", a, k),
-                    proof_artifact: format!("claims/verified/macrocycle_{}_{}_no_infinite.json", a, k),
+                    proof_artifact: format!(
+                        "claims/verified/macrocycle_{}_{}_no_infinite.json",
+                        a, k
+                    ),
                     proof_hash: hash2,
                 },
             };
-
 
             FixedPointSynthesisResult::FiniteFuelMacrocycle(cert)
         }
@@ -492,7 +496,10 @@ mod tests {
     #[test]
     fn test_synthesize_minus_one_countdown_w1() {
         let res = FixedPointSynthesizer::synthesize_macrocycle_invariant(&[1], 3, 2);
-        assert!(matches!(res, FixedPointSynthesisResult::FiniteFuelMacrocycle(_)));
+        assert!(matches!(
+            res,
+            FixedPointSynthesisResult::FiniteFuelMacrocycle(_)
+        ));
         if let FixedPointSynthesisResult::FiniteFuelMacrocycle(cert) = res {
             assert_eq!(cert.fixed_point_linear_form.alpha, "1");
             assert_eq!(cert.fixed_point_linear_form.beta, "1");
@@ -502,7 +509,10 @@ mod tests {
     #[test]
     fn test_synthesize_macrocycle_7_11_9_7_w_1_1_2() {
         let res = FixedPointSynthesizer::synthesize_macrocycle_invariant(&[1, 1, 2], 7, 4);
-        assert!(matches!(res, FixedPointSynthesisResult::FiniteFuelMacrocycle(_)));
+        assert!(matches!(
+            res,
+            FixedPointSynthesisResult::FiniteFuelMacrocycle(_)
+        ));
         if let FixedPointSynthesisResult::FiniteFuelMacrocycle(cert) = res {
             assert_eq!(cert.fixed_point_linear_form.alpha, "11");
             assert_eq!(cert.fixed_point_linear_form.beta, "19");
@@ -515,13 +525,22 @@ mod tests {
     #[test]
     fn test_synthesize_trivial_cycle_w2() {
         let res = FixedPointSynthesizer::synthesize_macrocycle_invariant(&[2], 1, 2);
-        assert_eq!(res, FixedPointSynthesisResult::TrivialPositiveCycle { start_n: 1, is_primitive_canonical: false });
+        assert_eq!(
+            res,
+            FixedPointSynthesisResult::TrivialPositiveCycle {
+                start_n: 1,
+                is_primitive_canonical: false
+            }
+        );
     }
 
     #[test]
     fn test_synthesize_infeasible_cycle() {
         let res = FixedPointSynthesizer::synthesize_macrocycle_invariant(&[5, 5], 7, 4);
-        assert!(matches!(res, FixedPointSynthesisResult::InfeasibleAbstractCycle { .. }));
+        assert!(matches!(
+            res,
+            FixedPointSynthesisResult::InfeasibleAbstractCycle { .. }
+        ));
     }
 
     #[test]

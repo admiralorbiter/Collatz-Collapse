@@ -1,0 +1,42 @@
+{
+  "all_rejected": true,
+  "results": [
+    {
+      "mutation": "reverse_sequence_order",
+      "rejected": true
+    },
+    {
+      "mutation": "alter_one_valuation",
+      "rejected": true
+    },
+    {
+      "mutation": "alter_affine_constant",
+      "rejected": true
+    },
+    {
+      "mutation": "alter_source_residue",
+      "rejected": true
+    },
+    {
+      "mutation": "lower_source_exponent",
+      "rejected": true
+    },
+    {
+      "mutation": "remove_intermediate_step",
+      "rejected": true
+    },
+    {
+      "mutation": "change_base_state_residue",
+      "rejected": true
+    },
+    {
+      "mutation": "change_execution_semantics",
+      "rejected": true
+    },
+    {
+      "mutation": "replace_with_exact_word_cylinder",
+      "rejected": true
+    }
+  ],
+  "total_mutations": 9
+}

@@ -84,7 +84,11 @@ impl SizeChangeGraph {
         rel: RelationValue,
     ) {
         let key = (src_feature.into(), dst_feature.into());
-        let current = self.matrix.get(&key).copied().unwrap_or(RelationValue::None);
+        let current = self
+            .matrix
+            .get(&key)
+            .copied()
+            .unwrap_or(RelationValue::None);
         self.matrix.insert(key, current.max(rel));
     }
 
@@ -104,11 +108,7 @@ impl SizeChangeGraph {
         let mut composed_word = self.valuation_word.clone();
         composed_word.extend_from_slice(&other.valuation_word);
 
-        let mut composed = Self::new(
-            &self.source_node,
-            &other.target_node,
-            composed_word,
-        );
+        let mut composed = Self::new(&self.source_node, &other.target_node, composed_word);
 
         let src_features: BTreeSet<String> = self.matrix.keys().map(|k| k.0.clone()).collect();
         let mid_features: BTreeSet<String> = self.matrix.keys().map(|k| k.1.clone()).collect();

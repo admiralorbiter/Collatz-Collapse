@@ -23,11 +23,21 @@ impl PathMergingSieve {
 
     /// Computes a hash key from modulo 2^m and modulo 3^j affine residue properties
     fn state_key(state: &PrefixState) -> u64 {
-        let r_low = state.affine.starting_residue.to_u64_digits().first().cloned().unwrap_or(0);
+        let r_low = state
+            .affine
+            .starting_residue
+            .to_u64_digits()
+            .first()
+            .cloned()
+            .unwrap_or(0);
         let len = state.valuations.len() as u64;
         let twos = state.affine.total_twos;
 
-        r_low.wrapping_mul(31).wrapping_add(len).wrapping_mul(17).wrapping_add(twos)
+        r_low
+            .wrapping_mul(31)
+            .wrapping_add(len)
+            .wrapping_mul(17)
+            .wrapping_add(twos)
     }
 }
 
@@ -38,7 +48,12 @@ impl PrefixSieve for PathMergingSieve {
 
     fn evaluate(&self, state: &PrefixState) -> SieveResult {
         let key = Self::state_key(state);
-        let current_word: Vec<u32> = state.valuations.as_slice().iter().map(|&a| a as u32).collect();
+        let current_word: Vec<u32> = state
+            .valuations
+            .as_slice()
+            .iter()
+            .map(|&a| a as u32)
+            .collect();
 
         if let Some(target) = self.state_table.get(&key) {
             if *target != current_word {

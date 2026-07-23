@@ -38,7 +38,10 @@ impl ProductState {
     }
 
     pub fn canonical_label(&self) -> String {
-        format!("s{}_r{}_m{}", self.control_state_s, self.residue_r, self.modulus_exponent_m)
+        format!(
+            "s{}_r{}_m{}",
+            self.control_state_s, self.residue_r, self.modulus_exponent_m
+        )
     }
 }
 

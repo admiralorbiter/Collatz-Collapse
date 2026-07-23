@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use num_bigint::BigUint;
 use num_traits::One;
+use serde::{Deserialize, Serialize};
 
 pub const MIN_COUNTDOWN_MODULUS_EXPONENT: u32 = 2;
 pub const MAX_COUNTDOWN_MODULUS_EXPONENT: u32 = 16;
@@ -62,19 +62,23 @@ pub fn verify_minus_one_countdown_certificate(
     // Replay validation over concrete 2-adic representatives (u = 1, 3, 5)
     for u_val in &[1u64, 3u64, 5u64] {
         let u = BigUint::from(*u_val);
-        
+
         // Test tau = 0: n = 2^m * u - 1 => S(n) = exit_r mod 2^m
         let n_tau0 = (BigUint::one() << m) * &u - BigUint::one();
         let sn_tau0 = (BigUint::from(3u32) * &n_tau0 + BigUint::one()) >> 1;
         if &sn_tau0 % &modulus != exit_r {
-            return Err(MinusOneCountdownError::VerificationFailed(n_tau0.to_string()));
+            return Err(MinusOneCountdownError::VerificationFailed(
+                n_tau0.to_string(),
+            ));
         }
 
         // Test tau = 1: n = 2^(m+1) * u - 1 => S(n) = source_r mod 2^m
         let n_tau1 = (BigUint::one() << (m + 1)) * &u - BigUint::one();
         let sn_tau1 = (BigUint::from(3u32) * &n_tau1 + BigUint::one()) >> 1;
         if &sn_tau1 % &modulus != source_r {
-            return Err(MinusOneCountdownError::VerificationFailed(n_tau1.to_string()));
+            return Err(MinusOneCountdownError::VerificationFailed(
+                n_tau1.to_string(),
+            ));
         }
     }
 

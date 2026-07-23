@@ -55,7 +55,6 @@ impl MiniCegarEngine {
             for a_1 in 1..=4u8 {
                 let word = ValuationWord::new(vec![a_1]).unwrap();
                 if let Ok(_prefix) = AffinePrefix::from_valuation_word(word) {
-
                     let next_r = (3 * r + 1) >> a_1;
                     let to_r = next_r % limit;
                     let to_state = AbstractState {

@@ -13,11 +13,15 @@ impl fmt::Display for SymbolicControlState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             SymbolicControlState::OrdinaryResidue(r) => write!(f, "Residue({})", r),
-            SymbolicControlState::MinusOneCountdownPositive { modulus_exponent: m } => {
+            SymbolicControlState::MinusOneCountdownPositive {
+                modulus_exponent: m,
+            } => {
                 let r = (1u64 << m) - 1;
                 write!(f, "({}_mod_{}, tau>=1)", r, 1u64 << m)
             }
-            SymbolicControlState::MinusOneCountdownZero { modulus_exponent: m } => {
+            SymbolicControlState::MinusOneCountdownZero {
+                modulus_exponent: m,
+            } => {
                 let r = (1u64 << m) - 1;
                 write!(f, "({}_mod_{}, tau=0)", r, 1u64 << m)
             }
@@ -67,7 +71,9 @@ pub fn compute_canonical_relational_graph_hash(
 /// 2. Loop rule (tau = 1): (15, tau = 1) -> (15, tau = 0) with dec = 1
 /// 3. Exit rule (tau = 0): (15, tau = 0) -> 7 mod 16 (exits self-loop!)
 /// 4. Incoming routing: Edges targeting 15 mod 16 branch into Positive (tau>=1) and Zero (tau=0).
-pub fn construct_symbolic_relational_transitions(modulus_exponent: u32) -> Vec<SymbolicTransitionEdge> {
+pub fn construct_symbolic_relational_transitions(
+    modulus_exponent: u32,
+) -> Vec<SymbolicTransitionEdge> {
     let modulus = 1u64 << modulus_exponent;
     let source_r = modulus - 1;
     let exit_r = (1u64 << (modulus_exponent - 1)) - 1;
@@ -183,7 +189,9 @@ pub struct SymbolicRelationalSolver {
 
 impl SymbolicRelationalSolver {
     pub fn new(modulus_exp: u32) -> Self {
-        Self { modulus_exponent: modulus_exp }
+        Self {
+            modulus_exponent: modulus_exp,
+        }
     }
 
     /// Reruns cycle and ranking analysis over the refined symbolic relational state graph.
@@ -191,7 +199,12 @@ impl SymbolicRelationalSolver {
         let edges = construct_symbolic_relational_transitions(self.modulus_exponent);
         let graph_hash = compute_canonical_relational_graph_hash(&edges, self.modulus_exponent);
 
-        let cycle_seq = vec!["7".to_string(), "11".to_string(), "9".to_string(), "7".to_string()];
+        let cycle_seq = vec![
+            "7".to_string(),
+            "11".to_string(),
+            "9".to_string(),
+            "7".to_string(),
+        ];
         let valuations = vec![1u32, 1u32, 2u32];
 
         Err(ObstructionCycleJson {
@@ -218,7 +231,7 @@ mod tests {
     #[test]
     fn test_symbolic_relational_transitions_mod16_exit_rule() {
         let edges = construct_symbolic_relational_transitions(4);
-        
+
         let exit_edge = edges
             .iter()
             .find(|e| matches!(e.src, SymbolicControlState::MinusOneCountdownZero { .. }))

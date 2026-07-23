@@ -152,7 +152,8 @@ impl PrefixTrie {
             self.exact_cylinder_measure += exact_m;
 
             // Insert broad residue class into LSB Patricia Trie for canonical union computation
-            self.measure_trie.insert(&state.affine.starting_residue, total_twos);
+            self.measure_trie
+                .insert(&state.affine.starting_residue, total_twos);
         }
 
         self.certified_count += 1;

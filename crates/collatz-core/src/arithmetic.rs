@@ -10,11 +10,12 @@ pub trait CollatzInt: Sized + Clone + Eq + Ord + std::fmt::Display {
     }
     fn is_unit_one(&self) -> bool;
     fn is_zero_val(&self) -> bool;
-    
+
     fn v2_valuation_of_3n_plus_1(&self) -> Result<(u32, Self), CoreError>;
 }
 
 impl CollatzInt for u128 {
+    #[allow(clippy::manual_is_multiple_of)]
     fn is_odd(&self) -> bool {
         self % 2 != 0
     }
@@ -30,7 +31,10 @@ impl CollatzInt for u128 {
             return Err(CoreError::EvenInput(self.to_string()));
         }
 
-        let temp = self.checked_mul(3).and_then(|v| v.checked_add(1)).ok_or(CoreError::Overflow)?;
+        let temp = self
+            .checked_mul(3)
+            .and_then(|v| v.checked_add(1))
+            .ok_or(CoreError::Overflow)?;
         let val = temp.trailing_zeros();
         Ok((val, temp >> val))
     }

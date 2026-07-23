@@ -2,10 +2,10 @@ use crate::AffineError;
 use num_bigint::BigUint;
 use num_traits::{One, Zero};
 
-/// Base seed for 3^-1 mod 2^64: 0xAAAAAAAAAAAAAAAA_u64 * 3 + 1 = ... 
+/// Base seed for 3^-1 mod 2^64: 0xAAAAAAAAAAAAAAAA_u64 * 3 + 1 = ...
 /// 3 * 0xAAAA_AAAA_AAAA_AAAB = 0x2_0000_0000_0000_0001 = 1 mod 2^64
 pub const INVERSE_3_MOD_2_64: u64 = 0xAAAAAAAAAAAAAAAA_u64 + 1; // 0xAAAAAAAAAAAAAAAA + 1 = 0xAAAAAAAAAAAAAAAA + 1? Wait:
-// Let's verify: 3 * 0xAAAAAAAA_AAAA_AAAB = 3 * 12297829382473034411 = 36893488147419103233 = 2^64 * 2 + 1. Correct!
+                                                                // Let's verify: 3 * 0xAAAAAAAA_AAAA_AAAB = 3 * 12297829382473034411 = 36893488147419103233 = 2^64 * 2 + 1. Correct!
 pub const INVERSE_3_MOD_2_64_VAL: u64 = 0xAAAAAAAAAAAAAAAA_u64 + 1;
 
 /// Computes (3^-1) mod 2^A_k using Hensel Lifting (quadratic Newton iteration).
@@ -18,7 +18,11 @@ pub fn hensel_inverse_3_pow(a_k: u64) -> BigUint {
     // Base seed for up to 64 bits
     let seed = 0xAAAAAAAAAAAAAAAA_u64.wrapping_add(1); // 12297829382473034411
     if a_k <= 64 {
-        let mask = if a_k == 64 { u64::MAX } else { (1u64 << a_k) - 1 };
+        let mask = if a_k == 64 {
+            u64::MAX
+        } else {
+            (1u64 << a_k) - 1
+        };
         return BigUint::from(seed & mask);
     }
 
@@ -32,7 +36,7 @@ pub fn hensel_inverse_3_pow(a_k: u64) -> BigUint {
     while current_bits < a_k {
         let next_bits = (current_bits * 2).min(a_k);
         let modulus = BigUint::one() << next_bits;
-        
+
         // Newton step: x_next = (x * (2 - 3 * x)) mod 2^next_bits
         let term = &three * &x;
         // In unsigned mod 2^next_bits: (2 - term) mod 2^next_bits = (2 + modulus - (term % modulus)) % modulus
@@ -66,7 +70,11 @@ pub fn modular_inverse_3k_mod_2A(k: usize, a_k: u64) -> BigUint {
 
 /// Solves the closed-form starting residue n_0 mod 2^A_k for the broad class (terminal valuation >= a_{k-1}):
 /// n_0 = (-c_k * (3^k)^-1) mod 2^A_k
-pub fn solve_starting_residue_broad(c_k: &BigUint, k: usize, a_k: u64) -> Result<BigUint, AffineError> {
+pub fn solve_starting_residue_broad(
+    c_k: &BigUint,
+    k: usize,
+    a_k: u64,
+) -> Result<BigUint, AffineError> {
     if a_k == 0 {
         return Ok(BigUint::zero());
     }
@@ -87,7 +95,11 @@ pub fn solve_starting_residue_broad(c_k: &BigUint, k: usize, a_k: u64) -> Result
 
 /// Solves the closed-form starting residue n_0 mod 2^{A_k + 1} for the exact valuation cylinder (terminal valuation == a_{k-1}):
 /// n_0 = ((2^A_k - c_k) * (3^k)^-1) mod 2^{A_k + 1}
-pub fn solve_starting_residue_exact(c_k: &BigUint, k: usize, a_k: u64) -> Result<BigUint, AffineError> {
+pub fn solve_starting_residue_exact(
+    c_k: &BigUint,
+    k: usize,
+    a_k: u64,
+) -> Result<BigUint, AffineError> {
     if a_k == 0 {
         return Ok(BigUint::zero());
     }

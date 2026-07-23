@@ -24,7 +24,15 @@ impl KarpCycleEngine {
         for start in states {
             let mut visited = HashSet::new();
             let mut path = Vec::new();
-            Self::dfs_cycles(start, start, &adj, &mut visited, &mut path, &mut cycles, max_cycle_length);
+            Self::dfs_cycles(
+                start,
+                start,
+                &adj,
+                &mut visited,
+                &mut path,
+                &mut cycles,
+                max_cycle_length,
+            );
         }
 
         cycles
@@ -79,15 +87,31 @@ mod tests {
 
         // Contracting cycle: valuations [2, 2] (3^2 = 9 < 2^4 = 16)
         let contracting_cycle = vec![
-            AbstractEdge { from: s1.clone(), to: s2.clone(), valuation: 2 },
-            AbstractEdge { from: s2.clone(), to: s1.clone(), valuation: 2 },
+            AbstractEdge {
+                from: s1.clone(),
+                to: s2.clone(),
+                valuation: 2,
+            },
+            AbstractEdge {
+                from: s2.clone(),
+                to: s1.clone(),
+                valuation: 2,
+            },
         ];
         assert!(!KarpCycleEngine::is_dangerous_cycle(&contracting_cycle));
 
         // Dangerous cycle: valuations [1, 1] (3^2 = 9 > 2^2 = 4)
         let dangerous_cycle = vec![
-            AbstractEdge { from: s1.clone(), to: s2.clone(), valuation: 1 },
-            AbstractEdge { from: s2.clone(), to: s1.clone(), valuation: 1 },
+            AbstractEdge {
+                from: s1.clone(),
+                to: s2.clone(),
+                valuation: 1,
+            },
+            AbstractEdge {
+                from: s2.clone(),
+                to: s1.clone(),
+                valuation: 1,
+            },
         ];
         assert!(KarpCycleEngine::is_dangerous_cycle(&dangerous_cycle));
     }

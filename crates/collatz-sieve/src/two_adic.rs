@@ -3,7 +3,7 @@ use num_bigint::BigUint;
 use num_traits::One;
 
 /// Search Diagnostic evaluating proximity of residues to negative 2-adic integers (e.g., -1 mod 2^A_k).
-/// 
+///
 /// Mathematical Safeguard: In N+, proximity to -1 mod 2^A_k corresponds to positive integer 2^{A_k} - 1.
 /// Therefore, this sieve acts as a search scoring diagnostic or triggers formal rejection strictly when
 /// 2^{A_k} - 1 exceeds the minimal counterexample bound.

@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use num_bigint::BigUint;
 use sha2::{Digest, Sha256};
 
 pub const MAX_WORD_LENGTH: usize = 256;
@@ -88,12 +87,19 @@ pub fn verify_finite_fuel_macrocycle_certificate(
     let a = cert.total_twos;
 
     if cert.valuation_word.len() > MAX_WORD_LENGTH {
-        return Err(format!("Valuation word length {} exceeds limit {}", cert.valuation_word.len(), MAX_WORD_LENGTH));
+        return Err(format!(
+            "Valuation word length {} exceeds limit {}",
+            cert.valuation_word.len(),
+            MAX_WORD_LENGTH
+        ));
     }
 
     for &v in &cert.valuation_word {
         if v > MAX_VALUATION_STEP {
-            return Err(format!("Valuation step {} exceeds limit {}", v, MAX_VALUATION_STEP));
+            return Err(format!(
+                "Valuation step {} exceeds limit {}",
+                v, MAX_VALUATION_STEP
+            ));
         }
     }
 
@@ -109,12 +115,19 @@ pub fn verify_finite_fuel_macrocycle_certificate(
     }
 
     if cert.state_modulus_exponent > MAX_MODULUS_EXPONENT {
-        return Err(format!("State modulus exponent {} exceeds limit {}", cert.state_modulus_exponent, MAX_MODULUS_EXPONENT));
+        return Err(format!(
+            "State modulus exponent {} exceeds limit {}",
+            cert.state_modulus_exponent, MAX_MODULUS_EXPONENT
+        ));
     }
 
     // Verify metadata calculation matches valuation word
     if cert.valuation_word.len() as u32 != k {
-        return Err(format!("Word length {} != odd_steps {}", cert.valuation_word.len(), k));
+        return Err(format!(
+            "Word length {} != odd_steps {}",
+            cert.valuation_word.len(),
+            k
+        ));
     }
 
     let word_a_sum: u32 = cert.valuation_word.iter().sum();
@@ -136,14 +149,24 @@ pub fn verify_finite_fuel_macrocycle_certificate(
     }
 
     // Verify proof artifact hashes are non-placeholder and valid 64-char hex strings
-    for proof in &[&cert.finite_repetition_proof, &cert.infinite_realization_proof] {
+    for proof in &[
+        &cert.finite_repetition_proof,
+        &cert.infinite_realization_proof,
+    ] {
         if proof.proof_hash.len() != 64 {
-            return Err(format!("Proof hash for {} is not a valid 64-character SHA-256 digest string", proof.claim_id));
+            return Err(format!(
+                "Proof hash for {} is not a valid 64-character SHA-256 digest string",
+                proof.claim_id
+            ));
         }
         if proof.proof_hash == "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-            || proof.proof_hash == "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e"
+            || proof.proof_hash
+                == "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e"
         {
-            return Err(format!("Proof hash for {} is a placeholder hash! Real SHA-256 required.", proof.claim_id));
+            return Err(format!(
+                "Proof hash for {} is a placeholder hash! Real SHA-256 required.",
+                proof.claim_id
+            ));
         }
     }
 
@@ -157,7 +180,8 @@ mod tests {
     #[test]
     fn test_verify_finite_fuel_macrocycle_certificate_valid() {
         let claim1_content = "CLM-MACROCYCLE-112-FINITE-REPETITION-001:v2(11n+19)-4:proof_laps=10";
-        let claim2_content = "CLM-MACROCYCLE-112-NO-POSITIVE-INFINITE-001:fixed_point=-19/11:positive_integer=false";
+        let claim2_content =
+            "CLM-MACROCYCLE-112-NO-POSITIVE-INFINITE-001:fixed_point=-19/11:positive_integer=false";
 
         let hash1 = compute_proof_artifact_hash(claim1_content);
         let hash2 = compute_proof_artifact_hash(claim2_content);
@@ -200,7 +224,8 @@ mod tests {
             },
             infinite_realization_proof: ProofArtifactRefJson {
                 claim_id: "CLM-MACROCYCLE-112-NO-POSITIVE-INFINITE-001".to_string(),
-                proof_artifact: "claims/verified/macrocycle_112_no_positive_infinite.json".to_string(),
+                proof_artifact: "claims/verified/macrocycle_112_no_positive_infinite.json"
+                    .to_string(),
                 proof_hash: hash2,
             },
         };
@@ -244,12 +269,15 @@ mod tests {
             finite_repetition_proof: ProofArtifactRefJson {
                 claim_id: "CLM-MACROCYCLE-112-FINITE-REPETITION-001".to_string(),
                 proof_artifact: "claims/verified/macrocycle_112_finite_repetition.json".to_string(),
-                proof_hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855".to_string(),
+                proof_hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                    .to_string(),
             },
             infinite_realization_proof: ProofArtifactRefJson {
                 claim_id: "CLM-MACROCYCLE-112-NO-POSITIVE-INFINITE-001".to_string(),
-                proof_artifact: "claims/verified/macrocycle_112_no_positive_infinite.json".to_string(),
-                proof_hash: "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e".to_string(),
+                proof_artifact: "claims/verified/macrocycle_112_no_positive_infinite.json"
+                    .to_string(),
+                proof_hash: "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e"
+                    .to_string(),
             },
         };
 

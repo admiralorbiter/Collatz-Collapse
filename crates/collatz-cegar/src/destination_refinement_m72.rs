@@ -31,7 +31,11 @@ pub struct DestinationRefinementEngine;
 
 impl DestinationRefinementEngine {
     /// Refines source residue r mod 2^m into 2^h_add subcells mod 2^(m + h_add)
-    pub fn generate_subcells(residue: u64, current_exp: u32, additional_bits: u32) -> Vec<(u64, u32)> {
+    pub fn generate_subcells(
+        residue: u64,
+        current_exp: u32,
+        additional_bits: u32,
+    ) -> Vec<(u64, u32)> {
         if additional_bits == 0 {
             return vec![(residue, current_exp)];
         }

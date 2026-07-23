@@ -57,10 +57,14 @@ impl DiversityBeamSearch {
         });
 
         let total = word.len() as f64;
-        let entropy = counts.iter().filter(|&&c| c > 0).map(|&c| {
-            let p = c as f64 / total;
-            -p * p.log2()
-        }).sum::<f64>();
+        let entropy = counts
+            .iter()
+            .filter(|&&c| c > 0)
+            .map(|&c| {
+                let p = c as f64 / total;
+                -p * p.log2()
+            })
+            .sum::<f64>();
 
         let pole_bits = diag.pole_distance_bits as f64;
 
@@ -95,7 +99,9 @@ impl DiversityBeamSearch {
                     child_vec.push(a_k as u8);
 
                     if let Ok(child_word) = ValuationWord::new(child_vec.clone()) {
-                        if let Ok(child_prefix) = AffinePrefix::from_valuation_word(child_word.clone()) {
+                        if let Ok(child_prefix) =
+                            AffinePrefix::from_valuation_word(child_word.clone())
+                        {
                             let state = PrefixState {
                                 valuations: SmallVec::from_slice(&child_vec),
                                 affine: child_prefix.clone(),
@@ -103,7 +109,8 @@ impl DiversityBeamSearch {
                             };
 
                             // Prune if certified descending
-                            if matches!(descent_sieve.evaluate(&state), SieveResult::Reject { .. }) {
+                            if matches!(descent_sieve.evaluate(&state), SieveResult::Reject { .. })
+                            {
                                 continue;
                             }
 
@@ -128,7 +135,11 @@ impl DiversityBeamSearch {
             }
 
             // Sort by combined score descending and retain top beam_width
-            next_candidates.sort_by(|a, b| b.combined_score.partial_cmp(&a.combined_score).unwrap_or(std::cmp::Ordering::Equal));
+            next_candidates.sort_by(|a, b| {
+                b.combined_score
+                    .partial_cmp(&a.combined_score)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            });
             next_candidates.truncate(self.beam_width);
             current_beam = next_candidates;
         }

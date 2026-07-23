@@ -5,8 +5,8 @@ use collatz_cert::graph_contraction::{
 use std::collections::HashMap;
 
 pub struct GraphContractionSolver {
-    pub p: u64, // 8
-    pub q: u64, // 5 (2^8 = 256 > 243 = 3^5)
+    pub p: u64,      // 8
+    pub q: u64,      // 5 (2^8 = 256 > 243 = 3^5)
     pub margin: i64, // 1
 }
 
@@ -68,7 +68,7 @@ impl GraphContractionSolver {
                 // Noncontracting cycle / obstruction detected! Emit ObstructionCycleJson artifact.
                 let valuations: Vec<u32> = edges.iter().map(|e| e.valuation).collect();
                 let vertex_seq: Vec<String> = edges.iter().map(|e| e.u.clone()).collect();
-                
+
                 return Err(ObstructionCycleJson {
                     schema_version: "obstruction_cycle_v1".to_string(),
                     cycle_length: edges.len(),
@@ -103,18 +103,17 @@ impl GraphContractionSolver {
         };
 
         // Self-verify certificate before returning
-        verify_graph_contraction_certificate(&cert, edges)
-            .map_err(|e| ObstructionCycleJson {
-                schema_version: "obstruction_cycle_v1".to_string(),
-                cycle_length: edges.len(),
-                vertex_sequence: vertex_ids.to_vec(),
-                valuation_word: edges.iter().map(|e| e.valuation).collect(),
-                total_twos: 0,
-                odd_steps: 0,
-                constant: "0".to_string(),
-                primary_obstruction: format!("SelfVerificationFailed: {}", e),
-                positive_realizable: false,
-            })?;
+        verify_graph_contraction_certificate(&cert, edges).map_err(|e| ObstructionCycleJson {
+            schema_version: "obstruction_cycle_v1".to_string(),
+            cycle_length: edges.len(),
+            vertex_sequence: vertex_ids.to_vec(),
+            valuation_word: edges.iter().map(|e| e.valuation).collect(),
+            total_twos: 0,
+            odd_steps: 0,
+            constant: "0".to_string(),
+            primary_obstruction: format!("SelfVerificationFailed: {}", e),
+            positive_realizable: false,
+        })?;
 
         Ok(cert)
     }
@@ -129,8 +128,16 @@ mod tests {
         let solver = GraphContractionSolver::default();
         // Strongly connected graph with true directed cycle 1 -> 3 -> 1 (valuations a1=2, a2=2)
         let edges = vec![
-            GraphEdge { u: "1".to_string(), v: "3".to_string(), valuation: 2 },
-            GraphEdge { u: "3".to_string(), v: "1".to_string(), valuation: 2 },
+            GraphEdge {
+                u: "1".to_string(),
+                v: "3".to_string(),
+                valuation: 2,
+            },
+            GraphEdge {
+                u: "3".to_string(),
+                v: "1".to_string(),
+                valuation: 2,
+            },
         ];
         let vertices = vec!["1".to_string(), "3".to_string()];
 
@@ -146,8 +153,16 @@ mod tests {
         let solver = GraphContractionSolver::default();
         // Noncontracting cycle 1 -> 3 -> 1 with expanding valuations a1=1, a2=1 (2^2 = 4 < 9 = 3^2)
         let edges = vec![
-            GraphEdge { u: "1".to_string(), v: "3".to_string(), valuation: 1 },
-            GraphEdge { u: "3".to_string(), v: "1".to_string(), valuation: 1 },
+            GraphEdge {
+                u: "1".to_string(),
+                v: "3".to_string(),
+                valuation: 1,
+            },
+            GraphEdge {
+                u: "3".to_string(),
+                v: "1".to_string(),
+                valuation: 1,
+            },
         ];
         let vertices = vec!["1".to_string(), "3".to_string()];
 
@@ -159,4 +174,3 @@ mod tests {
         assert!(!obstruction.positive_realizable);
     }
 }
-

@@ -32,7 +32,12 @@ impl LinearPotential {
         let pow3_k = 3i64.checked_pow(k as u32)?;
         let pow2_a = 1i64.checked_shl(a_k as u32)?;
 
-        let c_k_u64 = prefix.constant.to_u64_digits().first().cloned().unwrap_or(0);
+        let c_k_u64 = prefix
+            .constant
+            .to_u64_digits()
+            .first()
+            .cloned()
+            .unwrap_or(0);
         if c_k_u64 > i64::MAX as u64 {
             return None;
         }

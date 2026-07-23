@@ -70,12 +70,8 @@ impl CylinderImage {
 
         let target_base_image = num / two_a;
         let quotient_multiplier = pow3_k;
-        let required_quotient_bits = Self::compute_required_quotient_bits(
-            source_exponent,
-            0,
-            total_a,
-            requested_target_q,
-        );
+        let required_quotient_bits =
+            Self::compute_required_quotient_bits(source_exponent, 0, total_a, requested_target_q);
 
         Ok(Self {
             source_residue,
@@ -95,7 +91,7 @@ pub struct SemanticGate;
 
 impl SemanticGate {
     pub fn verify_word_forcing(
-        residue: u64,
+        _residue: u64,
         modulus_exponent: u32,
         word: &ValuationWord,
     ) -> WordForcingStatus {

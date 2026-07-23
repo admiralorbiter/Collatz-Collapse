@@ -35,9 +35,13 @@ pub fn compute_a_crit(word: &ValuationWord) -> u32 {
 }
 
 /// Generates a TailDescentCertificateJson (tail_descent_v1) artifact for a prefix word.
-pub fn generate_tail_descent_certificate(word: ValuationWord) -> Result<TailDescentCertificateJson, VerificationError> {
+pub fn generate_tail_descent_certificate(
+    word: ValuationWord,
+) -> Result<TailDescentCertificateJson, VerificationError> {
     if word.is_empty() {
-        return Err(VerificationError::InvalidValuationWord("Valuation word cannot be empty".to_string()));
+        return Err(VerificationError::InvalidValuationWord(
+            "Valuation word cannot be empty".to_string(),
+        ));
     }
 
     let a_k = word.total_valuation();
@@ -58,7 +62,6 @@ pub fn generate_tail_descent_certificate(word: ValuationWord) -> Result<TailDesc
         minimum_child_valuation: a_crit,
         proof_bound: "1".to_string(),
     })
-
 }
 
 #[cfg(test)]

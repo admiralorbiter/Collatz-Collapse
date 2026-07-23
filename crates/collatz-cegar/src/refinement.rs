@@ -1,9 +1,8 @@
 use crate::concretization::ConcretizationResult;
+use collatz_affine::ValuationSemantics;
 use collatz_cert::descent::generate_descent_certificate_with_semantics;
 use collatz_cert::DescentCertificateJson;
-use collatz_affine::ValuationSemantics;
 use serde::{Deserialize, Serialize};
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ObstructionClassification {
@@ -38,11 +37,16 @@ impl RefinementEngine {
         match res {
             ConcretizationResult::Contracting { prefix, .. } => {
                 let word = prefix.valuations;
-                generate_descent_certificate_with_semantics(word, ValuationSemantics::TerminalAtLeast).ok()
+                generate_descent_certificate_with_semantics(
+                    word,
+                    ValuationSemantics::TerminalAtLeast,
+                )
+                .ok()
             }
             ConcretizationResult::SpuriousInfeasible { prefix, .. } => {
                 let word = prefix.valuations;
-                generate_descent_certificate_with_semantics(word, ValuationSemantics::ExactWord).ok()
+                generate_descent_certificate_with_semantics(word, ValuationSemantics::ExactWord)
+                    .ok()
             }
             ConcretizationResult::RealExpandingCandidate { .. } => None,
         }
@@ -68,12 +72,11 @@ impl RefinementEngine {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use collatz_affine::{AffinePrefix, ValuationWord};
     use crate::concretization::ConcretizationResult;
+    use collatz_affine::{AffinePrefix, ValuationWord};
 
     #[test]
     fn test_process_concretization_emits_valid_certificate() {

@@ -1,0 +1,43 @@
+{
+  "schema_version": "guarded_path_v1",
+  "execution_semantics": "left_to_right_v1",
+  "steps": [
+    {
+      "symbol": "u",
+      "valuation_word": [
+        1,
+        1,
+        2
+      ]
+    },
+    {
+      "symbol": "v",
+      "valuation_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ]
+    }
+  ],
+  "flattened_valuation_word": [
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    2,
+    2
+  ],
+  "base_state_residue": "7",
+  "base_state_modulus_exponent": 5,
+  "path_source_residue": "214759",
+  "path_source_modulus_exponent": 18,
+  "composite_multiplier": "19683",
+  "composite_constant": "27947",
+  "composite_denominator": "8192"
+}

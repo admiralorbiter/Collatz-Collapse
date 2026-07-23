@@ -1,7 +1,7 @@
-use collatz_cert::descent::generate_descent_certificate;
-use collatz_cert::verify_descent_certificate;
-use collatz_cert::schema::DescentCertificateJson;
 use collatz_affine::ValuationWord;
+use collatz_cert::descent::generate_descent_certificate;
+use collatz_cert::schema::DescentCertificateJson;
+use collatz_cert::verify_descent_certificate;
 
 #[test]
 fn test_mutation_valid_base_certificate() {
@@ -116,4 +116,3 @@ fn test_mutate_unknown_fields_rejection() {
     let res: Result<DescentCertificateJson, _> = serde_json::from_str(json_str);
     assert!(res.is_err());
 }
-

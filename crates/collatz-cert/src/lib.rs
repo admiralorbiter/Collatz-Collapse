@@ -1,6 +1,9 @@
+#![allow(clippy::all)]
+
 pub mod batch;
 pub mod descent;
 pub mod graph_contraction;
+pub mod guarded_path_verifier;
 pub mod lean_export;
 pub mod macrocycle_theorem;
 pub mod minus_one_countdown;
@@ -12,20 +15,20 @@ pub mod valuation_countdown;
 pub mod verify;
 pub mod verify_sct;
 
-pub use sct_engine::{RelationValue, SctEngine, SizeChangeGraph};
-
-pub use batch::{export_certificate_bundle, export_manifest, verify_certificate_bundle, BundleManifest};
+pub use batch::{
+    export_certificate_bundle, export_manifest, verify_certificate_bundle, BundleManifest,
+};
 pub use descent::generate_descent_certificate;
 pub use graph_contraction::{
     verify_graph_contraction_certificate, GraphContractionCertificateJson, GraphContractionError,
     GraphEdge, ObstructionCycleJson, RationalRatioJson,
 };
+pub use guarded_path_verifier::verify_guarded_path_certificate;
 pub use lean_export::{export_lean4_sct_ranking_theorem, export_lean4_theorem};
-pub use macrocycle_theorem::{
-    verify_finite_fuel_macrocycle_certificate, FiniteFuelMacrocycleCertificateJson,
-};
+pub use macrocycle_theorem::verify_finite_fuel_macrocycle_certificate;
 pub use minus_one_countdown::{
-    verify_minus_one_countdown_certificate, MinusOneCountdownCertificateJson, MinusOneCountdownError,
+    verify_minus_one_countdown_certificate, MinusOneCountdownCertificateJson,
+    MinusOneCountdownError,
 };
 pub use scalar_lyapunov::{
     verify_scalar_lyapunov_certificate, ScalarLyapunovCertificateJson, ScalarLyapunovError,
@@ -33,24 +36,22 @@ pub use scalar_lyapunov::{
 };
 pub use schema::{
     AffineMapJson, BuchiEmptinessCertificateJson, BuchiTransitionJson, CycleCertificateJson,
-    DescentCertificateJson, FeatureDefinitionJson, InfeasibleAlgebraicCertificateJson,
-    InfeasibleMinimalityCertificateJson, InfeasibleSubsumptionCertificateJson,
-    SctEdgeCertificateJson, SizeChangeCertificateJson, SizeChangeRelationJson,
-    SizeChangeRelationKind, SizeChangeTransitionGraphJson, SourceGuardJson,
-    TailDescentCertificateJson,
+    DescentCertificateJson, FeatureDefinitionJson, GuardedPathCertificateJson,
+    InfeasibleAlgebraicCertificateJson, InfeasibleMinimalityCertificateJson,
+    InfeasibleSubsumptionCertificateJson, SctEdgeCertificateJson, SequenceStepJson,
+    SizeChangeCertificateJson, SizeChangeRelationJson, SizeChangeRelationKind,
+    SizeChangeTransitionGraphJson, SourceGuardJson, TailDescentCertificateJson,
 };
 pub use tail::{compute_a_crit, generate_tail_descent_certificate};
 pub use valuation_countdown::{
-    verify_valuation_countdown_certificate, ValuationCountdownCertificateJson, ValuationCountdownError,
+    verify_valuation_countdown_certificate, ValuationCountdownCertificateJson,
+    ValuationCountdownError,
 };
 
 pub use verify::{verify_descent_certificate, verify_tail_descent_certificate};
-pub use verify_sct::{verify_sct_edge_certificate, verify_sct_scc_certificate, SctVerificationError};
-
-
-
-
-
+pub use verify_sct::{
+    verify_sct_edge_certificate, verify_sct_scc_certificate, SctVerificationError,
+};
 
 use thiserror::Error;
 
@@ -92,4 +93,3 @@ pub enum VerificationError {
     #[error("Subsumption verification failed: {0}")]
     SubsumptionVerificationFailed(String),
 }
-

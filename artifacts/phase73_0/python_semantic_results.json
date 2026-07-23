@@ -1,0 +1,56 @@
+{
+  "execution_semantics": "left_to_right_v1",
+  "sequence_uv": {
+    "flattened_word": [
+      1,
+      1,
+      2,
+      1,
+      1,
+      2,
+      1,
+      2,
+      2
+    ],
+    "affine_form": {
+      "k": 9,
+      "total_twos": 13,
+      "constant": "27947"
+    },
+    "exact_word_cylinder": {
+      "residue": "1767",
+      "modulus_exponent": 14
+    },
+    "guarded_path_cylinder": {
+      "residue": "214759",
+      "modulus_exponent": 18
+    }
+  },
+  "sequence_vu": {
+    "flattened_word": [
+      1,
+      1,
+      2,
+      1,
+      2,
+      2,
+      1,
+      1,
+      2
+    ],
+    "affine_form": {
+      "k": 9,
+      "total_twos": 13,
+      "constant": "33515"
+    },
+    "exact_word_cylinder": {
+      "residue": "1959",
+      "modulus_exponent": 14
+    },
+    "guarded_path_cylinder": {
+      "residue": "1959",
+      "modulus_exponent": 18
+    }
+  },
+  "commutator_constant_diff": "5568"
+}

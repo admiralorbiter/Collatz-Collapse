@@ -29,7 +29,8 @@ pub fn export_manifest(
     };
 
     let manifest_path = output_dir.join("manifest.json");
-    let manifest_json = serde_json::to_string_pretty(&manifest).map_err(|e| format!("Manifest serialize error: {}", e))?;
+    let manifest_json = serde_json::to_string_pretty(&manifest)
+        .map_err(|e| format!("Manifest serialize error: {}", e))?;
     fs::write(&manifest_path, manifest_json).map_err(|e| format!("Manifest write error: {}", e))?;
 
     Ok(manifest)
@@ -43,11 +44,13 @@ pub fn export_certificate_bundle(
     fs::create_dir_all(output_dir).map_err(|e| format!("Failed to create output dir: {}", e))?;
 
     let jsonl_path = output_dir.join("certs.jsonl");
-    let mut file = fs::File::create(&jsonl_path).map_err(|e| format!("Failed to create certs.jsonl: {}", e))?;
+    let mut file = fs::File::create(&jsonl_path)
+        .map_err(|e| format!("Failed to create certs.jsonl: {}", e))?;
 
     let mut byte_contents = Vec::new();
     for cert in certificates {
-        let line = serde_json::to_string(cert).map_err(|e| format!("Serialization error: {}", e))?;
+        let line =
+            serde_json::to_string(cert).map_err(|e| format!("Serialization error: {}", e))?;
         writeln!(file, "{}", line).map_err(|e| format!("Write error: {}", e))?;
         byte_contents.extend_from_slice(line.as_bytes());
         byte_contents.push(b'\n');
@@ -69,11 +72,14 @@ pub fn verify_certificate_bundle(bundle_dir: &Path) -> Result<usize, String> {
         return Err(format!("Manifest file not found: {:?}", manifest_path));
     }
 
-    let manifest_str = fs::read_to_string(&manifest_path).map_err(|e| format!("Failed to read manifest: {}", e))?;
-    let manifest: BundleManifest = serde_json::from_str(&manifest_str).map_err(|e| format!("Manifest parse error: {}", e))?;
+    let manifest_str = fs::read_to_string(&manifest_path)
+        .map_err(|e| format!("Failed to read manifest: {}", e))?;
+    let manifest: BundleManifest =
+        serde_json::from_str(&manifest_str).map_err(|e| format!("Manifest parse error: {}", e))?;
 
     let jsonl_path = bundle_dir.join(&manifest.cert_file);
-    let file = fs::File::open(&jsonl_path).map_err(|e| format!("Failed to open certs.jsonl: {}", e))?;
+    let file =
+        fs::File::open(&jsonl_path).map_err(|e| format!("Failed to open certs.jsonl: {}", e))?;
     let reader = BufReader::new(file);
 
     let mut verified_count = 0;

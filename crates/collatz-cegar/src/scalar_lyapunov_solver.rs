@@ -7,9 +7,9 @@ use collatz_cert::graph_contraction::ObstructionCycleJson;
 use std::collections::HashMap;
 
 pub struct ScalarLyapunovSolver {
-    pub global_scale_q: u64, // 8
-    pub modulus_exponent: u32, // m (e.g. 4 for mod 16)
-    pub margin: i64, // 1
+    pub global_scale_q: u64,        // 8
+    pub modulus_exponent: u32,      // m (e.g. 4 for mod 16)
+    pub margin: i64,                // 1
     pub enforce_non_negative: bool, // true
 }
 
@@ -36,15 +36,16 @@ impl ScalarLyapunovSolver {
 
     /// Synthesizes non-negative integer residue weights w_r >= 0 over 100% of legal residue transitions.
     /// Emits an ObstructionCycleJson if single-step scalar ranking is mathematically impossible.
-    pub fn solve(
-        &self,
-    ) -> Result<ScalarLyapunovCertificateJson, ObstructionCycleJson> {
+    pub fn solve(&self) -> Result<ScalarLyapunovCertificateJson, ObstructionCycleJson> {
         let modulus = 1u64 << self.modulus_exponent;
         let complete_transitions = reconstruct_complete_residue_transitions(self.modulus_exponent);
 
         // Check for self-loop impossibility proof: r -> r with valuation a = 1
         for trans in &complete_transitions {
-            if trans.r_src == trans.r_dst && trans.valuation.min_valuation() == 1 && trans.r_src != 1 {
+            if trans.r_src == trans.r_dst
+                && trans.valuation.min_valuation() == 1
+                && trans.r_src != 1
+            {
                 let witness_n = (trans.r_src + modulus).to_string();
                 return Err(ObstructionCycleJson {
                     schema_version: "obstruction_cycle_v1".to_string(),
@@ -77,7 +78,8 @@ impl ScalarLyapunovSolver {
             for trans in &complete_transitions {
                 let w_src = *weights.get(&trans.r_src).unwrap_or(&0);
                 let w_dst = *weights.get(&trans.r_dst).unwrap_or(&0);
-                let max_allowed_wdst = w_src - self.margin - q * (2 - trans.valuation.min_valuation() as i64);
+                let max_allowed_wdst =
+                    w_src - self.margin - q * (2 - trans.valuation.min_valuation() as i64);
 
                 if w_dst > max_allowed_wdst {
                     let delta = w_dst - max_allowed_wdst;
@@ -107,7 +109,8 @@ impl ScalarLyapunovSolver {
             string_weights.insert(r.to_string(), w);
         }
 
-        let canonical_hash = compute_canonical_lyapunov_graph_hash(&complete_transitions, self.modulus_exponent);
+        let canonical_hash =
+            compute_canonical_lyapunov_graph_hash(&complete_transitions, self.modulus_exponent);
 
         let cert = ScalarLyapunovCertificateJson {
             schema_version: "scalar_lyapunov_v1".to_string(),
@@ -120,18 +123,17 @@ impl ScalarLyapunovSolver {
         };
 
         // Self-verify certificate over complete reconstructed domain
-        verify_scalar_lyapunov_certificate(&cert)
-            .map_err(|e| ObstructionCycleJson {
-                schema_version: "obstruction_cycle_v1".to_string(),
-                cycle_length: 1,
-                vertex_sequence: vec!["15".to_string(), "15".to_string()],
-                valuation_word: vec![1],
-                total_twos: 1,
-                odd_steps: 1,
-                constant: "1".to_string(),
-                primary_obstruction: format!("SelfVerificationFailed: {}", e),
-                positive_realizable: true,
-            })?;
+        verify_scalar_lyapunov_certificate(&cert).map_err(|e| ObstructionCycleJson {
+            schema_version: "obstruction_cycle_v1".to_string(),
+            cycle_length: 1,
+            vertex_sequence: vec!["15".to_string(), "15".to_string()],
+            valuation_word: vec![1],
+            total_twos: 1,
+            odd_steps: 1,
+            constant: "1".to_string(),
+            primary_obstruction: format!("SelfVerificationFailed: {}", e),
+            positive_realizable: true,
+        })?;
 
         Ok(cert)
     }
@@ -152,6 +154,8 @@ mod tests {
         assert_eq!(obstruction.schema_version, "obstruction_cycle_v1");
         assert_eq!(obstruction.cycle_length, 1);
         assert_eq!(obstruction.vertex_sequence, vec!["15", "15"]);
-        assert!(obstruction.primary_obstruction.contains("UnresolvedAbstractionObstruction"));
+        assert!(obstruction
+            .primary_obstruction
+            .contains("UnresolvedAbstractionObstruction"));
     }
 }

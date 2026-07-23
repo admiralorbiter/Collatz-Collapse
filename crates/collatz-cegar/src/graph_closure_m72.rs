@@ -30,7 +30,7 @@ impl GraphClosureEngine {
         (81 * n + 65) / 32
     }
 
-    /// Verifies path realizability & exact path cylinder for uv switching (214759 mod 262144)
+    /// Verifies path realizability & complete guarded path cylinder for uv switching (214759 mod 262144)
     pub fn verify_uv_realizability() -> bool {
         let n0 = 214759u128;
         assert_eq!(n0 % 262144, 214759, "n0 must be in 214759 mod 262144");

@@ -73,9 +73,11 @@ impl CegarEngine {
         let mut iterations = 0;
         let mut dangerous_cycles_found = 0;
 
-        while iterations < self.config.max_iterations && self.states.len() <= self.config.max_states {
+        while iterations < self.config.max_iterations && self.states.len() <= self.config.max_states
+        {
             iterations += 1;
-            let cycles = KarpCycleEngine::find_cycles(&self.states, &self.edges, self.config.max_depth);
+            let cycles =
+                KarpCycleEngine::find_cycles(&self.states, &self.edges, self.config.max_depth);
             let dangerous_cycles: Vec<_> = cycles
                 .into_iter()
                 .filter(|c| KarpCycleEngine::is_dangerous_cycle(c))
@@ -108,7 +110,9 @@ impl CegarEngine {
             }
         }
 
-        let negative_refinement_lemma = if iterations >= self.config.max_iterations || self.states.len() > self.config.max_states {
+        let negative_refinement_lemma = if iterations >= self.config.max_iterations
+            || self.states.len() > self.config.max_states
+        {
             Some(RefinementEngine::emit_negative_refinement_lemma(
                 self.config.max_depth,
                 iterations,

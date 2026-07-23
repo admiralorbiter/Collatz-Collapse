@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 63df60060e2c12319f7ed8d878abb9ad5f5a6b2221c478a360ed84819ab70c13 # shrinks to w1 = ValuationWord { valuations: [2] }, w2 = ValuationWord { valuations: [1, 1] }, start = 406

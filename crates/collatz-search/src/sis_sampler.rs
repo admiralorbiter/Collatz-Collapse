@@ -46,7 +46,9 @@ impl SequentialImportanceSampler {
     pub fn tilted_prob(&self, v: u32) -> f64 {
         let raw = (-self.theta_star * (v as f64)).exp() * Self::untilted_prob(v);
         // Normalize over v in 1..=10
-        let norm: f64 = (1..=10u32).map(|x| (-self.theta_star * (x as f64)).exp() * Self::untilted_prob(x)).sum();
+        let norm: f64 = (1..=10u32)
+            .map(|x| (-self.theta_star * (x as f64)).exp() * Self::untilted_prob(x))
+            .sum();
         raw / norm
     }
 
@@ -76,7 +78,11 @@ impl SequentialImportanceSampler {
                 rng_seed ^= rng_seed << 17;
                 let u = (rng_seed as f64) / (u64::MAX as f64);
 
-                let selected_val = cdf.iter().find(|&&(_, p)| u <= p).map(|&(v, _)| v).unwrap_or(1);
+                let selected_val = cdf
+                    .iter()
+                    .find(|&&(_, p)| u <= p)
+                    .map(|&(v, _)| v)
+                    .unwrap_or(1);
                 word_vec.push(selected_val as u8);
 
                 let p_untilted = Self::untilted_prob(selected_val);

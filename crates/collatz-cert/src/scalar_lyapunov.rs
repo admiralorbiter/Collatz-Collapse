@@ -21,7 +21,10 @@ impl ValuationConstraint {
 }
 
 /// Computes deterministic SHA-256 canonical hash of the complete residue transition graph.
-pub fn compute_canonical_lyapunov_graph_hash(transitions: &[ScalarTransition], modulus_exp: u32) -> String {
+pub fn compute_canonical_lyapunov_graph_hash(
+    transitions: &[ScalarTransition],
+    modulus_exp: u32,
+) -> String {
     let mut sorted_edges: Vec<String> = transitions
         .iter()
         .map(|t| match t.valuation {
@@ -87,7 +90,9 @@ pub enum ScalarLyapunovError {
     #[error("Missing weight entry for residue {0}")]
     MissingWeight(u64),
 
-    #[error("Extra or out-of-range weight keys in weight table: expected {expected}, found {found}")]
+    #[error(
+        "Extra or out-of-range weight keys in weight table: expected {expected}, found {found}"
+    )]
     ExtraWeightKeys { expected: usize, found: usize },
 
     #[error("Checked overflow occurred during Lyapunov transition inequality evaluation")]
@@ -111,7 +116,7 @@ pub fn reconstruct_complete_residue_transitions(modulus_exponent: u32) -> Vec<Sc
 
     for r in (1..modulus).step_by(2) {
         let val_r = (3 * r + 1).trailing_zeros();
-        
+
         if val_r >= modulus_exponent {
             // Unbounded tail (e.g. r=5 mod 16): Conservative minimum valuation AtLeast(m)
             for dst in (1..modulus).step_by(2) {
@@ -153,7 +158,9 @@ pub fn verify_scalar_lyapunov_certificate(
         });
     }
 
-    if cert.modulus_exponent < MIN_LYAPUNOV_MODULUS_EXPONENT || cert.modulus_exponent > MAX_LYAPUNOV_MODULUS_EXPONENT {
+    if cert.modulus_exponent < MIN_LYAPUNOV_MODULUS_EXPONENT
+        || cert.modulus_exponent > MAX_LYAPUNOV_MODULUS_EXPONENT
+    {
         return Err(ScalarLyapunovError::ModulusExponentOutOfBounds(
             cert.modulus_exponent,
             MIN_LYAPUNOV_MODULUS_EXPONENT,
@@ -186,7 +193,8 @@ pub fn verify_scalar_lyapunov_certificate(
 
     // Step 0: Independently reconstruct ALL legal residue transitions & verify SHA-256 graph hash
     let complete_transitions = reconstruct_complete_residue_transitions(cert.modulus_exponent);
-    let computed_hash = compute_canonical_lyapunov_graph_hash(&complete_transitions, cert.modulus_exponent);
+    let computed_hash =
+        compute_canonical_lyapunov_graph_hash(&complete_transitions, cert.modulus_exponent);
     if cert.graph_hash != computed_hash {
         return Err(ScalarLyapunovError::GraphHashMismatch {
             expected: computed_hash,
@@ -221,13 +229,17 @@ pub fn verify_scalar_lyapunov_certificate(
             .get(&trans.r_dst.to_string())
             .ok_or(ScalarLyapunovError::MissingWeight(trans.r_dst))?;
 
-        let diff = w_dst.checked_sub(*w_src).ok_or(ScalarLyapunovError::Overflow)?;
+        let diff = w_dst
+            .checked_sub(*w_src)
+            .ok_or(ScalarLyapunovError::Overflow)?;
 
         let min_val = trans.valuation.min_valuation();
         let delta_ceiling = 2i64
             .checked_sub(min_val as i64)
             .ok_or(ScalarLyapunovError::Overflow)?;
-        let q_delta = q.checked_mul(delta_ceiling).ok_or(ScalarLyapunovError::Overflow)?;
+        let q_delta = q
+            .checked_mul(delta_ceiling)
+            .ok_or(ScalarLyapunovError::Overflow)?;
         let target = (-margin)
             .checked_sub(q_delta)
             .ok_or(ScalarLyapunovError::Overflow)?;

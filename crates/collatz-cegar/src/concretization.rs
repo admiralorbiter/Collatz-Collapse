@@ -1,7 +1,7 @@
 use crate::abstract_domain::AbstractEdge;
 use collatz_affine::{AffinePrefix, ValuationWord};
 use num_bigint::{BigUint, ToBigInt};
-use num_traits::{Zero, One};
+use num_traits::{One, Zero};
 
 /// Multi-Lap Simultaneous Modular Cycle Solution
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -31,9 +31,7 @@ pub enum ConcretizationResult {
         prefix: AffinePrefix,
     },
     /// Real expanding cycle candidate (counterexample)
-    RealExpandingCandidate {
-        prefix: AffinePrefix,
-    },
+    RealExpandingCandidate { prefix: AffinePrefix },
 }
 
 impl ConcretizationEngine {
@@ -92,8 +90,10 @@ impl ConcretizationEngine {
         let word = ValuationWord::new(repeated_vals).map_err(|e| format!("{:?}", e))?;
         let prefix = AffinePrefix::from_valuation_word(word).map_err(|e| format!("{:?}", e))?;
 
-        let single_word = ValuationWord::new(valuations.to_vec()).map_err(|e| format!("{:?}", e))?;
-        let single_prefix = AffinePrefix::from_valuation_word(single_word).map_err(|e| format!("{:?}", e))?;
+        let single_word =
+            ValuationWord::new(valuations.to_vec()).map_err(|e| format!("{:?}", e))?;
+        let single_prefix =
+            AffinePrefix::from_valuation_word(single_word).map_err(|e| format!("{:?}", e))?;
 
         let total_a = prefix.total_twos;
         let total_k = prefix.odd_steps;
@@ -167,9 +167,11 @@ mod tests {
     #[test]
     fn test_positivity_guard_accepts_valid_prefix() {
         let s1 = RelationalState::new_congruence(1, 2);
-        let cycle = vec![
-            AbstractEdge { from: s1.clone(), to: s1.clone(), valuation: 2 },
-        ];
+        let cycle = vec![AbstractEdge {
+            from: s1.clone(),
+            to: s1.clone(),
+            valuation: 2,
+        }];
 
         let res = ConcretizationEngine::concretize_cycle(&cycle).unwrap();
         assert!(matches!(res, ConcretizationResult::Contracting { .. }));
@@ -178,7 +180,7 @@ mod tests {
     #[test]
     fn test_solve_multi_lap_cycle_7_11_9_7_laps_1_2_3() {
         let vals = vec![1u8, 1u8, 2u8];
-        
+
         // Lap 1: n = 231 mod 256
         let sol1 = ConcretizationEngine::solve_multi_lap_cycle(&vals, 7, 4, 1).unwrap();
         assert_eq!(sol1.smallest_positive_witness, BigUint::from(231u32));

@@ -1,7 +1,7 @@
 use collatz_cegar::{ExactValuation, FixedPointSynthesisResult, FixedPointSynthesizer};
+use num_bigint::BigUint;
 use std::fs;
 use std::path::Path;
-use num_bigint::BigUint;
 
 #[test]
 fn test_phase_6d_benchmark_and_artifact_generation() {
@@ -15,7 +15,6 @@ fn test_phase_6d_benchmark_and_artifact_generation() {
     assert_eq!(summary.finite_fuel_macrocycles, 36);
     assert_eq!(summary.trivial_cycles, 3);
     assert_eq!(summary.positive_candidates, 0);
-
 
     // Deduplicated cyclic orbit classes:
     assert_eq!(summary.unique_primitive_cyclic_classes, 14);
@@ -33,7 +32,11 @@ fn test_phase_6d_benchmark_and_artifact_generation() {
   "modulus_exponent": 4,
   "reason": "1-lap cycle fails positivity guards or valuation replay"
 }"#;
-    fs::write(out_dir.join("infeasible_abstract_cycle_v1.json"), infeasible_json).unwrap();
+    fs::write(
+        out_dir.join("infeasible_abstract_cycle_v1.json"),
+        infeasible_json,
+    )
+    .unwrap();
 
     // 2. non_returning_word_v1
     let non_returning_json = r#"{
@@ -44,7 +47,11 @@ fn test_phase_6d_benchmark_and_artifact_generation() {
   "modulus": "16",
   "reason": "Return congruence (2^A - 3^k)r_0 - c_w == 0 mod 2^4 fails"
 }"#;
-    fs::write(out_dir.join("non_returning_word_v1.json"), non_returning_json).unwrap();
+    fs::write(
+        out_dir.join("non_returning_word_v1.json"),
+        non_returning_json,
+    )
+    .unwrap();
 
     // 3. fixed_point_word_mismatch_v1
     let mismatch_json = r#"{
@@ -58,7 +65,11 @@ fn test_phase_6d_benchmark_and_artifact_generation() {
   "actual_valuation": 2,
   "reason": "Rational fixed point fails exact valuation replay at step 2: expected 3, found 2"
 }"#;
-    fs::write(out_dir.join("fixed_point_word_mismatch_v1.json"), mismatch_json).unwrap();
+    fs::write(
+        out_dir.join("fixed_point_word_mismatch_v1.json"),
+        mismatch_json,
+    )
+    .unwrap();
 
     // 4. finite_fuel_macrocycle_v2
     if let FixedPointSynthesisResult::FiniteFuelMacrocycle(cert) =
@@ -88,7 +99,11 @@ fn test_phase_6d_benchmark_and_artifact_generation() {
   "starting_n": "1",
   "note": "Derived positive integer fixed point root candidate requiring exact replay validation"
 }"#;
-    fs::write(out_dir.join("positive_cycle_candidate_v1.json"), positive_candidate_json).unwrap();
+    fs::write(
+        out_dir.join("positive_cycle_candidate_v1.json"),
+        positive_candidate_json,
+    )
+    .unwrap();
 
     // 7. unresolved_macrocycle_v1
     let unresolved_json = r#"{
@@ -98,7 +113,11 @@ fn test_phase_6d_benchmark_and_artifact_generation() {
   "modulus_exponent": 4,
   "reason": "Abstract cycle trajectory bounds require non-relational interval refinement"
 }"#;
-    fs::write(out_dir.join("unresolved_macrocycle_v1.json"), unresolved_json).unwrap();
+    fs::write(
+        out_dir.join("unresolved_macrocycle_v1.json"),
+        unresolved_json,
+    )
+    .unwrap();
 }
 
 #[test]

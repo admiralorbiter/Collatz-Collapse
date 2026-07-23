@@ -52,13 +52,11 @@ impl AlphabetManifestEngine {
             max_word_length,
             max_step_valuation,
             symbols,
-            excluded_branch_treatments: vec![
-                ExcludedBranchTreatmentJson {
-                    branch_condition: format!("step_valuation > {max_step_valuation}"),
-                    proof_kind: "tail_descent".to_string(),
-                    certificate_reference: "certificates/tail_descent_manifest.json".to_string(),
-                },
-            ],
+            excluded_branch_treatments: vec![ExcludedBranchTreatmentJson {
+                branch_condition: format!("step_valuation > {max_step_valuation}"),
+                proof_kind: "tail_descent".to_string(),
+                certificate_reference: "certificates/tail_descent_manifest.json".to_string(),
+            }],
             completeness_proved: true,
         }
     }

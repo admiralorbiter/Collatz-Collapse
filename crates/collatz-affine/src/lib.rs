@@ -1,12 +1,16 @@
 pub mod affine;
+pub mod execution_sequence;
 pub mod inversion;
+pub mod semantic_cylinders;
 pub mod valuation;
 
 pub use affine::{compute_descent_threshold, AffineDiagnostics, AffinePrefix, ValuationSemantics};
+pub use execution_sequence::{ExecutionSequence, ThenSequence};
 pub use inversion::{
-    hensel_inverse_3_pow, modular_inverse_3k_mod_2A, solve_starting_residue, solve_starting_residue_broad,
-    solve_starting_residue_exact,
+    hensel_inverse_3_pow, modular_inverse_3k_mod_2A, solve_starting_residue,
+    solve_starting_residue_broad, solve_starting_residue_exact,
 };
+pub use semantic_cylinders::{CanonicalCylinder, ExactWordCylinder};
 pub use valuation::ValuationWord;
 
 use thiserror::Error;

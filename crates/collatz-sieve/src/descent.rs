@@ -40,6 +40,11 @@ mod tests {
         };
 
         let sieve = DescentSieve;
-        assert_eq!(sieve.evaluate(&state), SieveResult::Reject { reason: RejectionReason::DescentCertified });
+        assert_eq!(
+            sieve.evaluate(&state),
+            SieveResult::Reject {
+                reason: RejectionReason::DescentCertified
+            }
+        );
     }
 }

@@ -30,7 +30,9 @@ impl SievePipeline {
             let mut final_result = SieveResult::Keep;
             for sieve in &self.sieves {
                 let res = sieve.evaluate(state);
-                if matches!(res, SieveResult::Reject { .. }) && matches!(final_result, SieveResult::Keep) {
+                if matches!(res, SieveResult::Reject { .. })
+                    && matches!(final_result, SieveResult::Keep)
+                {
                     final_result = res;
                 }
             }

@@ -18,6 +18,11 @@ impl ValuationWord {
         Ok(Self { valuations: vals })
     }
 
+    /// Helper constructor taking a slice of u8 values.
+    pub fn from_slice(vals: &[u8]) -> Self {
+        Self::new(vals.to_vec()).unwrap()
+    }
+
     /// Creates a ValuationWord from u32 values, asserting each fits in u8.
     pub fn from_u32_slice(vals: &[u32]) -> Result<Self, AffineError> {
         let mut bytes = Vec::with_capacity(vals.len());

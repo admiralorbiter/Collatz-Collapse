@@ -1,4 +1,6 @@
-use crate::{solve_starting_residue_broad, solve_starting_residue_exact, AffineError, ValuationWord};
+use crate::{
+    solve_starting_residue_broad, solve_starting_residue_exact, AffineError, ValuationWord,
+};
 use num_bigint::BigUint;
 use num_traits::{One, Zero};
 
@@ -64,7 +66,10 @@ impl AffinePrefix {
     }
 
     /// Solves starting residue for the specified ValuationSemantics.
-    pub fn starting_residue_for_semantics(&self, semantics: ValuationSemantics) -> Result<(BigUint, u64), AffineError> {
+    pub fn starting_residue_for_semantics(
+        &self,
+        semantics: ValuationSemantics,
+    ) -> Result<(BigUint, u64), AffineError> {
         match semantics {
             ValuationSemantics::TerminalAtLeast => {
                 let res = self.starting_residue_broad()?;
@@ -97,7 +102,6 @@ impl AffinePrefix {
         let numerator = (pow3_k * n_0) + &self.constant;
         numerator >> self.total_twos
     }
-
 
     /// Checks if multiplicative contraction holds: 2^{A_k} > 3^k
     pub fn is_multiplicative_contracting(&self) -> bool {
@@ -173,7 +177,6 @@ pub fn compute_descent_threshold(c_k: &BigUint, k: usize, a_k: u64) -> Option<Bi
     Some(b)
 }
 
-
 /// Diagnostic metadata measuring affine growth vs paradoxical sequence discrepancy.
 #[derive(Debug, Clone, PartialEq)]
 pub struct AffineDiagnostics {
@@ -199,7 +202,6 @@ impl AffineDiagnostics {
         }
     }
 }
-
 
 /// u128 Fast-Path Safety Guard:
 /// Promotes to BigUint if k > 80 or total_valuation > 126.
@@ -241,7 +243,6 @@ mod tests {
         assert_eq!(compute_affine_constant_u128(&word), None);
     }
 
-
     #[test]
     fn test_signed_representative_and_pole_distance() {
         let word = ValuationWord::new(vec![1, 1, 2, 1, 3]).unwrap();
@@ -250,13 +251,15 @@ mod tests {
 
         // starting_residue is 39 mod 256
         assert_eq!(prefix.starting_residue, BigUint::from(39u32));
-        assert_eq!(diagnostics.signed_representative, num_bigint::BigInt::from(39i32));
+        assert_eq!(
+            diagnostics.signed_representative,
+            num_bigint::BigInt::from(39i32)
+        );
         assert!(diagnostics.pole_distance_bits <= prefix.total_twos as u32);
     }
 
     #[test]
     fn test_affine_prefix_creation() {
-
         // Valuation word (1, 1), k=2, A_k=2.
         // c_1 = 3(0) + 2^0 = 1. c_2 = 3(1) + 2^1 = 5.
         // Residue mod 4 is 3.
@@ -271,7 +274,9 @@ mod tests {
     fn test_apply_affine() {
         let word = ValuationWord::new(vec![1, 4]).unwrap();
         let prefix = AffinePrefix::from_valuation_word(word).unwrap();
-        assert_eq!(prefix.apply(&BigUint::from(3u32)).unwrap(), BigUint::from(1u32));
+        assert_eq!(
+            prefix.apply(&BigUint::from(3u32)).unwrap(),
+            BigUint::from(1u32)
+        );
     }
 }
-

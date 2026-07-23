@@ -69,7 +69,8 @@ pub fn verify_sct_scc_certificate(
     // Step 2: Convert transition graphs into SizeChangeGraph objects
     let mut generators = Vec::new();
     for tg in &scc_cert.transition_graphs {
-        let mut g = SizeChangeGraph::new(&tg.source_node, &tg.target_node, tg.valuation_word.clone());
+        let mut g =
+            SizeChangeGraph::new(&tg.source_node, &tg.target_node, tg.valuation_word.clone());
         for rel in &tg.relations {
             let r_val = match rel.relation {
                 SizeChangeRelationKind::Decrease => RelationValue::Strict,
@@ -95,7 +96,9 @@ pub fn verify_sct_scc_certificate(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::schema::{AffineMapJson, FeatureDefinitionJson, SizeChangeRelationJson, SourceGuardJson};
+    use crate::schema::{
+        AffineMapJson, FeatureDefinitionJson, SizeChangeRelationJson, SourceGuardJson,
+    };
 
     #[test]
     fn test_verify_valid_sct_milestone70_certificate() {
@@ -193,7 +196,7 @@ mod tests {
             proof_kind: "fixed_point_linear_form".to_string(),
         };
 
-        let generators = vec![&e12, &e21];
+        let _generators = vec![&e12, &e21];
         let scc_cert = SctEngine::generate_scc_certificate(
             "SCC-MILESTONE-70-MULTI-CLASS",
             &["v2_L1", "v2_L2"],
@@ -204,8 +207,14 @@ mod tests {
                     target_node: "Q2".to_string(),
                     valuation_word: vec![1, 1, 2],
                     matrix: [
-                        (("v2_L1".to_string(), "v2_L1".to_string()), RelationValue::Strict),
-                        (("v2_L2".to_string(), "v2_L1".to_string()), RelationValue::Weak),
+                        (
+                            ("v2_L1".to_string(), "v2_L1".to_string()),
+                            RelationValue::Strict,
+                        ),
+                        (
+                            ("v2_L2".to_string(), "v2_L1".to_string()),
+                            RelationValue::Weak,
+                        ),
                     ]
                     .into_iter()
                     .collect(),
@@ -215,8 +224,14 @@ mod tests {
                     target_node: "Q1".to_string(),
                     valuation_word: vec![1, 2, 2],
                     matrix: [
-                        (("v2_L1".to_string(), "v2_L1".to_string()), RelationValue::Weak),
-                        (("v2_L2".to_string(), "v2_L2".to_string()), RelationValue::Strict),
+                        (
+                            ("v2_L1".to_string(), "v2_L1".to_string()),
+                            RelationValue::Weak,
+                        ),
+                        (
+                            ("v2_L2".to_string(), "v2_L2".to_string()),
+                            RelationValue::Strict,
+                        ),
                     ]
                     .into_iter()
                     .collect(),
