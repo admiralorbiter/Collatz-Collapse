@@ -78,6 +78,8 @@ impl Default for ExtremalSearchConfig {
     }
 }
 
+use crate::accelerated_branch_params::AcceleratedBranchParams;
+
 /// Gap-bound sensitivity table entry.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GapSensitivityEntry {
@@ -86,53 +88,67 @@ pub struct GapSensitivityEntry {
     pub stable_through_j: u64,
 }
 
+/// Symbolic branch diagnostics entry for single gap j.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SymbolicBranchDiagnostics {
+    pub gap_j: u64,
+    pub m_j: String,
+    pub q_j: String,
+    pub c_j: String,
+    pub d_j: String,
+    pub beta_j: String,
+    pub bitlength_c_j: u64,
+    pub precision_b_j: u64,
+    pub zero_tail_z_j: u64,
+    pub normalized_c_ratio: f64,
+    pub mu_mod_11: u8,
+}
+
 /// Experiment 1 Engine: Bounded Extremal Minimum Source Search M_{H,J}(B) & E_{H,J}(b)
 pub struct ExtremalSourceSearchEngine;
 
 impl ExtremalSourceSearchEngine {
-    /// Return exact branch parameters (M_j, Q_j, C_j, D_j, \beta_j) for return gap j >= 0.
-    pub fn branch_parameters_j(j: u64) -> (BigUint, BigUint, BigUint, BigUint, BigInt) {
-        let b_exp = 9 + 4 * j;
-        let m_j = BigUint::one() << b_exp;
+    /// Return exact authoritative branch parameters for return gap j >= 0.
+    pub fn branch_parameters_j(j: u64) -> AcceleratedBranchParams {
+        AcceleratedBranchParams::for_gap(j)
+    }
 
-        let mut q_j = BigUint::from(729u64);
-        for _ in 0..j {
-            q_j *= 27u32;
+    /// Analyze symbolic 1-gap branch diagnostics for gap j.
+    pub fn analyze_single_branch_j(j: u64) -> SymbolicBranchDiagnostics {
+        let p = Self::branch_parameters_j(j);
+        let precision_b_j = p.precision;
+        let bitlength_c_j = p.z_source_residue.bits() as u64;
+        let zero_tail_z_j = precision_b_j.saturating_sub(bitlength_c_j);
+
+        let m_float = Self::log2_biguint(&p.modulus).exp2();
+        let c_float = Self::log2_biguint(&p.z_source_residue).exp2();
+        let normalized_c_ratio = c_float / m_float.max(1.0);
+
+        SymbolicBranchDiagnostics {
+            gap_j: j,
+            m_j: p.modulus.to_string(),
+            q_j: p.multiplier.to_string(),
+            c_j: p.z_source_residue.to_string(),
+            d_j: p.z_endpoint.to_string(),
+            beta_j: p.affine_intercept.to_string(),
+            bitlength_c_j,
+            precision_b_j,
+            zero_tail_z_j,
+            normalized_c_ratio,
+            mu_mod_11: p.mu_mod_11,
         }
-
-        let (c_j, d_j) = match j {
-            0 => (BigUint::from(342u64), BigUint::from(487u64)),
-            1 => (BigUint::from(7392u64), BigUint::from(17761u64)),
-            2 => (BigUint::from(86208u64), BigUint::from(349537u64)),
-            3 => (BigUint::from(1764032u64), BigUint::from(12069670u64)),
-            _ => {
-                let mut c = BigUint::from(7392u64);
-                for _ in 1..j {
-                    c = (c * 16u32 + 86208u32 - 7392u32) % &m_j;
-                }
-                let d = (&q_j * &c + BigUint::from(1376u64)) / &m_j;
-                (c, d)
-            }
-        };
-
-        let m_d = &m_j * &d_j;
-        let q_c = &q_j * &c_j;
-        assert!(m_d >= q_c, "Invalid branch parameters calculation");
-        let beta_j = BigInt::from(&m_d - &q_c);
-
-        (m_j, q_j, c_j, d_j, beta_j)
     }
 
     /// Construct base single-branch canonical guarded word for gap j.
     pub fn base_guarded_word(j: u64) -> CanonicalGuardedWord {
-        let (m_j, q_j, c_j, d_j, beta_j) = Self::branch_parameters_j(j);
+        let p = Self::branch_parameters_j(j);
         let word = CanonicalGuardedWord {
-            source_residue: c_j,
-            endpoint: d_j,
+            source_residue: p.z_source_residue,
+            endpoint: p.z_endpoint,
             affine: CompositeAffineMap {
-                multiplier: q_j,
-                denominator: m_j,
-                intercept: beta_j,
+                multiplier: p.multiplier,
+                denominator: p.modulus,
+                intercept: p.affine_intercept,
             },
             gap_sequence: vec![j],
             accelerated_depth: 1,
@@ -147,7 +163,11 @@ impl ExtremalSourceSearchEngine {
     /// \beta_{wj} = Q_j * \beta_w + M_w * \beta_j
     /// D_{wj} = (Q_{wj} * \rho_{wj} + \beta_{wj}) / M_{wj}
     pub fn extend_guarded_word(parent: &CanonicalGuardedWord, j: u64) -> CanonicalGuardedWord {
-        let (m_j, q_j, c_j, _d_j, beta_j) = Self::branch_parameters_j(j);
+        let p = Self::branch_parameters_j(j);
+        let m_j = p.modulus;
+        let q_j = p.multiplier;
+        let c_j = p.z_source_residue;
+        let beta_j = p.affine_intercept;
 
         let q_w = &parent.affine.multiplier;
         let m_w = &parent.affine.denominator;
@@ -169,14 +189,14 @@ impl ExtremalSourceSearchEngine {
             }
         };
 
-        let r = (&inv_q_w * &target_diff) % &m_j;
+        let r = (&inv_q_w * target_diff) % &m_j;
 
         let rho_wj = rho_w + m_w * &r;
 
         let q_wj = &q_j * q_w;
         let m_wj = &m_j * m_w;
 
-        let beta_wj = BigInt::from(q_j.clone()) * beta_w + BigInt::from(m_w.clone()) * &beta_j;
+        let beta_wj = BigInt::from(q_j.clone()) * beta_w + BigInt::from(m_w.clone()) * beta_j;
 
         let q_rho = BigInt::from(q_wj.clone()) * BigInt::from(rho_wj.clone());
         let num_d = q_rho + &beta_wj;

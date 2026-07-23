@@ -93,11 +93,17 @@ pub use ultrametric_machine::{
     ValuationRegion,
 };
 
+pub mod accelerated_branch_params;
 pub mod adversarial_corpus;
 pub mod extremal_source_search;
 pub mod periodic_ghost_atlas;
+pub mod zero_tail_stress_audit;
+pub mod adaptive_stress_engine;
 
+pub use accelerated_branch_params::AcceleratedBranchParams;
 pub use adversarial_corpus::{AdversarialCorpus, AdversarialRecord, BranchParameters, RecordOrigin, StoppingReason};
-pub use extremal_source_search::{ExtremalSearchConfig, ExtremalSearchResult, ExtremalSourceSearchEngine};
+pub use extremal_source_search::{ExtremalSearchConfig, ExtremalSearchResult, ExtremalSourceSearchEngine, SymbolicBranchDiagnostics};
 pub use periodic_ghost_atlas::{GhostOrbitEntry, PeriodicGhostAtlas, PeriodicOrbitClass, ShadowEvaluationResult};
+pub use zero_tail_stress_audit::ZeroTailProfile;
+pub use adaptive_stress_engine::{AdaptiveStressEngine, ExecutionModeTag, LargeGapScanReport, ScanStatusLabel};
 

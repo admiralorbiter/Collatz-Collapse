@@ -6,8 +6,10 @@
 - `Phase 7.3S.0`: Active specifications and evidence report models (`[COMPLETE]`).
 - `Phase 7.3S.1`: Corpus & Theorem-Backed Generators (`[COMPLETE / FROZEN]`).
   - Badges: `VERIFIED_CORPUS_SCHEMA`, `GHOST_ATLAS_COORDINATE_AUDIT_PASSED`, `VERIFIED_PERIODIC_FIXED_POINT_GENERATOR`, `VERIFIED_BOUNDED_EXTREMAL_SEARCH_INFRASTRUCTURE`, `VERIFIED_EXTREMAL_TABLE_H36_J2`.
+- `Phase 7.3S.1B`: Zero-Tail & Large-Gap Stress Audit (`[COMPLETE]`).
+  - Badges: `VERIFIED_ZERO_TAIL_INVARIANT_AUDIT`, `VERIFIED_SINGLE_GAP_NO_CHEAP_PRECISION`, `FIXED_PERIOD_GHOST_ZERO_TAIL_BOUND_PROVED`, `NO_CHEAP_PRECISION_OBSERVED_THROUGH_J32`.
 **Next Queued Task**:
-- `Phase 7.3S.2`: Automata Transducer Probe & Bounded Equivalence Minimization (`[NOT STARTED / NEXT]`).
+- `Phase 7.3S.2`: Eventual-Zero Automata Quotient Minimizer (`[NOT STARTED / NEXT]`).
 
 ---
 
