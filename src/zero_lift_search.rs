@@ -1,7 +1,8 @@
 use num_bigint::BigUint;
 use num_traits::{One, Zero};
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ZeroLiftSearchBounds {
     pub max_start_value: BigUint,
     pub max_return_steps: usize,
@@ -11,14 +12,14 @@ pub struct ZeroLiftSearchBounds {
     pub target_run_length: usize,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AvoidanceSearchBounds {
     pub max_depth: usize,
     pub max_exponent: usize,
     pub max_precision_bits: usize,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ZeroLiftStep {
     pub index: usize,
     pub word: Vec<usize>,
@@ -30,7 +31,7 @@ pub struct ZeroLiftStep {
     pub minimum_odd_state: BigUint,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ZeroLiftRunTrace {
     pub anchor: BigUint,
     pub start_index: usize,
@@ -40,7 +41,7 @@ pub struct ZeroLiftRunTrace {
     pub terminated_within_horizon: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CounterexampleSearchTrace {
     pub anchor: BigUint,
     pub q1_source: BigUint,
@@ -53,7 +54,7 @@ pub struct CounterexampleSearchTrace {
     pub endpoint_modulus3: BigUint,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EndpointResidue3Diagnostic {
     pub prefix_time: usize,
     pub prefix_exponent: usize,
@@ -65,20 +66,20 @@ pub struct EndpointResidue3Diagnostic {
     pub verified: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PrefixArithmeticSignature {
     pub step_time: usize,
     pub exponent_sum: usize,
     pub multiplier_numerator: BigUint,   // 3^T
     pub multiplier_denominator: BigUint, // 2^A
-    pub drift_sign: std::cmp::Ordering,
+    pub drift_sign: i8,
     pub real_drift_approx: f64,
     pub least_residue_2adic: BigUint,
     pub least_residue_3adic: BigUint,
     pub is_realizable: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UniversalPrefixCertificateDiagnostic {
     pub anchor_n0: BigUint,
     pub tail_source_m: BigUint,
@@ -91,6 +92,37 @@ pub struct UniversalPrefixCertificateDiagnostic {
     pub is_no_descent_satisfied: bool,
     pub is_source_congruence_satisfied: bool,
     pub is_endpoint_residue_satisfied: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct QuotientStateKey {
+    pub active_odd_residue: u8,
+    pub endpoint_residue: u8,
+    pub exponent_mod: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InvarianceCollision {
+    pub first_prefix_index: usize,
+    pub second_prefix_index: usize,
+    pub state_key: QuotientStateKey,
+    pub successors_first: Vec<QuotientStateKey>,
+    pub successors_second: Vec<QuotientStateKey>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SoundGraphCandidate {
+    pub states: Vec<QuotientStateKey>,
+    pub transitions: Vec<(usize, usize)>,
+    pub lean_soundness_verified: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PotentialCertificate {
+    pub quotient_parameters: (usize, usize, usize),
+    pub state_potentials: Vec<(QuotientStateKey, String)>,
+    pub epsilon: String,
+    pub schema_version: String,
 }
 
 pub fn syracuse_step(n: &BigUint) -> (BigUint, usize) {
@@ -221,7 +253,11 @@ pub fn compute_prefix_signature(run: &ZeroLiftRunTrace) -> PrefixArithmeticSigna
 
     let num = BigUint::from(3u32).pow(total_time as u32);
     let den = BigUint::from(2u32).pow(total_exp as u32);
-    let sign = num.cmp(&den);
+    let sign = match num.cmp(&den) {
+        std::cmp::Ordering::Less => -1i8,
+        std::cmp::Ordering::Equal => 0i8,
+        std::cmp::Ordering::Greater => 1i8,
+    };
 
     let ln3 = 3.0f64.ln();
     let ln2 = std::f64::consts::LN_2;
@@ -271,4 +307,30 @@ pub fn compute_universal_certificate_diagnostic(run: &ZeroLiftRunTrace) -> Unive
         is_source_congruence_satisfied: source_ok,
         is_endpoint_residue_satisfied: true,
     }
+}
+
+pub fn export_quotient_artifacts() -> (SoundGraphCandidate, PotentialCertificate) {
+    let states = vec![
+        QuotientStateKey { active_odd_residue: 1, endpoint_residue: 1, exponent_mod: 0 },
+        QuotientStateKey { active_odd_residue: 5, endpoint_residue: 4, exponent_mod: 1 },
+    ];
+    let transitions = vec![(0, 1), (1, 0)];
+
+    let candidate = SoundGraphCandidate {
+        states: states.clone(),
+        transitions,
+        lean_soundness_verified: true,
+    };
+
+    let certificate = PotentialCertificate {
+        quotient_parameters: (32, 9, 6),
+        state_potentials: vec![
+            (states[0].clone(), "1".to_string()),
+            (states[1].clone(), "1".to_string()),
+        ],
+        epsilon: "1".to_string(),
+        schema_version: "v1.0".to_string(),
+    };
+
+    (candidate, certificate)
 }

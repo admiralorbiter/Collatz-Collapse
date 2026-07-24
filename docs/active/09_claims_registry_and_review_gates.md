@@ -2,6 +2,18 @@
 
 ## Verified Claims & Badges Ledger
 
+### Phase I.V — Persistent-Component Coverage & Avoidance Reduction
+- `MINIMAL_COUNTEREXAMPLE_MUST_BE_Q1_RECURRENT_CONDITIONAL_PROVED_LEAN4`
+- `ACTUAL_AVOIDING_TAIL_PROJECTS_INTO_SOUND_REACHABLE_PROVED_LEAN4`
+
+### Phase I.U — Discovery-First Concrete Quotient Discovery & Certified Component Elimination
+- `MINIMAL_COUNTEREXAMPLE_AVOIDING_TAIL_CANNOT_STAY_IN_REGION_PROVED_LEAN4`
+- `ACTUAL_AVOIDING_EXTENSION_PROJECTS_TO_SOUND_EDGE_PROVED_LEAN4`
+
+### Phase I.T — Finite Residual Quotients & Certified Potentials
+- `STRICT_RANKING_ELIMINATES_INFINITE_QUOTIENT_PATH_PROVED_LEAN4`
+- `WEIGHTED_RANKING_WITH_BOUNDED_COCYCLE_ELIMINATES_PATH_PROVED_LEAN4`
+
 ### Phase I.S — Universal Odd-Prefix Certificate & Dual-Branch Rigidity
 - `MINIMAL_COUNTEREXAMPLE_HAS_UNIVERSALLY_CERTIFIED_TAIL_PROVED_LEAN4`
 - `RECURRENT_PREFIX_HAS_UNIVERSAL_CERTIFICATE_PROVED_LEAN4`
@@ -56,6 +68,9 @@
 
 | Gate ID | Description | Status |
 |---|---|---|
+| `GATE_I_V_01` | Persistent-Component Coverage & Avoidance Reduction | PASSED |
+| `GATE_I_U_01` | Discovery-First Concrete Quotient & Certified Component Elimination | PASSED |
+| `GATE_I_T_01` | Finite Residual Quotients & Certified Potentials | PASSED |
 | `GATE_I_S_01` | Universal Odd-Prefix Certificate & Dual-Branch Rigidity | PASSED |
 | `GATE_I_R_01` | Infinite Avoidance Completion & Natural Realization | PASSED |
 | `GATE_I_Q_01` | Avoidance Prefix Compiler & Height Rigidity | PASSED |

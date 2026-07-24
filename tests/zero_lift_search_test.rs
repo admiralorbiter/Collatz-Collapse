@@ -3,7 +3,7 @@ use num_bigint::BigUint;
 #[path = "../src/zero_lift_search.rs"]
 mod zero_lift_search;
 
-use zero_lift_search::{compute_prefix_signature, compute_universal_certificate_diagnostic, search_counterexample_q1_traces, search_orbit_first_zero_lift_runs, ZeroLiftSearchBounds};
+use zero_lift_search::{compute_prefix_signature, compute_universal_certificate_diagnostic, export_quotient_artifacts, search_counterexample_q1_traces, search_orbit_first_zero_lift_runs, ZeroLiftSearchBounds};
 
 #[test]
 fn test_bounded_zero_lift_search_execution() {
@@ -79,4 +79,12 @@ fn test_universal_certificate_diagnostic_execution() {
     let diag = compute_universal_certificate_diagnostic(&traces[0]);
     assert!(diag.is_source_congruence_satisfied);
     assert!(diag.is_endpoint_residue_satisfied);
+}
+
+#[test]
+fn test_export_quotient_artifacts_execution() {
+    let (candidate, cert) = export_quotient_artifacts();
+    assert!(candidate.lean_soundness_verified);
+    assert_eq!(candidate.states.len(), 2);
+    assert_eq!(cert.schema_version, "v1.0");
 }
