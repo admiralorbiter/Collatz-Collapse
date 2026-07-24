@@ -1,0 +1,931 @@
+{
+  "gap_j": 2,
+  "total_candidate_words": 4368,
+  "coarse_guard_survivors": 28,
+  "first_return_branches_n": 13,
+  "rejected_coarse_survivors_count": 15,
+  "truncated_kraft_sum_numerator": 317,
+  "truncated_kraft_sum_denominator": 131072,
+  "surviving_branches": [
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        3
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          982729
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          118291
+        ]
+      ],
+      "exact_word_residue": [
+        14247
+      ],
+      "refined_source_residue": [
+        3422119
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        3,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1031881
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          119827
+        ]
+      ],
+      "exact_word_residue": [
+        227239
+      ],
+      "refined_source_residue": [
+        2586535
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        3,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1105609
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          122131
+        ]
+      ],
+      "exact_word_residue": [
+        22439
+      ],
+      "refined_source_residue": [
+        3430311
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        3,
+        1,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1216201
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          125587
+        ]
+      ],
+      "exact_word_residue": [
+        239527
+      ],
+      "refined_source_residue": [
+        2598823
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2,
+        1,
+        2,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1197769
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          125011
+        ]
+      ],
+      "exact_word_residue": [
+        28583
+      ],
+      "refined_source_residue": [
+        1339303
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1271497
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          127315
+        ]
+      ],
+      "exact_word_residue": [
+        85927
+      ],
+      "refined_source_residue": [
+        2183079
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        3,
+        1,
+        1,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1382089
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          130771
+        ]
+      ],
+      "exact_word_residue": [
+        40871
+      ],
+      "refined_source_residue": [
+        1351591
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        2,
+        1,
+        2,
+        1,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1354441
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          129907
+        ]
+      ],
+      "exact_word_residue": [
+        248743
+      ],
+      "refined_source_residue": [
+        3656615
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1465033
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          133363
+        ]
+      ],
+      "exact_word_residue": [
+        203687
+      ],
+      "refined_source_residue": [
+        2825127
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        3,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1630921
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          138547
+        ]
+      ],
+      "exact_word_residue": [
+        5031
+      ],
+      "refined_source_residue": [
+        1577895
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1589449
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          137251
+        ]
+      ],
+      "exact_word_residue": [
+        54695
+      ],
+      "refined_source_residue": [
+        2938279
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          1755337
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          142435
+        ]
+      ],
+      "exact_word_residue": [
+        118183
+      ],
+      "refined_source_residue": [
+        1691047
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        4,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "gap": 2,
+      "total_exponent": 17,
+      "alpha": [
+        1,
+        [
+          2004169
+        ]
+      ],
+      "live_shift": [
+        1,
+        [
+          150211
+        ]
+      ],
+      "exact_word_residue": [
+        82343
+      ],
+      "refined_source_residue": [
+        1917351
+      ],
+      "refined_source_modulus": [
+        4194304
+      ]
+    }
+  ],
+  "rejected_records": [
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2
+      ],
+      "earliest_return_length": 8,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        1,
+        2
+      ],
+      "earliest_return_length": 7,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        2,
+        1
+      ],
+      "earliest_return_length": 7,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        1,
+        2
+      ],
+      "earliest_return_length": 6,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "genealogical_category": "R_{2<-0}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1
+      ],
+      "earliest_return_length": 6,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "genealogical_category": "R_{2<-0}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1
+      ],
+      "earliest_return_length": 6,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2
+      ],
+      "genealogical_category": "R_{2<-0}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2,
+        1,
+        1,
+        1,
+        2
+      ],
+      "earliest_return_length": 9,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2,
+        1
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2,
+        1,
+        1,
+        2,
+        1
+      ],
+      "earliest_return_length": 8,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "earliest_return_length": 9,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        1
+      ],
+      "earliest_return_length": 8,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        2,
+        1
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      "earliest_return_length": 7,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        2
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "earliest_return_length": 9,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        1,
+        1,
+        1
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1
+      ],
+      "earliest_return_length": 8,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        1,
+        1
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      "earliest_return_length": 7,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        1
+      ],
+      "genealogical_category": "R_{2<-1}"
+    },
+    {
+      "word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1
+      ],
+      "earliest_return_length": 6,
+      "earliest_return_word": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3
+      ],
+      "genealogical_category": "R_{2<-0}"
+    }
+  ]
+}

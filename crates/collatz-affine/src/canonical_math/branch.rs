@@ -1,4 +1,4 @@
-use crate::canonical_math::cocycle::compile_semantic_return;
+use crate::canonical_math::cocycle::{compile_semantic_return, SemanticReturnCompilation};
 use crate::canonical_math::types::{
     BranchEndpointAnchor, BranchSourceAnchor, CanonicalEndpointCoordinate,
     CanonicalSourceCoordinate, CoreAffineConstant, J0CertificationError, OrdinaryOdd,
@@ -109,15 +109,18 @@ impl CertifiedJ0Q1Return {
         // Compile semantic return using generic compiler for w_0 = [1, 1, 2, 1, 2, 2], r_t = 7, q = 5
         let w_0 = ValuationWord::new(vec![1, 1, 2, 1, 2, 2])
             .map_err(|e| J0CertificationError::InvalidInput { message: e })?;
-        let compiled = compile_semantic_return(&w_0, 7, 5)
+        let compiled_res = compile_semantic_return(&w_0, 7, 5)
             .map_err(|e| J0CertificationError::InvalidInput { message: e })?;
 
-        if !compiled.is_compatible {
-            return Err(J0CertificationError::RefinedCylinderMismatch {
-                expected: compiled.exact_word_residue,
-                actual: n % &compiled.exact_word_modulus,
-            });
-        }
+        let compiled = match compiled_res {
+            SemanticReturnCompilation::Compatible(c) => c,
+            SemanticReturnCompilation::Incompatible { exact_word, .. } => {
+                return Err(J0CertificationError::RefinedCylinderMismatch {
+                    expected: exact_word.residue,
+                    actual: n % &exact_word.modulus,
+                });
+            }
+        };
 
         let expected_residue = compiled.refined_source_residue;
         let expected_modulus = compiled.refined_source_modulus;
@@ -162,12 +165,15 @@ impl CertifiedJ0Q1Return {
         let live_target = Q1RegisterState::from_ordinary_odd(&target)
             .map_err(|e| J0CertificationError::InvalidInput { message: e })?;
 
-        // 4. Live Quotient Intertwining: 512 * k' == 729 * k + 75
+        // 4. Live Quotient Intertwining with dynamically derived \eta
         let k_s = live_source.quotient();
         let k_t = live_target.quotient();
 
+        let expected_eta = compiled.live_affine_constant
+            .ok_or_else(|| J0CertificationError::InvalidInput { message: "Failed to derive live eta".to_string() })?;
+
         let lhs_live = BigInt::from(512u32) * k_t;
-        let rhs_live = (BigInt::from(729u32) * k_s) + BigInt::from(75u32);
+        let rhs_live = (BigInt::from(729u32) * k_s) + &expected_eta.0;
 
         if lhs_live != rhs_live {
             return Err(J0CertificationError::LiveAffineMismatch {

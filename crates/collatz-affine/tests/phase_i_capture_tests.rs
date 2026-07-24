@@ -3,7 +3,8 @@ use collatz_affine::canonical_math::{
     compute_eta_for_transition, compute_word_affine_destination_pullback,
     verify_coboundary_reconciliation, verify_core_intertwining,
     verify_live_quotient_intertwining, CertifiedJ0Q1Return, J0CertificationError,
-    LiveBlockConstant, OrdinaryOdd, QuotientRegisterState, ValuationWord,
+    LiveBlockConstant, OrdinaryOdd, QuotientRegisterState, SemanticReturnCompilation,
+    ValuationWord,
 };
 use collatz_affine::{
     verify_canonical_return, verify_prefix_cylinder_fidelity, CaptureEvent,
@@ -13,8 +14,6 @@ use num_bigint::{BigInt, BigUint};
 
 #[test]
 fn test_compile_exact_word_cylinder_j0() {
-    // Valuation word w_0 = [1, 1, 2, 1, 2, 2] (k=6, B=9).
-    // Backward pullback derives exact-word source cylinder \rho_{w_0} = 935 \pmod{1024}.
     let word_w0 = ValuationWord::new(vec![1, 1, 2, 1, 2, 2]).unwrap();
     let exact_cyl = compile_exact_word_cylinder(&word_w0).unwrap();
 
@@ -24,44 +23,56 @@ fn test_compile_exact_word_cylinder_j0() {
 
 #[test]
 fn test_compile_semantic_return_j0_q1_compatible() {
-    // Word w_0 = [1, 1, 2, 1, 2, 2], destination Q1: r_t = 7, q = 5 bits.
-    // Exact word cylinder = 935 mod 1024. Pullback cylinder = 1959 mod 16384.
-    // 1959 mod 1024 = 935 => COMPATIBLE! Refined cylinder = 1959 mod 16384.
     let word_w0 = ValuationWord::new(vec![1, 1, 2, 1, 2, 2]).unwrap();
-    let compiled = compile_semantic_return(&word_w0, 7, 5).unwrap();
+    let compiled_res = compile_semantic_return(&word_w0, 7, 5).unwrap();
 
-    assert!(compiled.is_compatible);
-    assert_eq!(compiled.exact_word_residue, BigUint::from(935u32));
-    assert_eq!(compiled.exact_word_modulus, BigUint::from(1024u32));
-    assert_eq!(compiled.refined_source_residue, BigUint::from(1959u32));
-    assert_eq!(compiled.refined_source_modulus, BigUint::from(16384u32));
+    match compiled_res {
+        SemanticReturnCompilation::Compatible(compiled) => {
+            assert_eq!(compiled.exact_word_residue, BigUint::from(935u32));
+            assert_eq!(compiled.exact_word_modulus, BigUint::from(1024u32));
+            assert_eq!(compiled.refined_source_residue, BigUint::from(1959u32));
+            assert_eq!(compiled.refined_source_modulus, BigUint::from(16384u32));
+            assert_eq!(compiled.live_affine_constant, Some(LiveBlockConstant(BigInt::from(75u32))));
+        }
+        SemanticReturnCompilation::Incompatible { .. } => panic!("Expected Compatible for r_t = 7"),
+    }
+}
+
+#[test]
+fn test_compile_semantic_return_j0_q0_compatible() {
+    // Test q=0 vacuous destination condition: result remains exact-word cylinder 935 mod 1024!
+    let word_w0 = ValuationWord::new(vec![1, 1, 2, 1, 2, 2]).unwrap();
+    let compiled_res = compile_semantic_return(&word_w0, 0, 0).unwrap();
+
+    match compiled_res {
+        SemanticReturnCompilation::Compatible(compiled) => {
+            assert_eq!(compiled.refined_source_residue, BigUint::from(935u32));
+            assert_eq!(compiled.refined_source_modulus, BigUint::from(1024u32));
+            assert_eq!(compiled.live_affine_constant, None); // q=0 < 5 bits => None
+        }
+        SemanticReturnCompilation::Incompatible { .. } => panic!("Expected Compatible for q=0"),
+    }
 }
 
 #[test]
 fn test_compile_semantic_return_j0_even_target_incompatible() {
-    // Word w_0 = [1, 1, 2, 1, 2, 2], target section r_t = 2 (even target residue!).
-    // 18 s \equiv 11 (mod 32) has NO solutions! => INCOMPATIBLE!
     let word_w0 = ValuationWord::new(vec![1, 1, 2, 1, 2, 2]).unwrap();
-    let compiled = compile_semantic_return(&word_w0, 2, 5).unwrap();
+    let compiled_res = compile_semantic_return(&word_w0, 2, 5).unwrap();
 
-    assert!(!compiled.is_compatible);
+    assert!(matches!(compiled_res, SemanticReturnCompilation::Incompatible { .. }));
 }
 
 #[test]
 fn test_generic_destination_pullback_cylinder_j0() {
-    // Valuation word w_0 = [1, 1, 2, 1, 2, 2] (k=6, B=9, \alpha_{w_0} = 881).
-    // Destination section Q1: r_t = 7, q = 5 bits (mod 32).
-    // Formula: \sigma_{w, r_t} = Q_w^{-1} (2^B r_t - \alpha_w) \pmod{2^{B + q}}
     let word_w0 = ValuationWord::new(vec![1, 1, 2, 1, 2, 2]).unwrap();
-    let (sigma, modulus) = compute_word_affine_destination_pullback(&word_w0, 7, 5).unwrap();
+    let cyl = compute_word_affine_destination_pullback(&word_w0, 7, 5).unwrap();
 
-    assert_eq!(sigma, BigInt::from(1959u32));
-    assert_eq!(modulus, BigInt::from(16384u32));
+    assert_eq!(cyl.sigma, BigUint::from(1959u32));
+    assert_eq!(cyl.modulus, BigUint::from(16384u32));
 }
 
 #[test]
 fn test_certified_j0_q1_return_try_from_source_t0_to_t3() {
-    // Deterministic source-only constructor test for n(t) = 1959 + 16384 * t
     for t in 0..=3 {
         let n_val = 1959u64 + 16384u64 * (t as u64);
         let n_prime_val = 2791u64 + 23328u64 * (t as u64);
@@ -83,19 +94,16 @@ fn test_certified_j0_q1_return_try_from_source_t0_to_t3() {
 fn test_certified_j0_q1_return_structured_rejections() {
     let word_w0 = ValuationWord::new(vec![1, 1, 2, 1, 2, 2]).unwrap();
 
-    // Rejection 1: n = 935 -> 1333 (target is 1333 = 21 mod 32, not 7!)
     let src_935 = OrdinaryOdd::new(BigUint::from(935u64)).unwrap();
     let tgt_1333 = OrdinaryOdd::new(BigUint::from(1333u64)).unwrap();
     let res1 = CertifiedJ0Q1Return::try_from_transition(&src_935, &tgt_1333, &word_w0);
     assert!(matches!(res1, Err(J0CertificationError::RefinedCylinderMismatch { .. }) | Err(J0CertificationError::DestinationPhaseMismatch { .. })));
 
-    // Rejection 2: n = 423 -> 635 (423 = 423 mod 512, but 423 = 423 mod 1024 != 935 mod 1024!)
     let src_423 = OrdinaryOdd::new(BigUint::from(423u64)).unwrap();
     let tgt_635 = OrdinaryOdd::new(BigUint::from(635u64)).unwrap();
     let res2 = CertifiedJ0Q1Return::try_from_transition(&src_423, &tgt_635, &word_w0);
     assert!(matches!(res2, Err(J0CertificationError::RefinedCylinderMismatch { .. })));
 
-    // Rejection 3: Wrong valuation word
     let src_1959 = OrdinaryOdd::new(BigUint::from(1959u64)).unwrap();
     let tgt_2791 = OrdinaryOdd::new(BigUint::from(2791u64)).unwrap();
     let wrong_word = ValuationWord::new(vec![1, 1, 1, 1, 1, 1]).unwrap();

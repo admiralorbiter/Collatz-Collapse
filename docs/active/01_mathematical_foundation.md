@@ -46,23 +46,10 @@ Every valuation word $(a_0, \ldots, a_{k-1})$ of total valuation $A_k$ imposes m
 Taking $3^k n_0 + c_k \equiv 0 \pmod{2^{A_k}}$ yields:
 $$n_0 \equiv -c_k \cdot (3^k)^{-1} \pmod{2^{A_k}}$$
 This congruence forces the first $k-1$ valuations $(a_0, \ldots, a_{k-2})$ exactly, and guarantees that the $k$-th valuation is **at least** $a_{k-1}$ ($v_2(3n_{k-1}+1) \ge a_{k-1}$).
-- **Modulus:** $2^{A_k}$
-- **Normalized 2-Adic Measure over $2\mathbb{N}+1$:** $2^{-(A_k - 1)}$
-- **Overlap:** Broad valuation classes are **not disjoint** (a class with terminal valuation $\ge a+1$ is contained within terminal valuation $\ge a$).
 
 #### 2. Complete Exact Valuation Cylinder (`ExactWord`)
 To force the final value after $k$ divisions to be odd—and therefore obtain the exact word $(a_0, \ldots, a_{k-1})$—we apply a 1-bit lift requiring $3^k n_0 + c_k \equiv 2^{A_k} \pmod{2^{A_k + 1}}$:
 $$n_0 \equiv (2^{A_k} - c_k) \cdot (3^k)^{-1} \pmod{2^{A_k + 1}}$$
-- **Modulus:** $2^{A_k + 1}$
-- **Normalized 2-Adic Measure over $2\mathbb{N}+1$:** $2^{-A_k}$
-- **Disjointness:** Exact valuation cylinders from a prefix-free valuation tree are **strictly disjoint** over $\mathbb{Z}_2$.
-
-### 3.2 Significance for Search Logic
-This closed-form identity eliminates the need for iterative modular lifting or candidate branching. Given any valuation word $(a_0, \ldots, a_{k-1})$:
-1. Compute total valuation $A_k$ and additive constant $c_k$.
-2. Compute $(3^k)^{-1} \pmod{2^{A_k}}$ or $\pmod{2^{A_k+1}}$ via Hensel lifting or modular exponentiation.
-3. Compute starting residue $r_k$ for either broad or exact semantics.
-4. The residue class is the exact set of starting integers satisfying the valuation constraints.
 
 ---
 
@@ -72,222 +59,47 @@ This closed-form identity eliminates the need for iterative modular lifting or c
 The multiplicative growth ratio after $k$ odd steps is $\frac{3^k}{2^{A_k}}$. We define the **growth debt** $D_k$ as:
 $$D_k = k \log_2 3 - A_k$$
 
-* $D_k > 0$: Multiplicative expansion ($3^k > 2^{A_k}$).
-* $D_k < 0$: Multiplicative contraction ($3^k < 2^{A_k}$).
-* $D_k \approx 0$: Near-critical boundary behavior.
-
-> **Verification Rule:** Floating-point growth debt $D_k$ is used strictly as a search prioritization score. All certificate verification relies exclusively on exact comparison of integers $3^k$ and $2^{A_k}$.
-
 ### 4.2 Exact Integer Descent Threshold $B$
 Suppose a valuation prefix of length $k$ satisfies $2^{A_k} > 3^k$ (multiplicative contraction). Then $n_k < n_0$ if and only if:
-$$\frac{3^k n_0 + c_k}{2^{A_k}} < n_0 \quad \iff \quad c_k < (2^{A_k} - 3^k) n_0$$
-
-Define the exact integer threshold $B$:
-$$B = \left\lfloor \frac{c_k}{2^{A_k} - 3^k} \right\rfloor + 1$$
-
-**Descent Theorem:** For any starting integer $n_0 \equiv r_k \pmod{2^{A_k}}$, if $n_0 \ge B$, then $S^k(n_0) < n_0$. The valuation prefix guarantees that $n_0$ descends below itself in $k$ odd steps.
-
-### 4.4 The Tail-Cutoff Lemma for Infinite Valuation Branching
-At any tree node with length $k$, additive constant $c_k$, and total valuation $A_k$, the child valuation $a_k$ can theoretically range from $1$ to $\infty$. However, as $a_k$ increases, $2^{A_k + a_k}$ grows exponentially relative to $3^{k+1}$, driving the descent threshold $B \to 1$.
-
-Define the analytical cutoff threshold $a_{\text{crit}}$ using exact integer bit length:
-$$a_{\text{crit}} = \max\left(1, \text{bitlength}(3c_k + 2^{A_k} + 3^{k+1}) - A_k\right)$$
-
-**Tail-Cutoff Theorem:** For all child valuations $a_k \ge a_{\text{crit}}$, the resulting macrostep satisfies $2^{A_k + a_k} > 3^{k+1}$ and descent threshold $B \le 1$. Because no positive odd integer is strictly less than 1, all branches $a_k \ge a_{\text{crit}}$ are **trivially certified with zero exceptions**.
-
-This enables the `PrefixTrie` to cover infinite child valuation branches $a_k \ge a_{\text{crit}}$ in a single exact analytical step without allocating infinite nodes in memory.
-
-### 4.5 The Four 2-Adic Coverage Metrics
-To provide rigorous mathematical interpretation of tree search results without confusing overlap mass with set measure, the workbench reports **4 distinct metrics**:
-
-1. **Exact-Cylinder Lower Bound Coverage ($\mu_{\text{exact}}$):**
-   $$\mu_{\text{exact}} = \sum_{L \in \text{Leaves}} \frac{1}{2^{A_k(L)}} = \frac{1}{2} \cdot \text{Mass}_{\text{broad}}$$
-   Because exact valuation cylinders are strictly disjoint, this gives a provable lower bound (e.g., $\approx 79.6\%$ at depth 20).
-2. **Broad-Certificate Canonical Union Measure ($\mu_{\text{union}}$):**
-   Computed by inserting broad residue classes $r_k \pmod{2^{A_k}}$ into an LSB-first binary Patricia trie (`MeasureTrie`) and canonicalizing overlapping subtrees. Enforces the strict invariant $0 \le \mu_{\text{union}} \le 1.0$.
-3. **Raw Overlap-Weighted Mass ($\text{Mass}_{\text{broad}}$):**
-   $$\text{Mass}_{\text{broad}} = \sum_{L \in \text{Leaves}} \frac{1}{2^{A_k(L) - 1}}$$
-   Quantifies total certificate mass including broad overlaps (e.g., $1.592$ at depth 20).
-4. **Unresolved Measure ($\mu_{\text{unresolved}}$):**
-   $$\mu_{\text{unresolved}} = 1.0 - \mu_{\text{union}}$$
+$$n_0 \ge B = \left\lfloor \frac{c_k}{2^{A_k} - 3^k} \right\rfloor + 1$$
 
 ---
 
-## 5. 2-Adic Topological Framework & The $-1/3$ Singularity
+## 5. Measure Dictionary & First-Return Kraft Sum
 
-### 5.1 The 2-Adic Embedding
-The 2-adic integers $\mathbb{Z}_2$ form the completion of $\mathbb{Z}$ under the 2-adic metric $|x|_2 = 2^{-v_2(x)}$. The odd-only Collatz map extends continuously to $\mathbb{Z}_2 \setminus \{-1/3\}$.
+### 5.1 2-Adic Measure Space Dictionary
 
-Every infinite valuation word $(a_0, a_1, a_2, \ldots)$ defines a sequence of residues $r_k \pmod{2^{A_k}}$ that converges in $\mathbb{Z}_2$ to a unique 2-adic integer:
-$$x_{\infty} = \lim_{k \to \infty} (-c_k \cdot (3^k)^{-1}) \in \mathbb{Z}_2$$
+| Object | State Space | Section / Event Conditioning | 2-Adic Measure Formula |
+| :--- | :--- | :--- | :--- |
+| **Exact Word Cylinder** | $\mathbb{Z}_2$ | None | $2^{-(B(w) + 1)}$ |
+| **Destination-Refined Cylinder** | $\mathbb{Z}_2$ | None ($q=5$ bits) | $2^{-(B(w) + 5)}$ |
+| **First-Return Branch** | $Q_1$ Section ($n \equiv 7 \bmod 32$) | Conditional on $Q_1$ ($\mu(Q_1) = 2^{-5}$) | $\mu_{Q_1}(R(w)) = 2^{-B(w)}$ |
+| **Canonical Quotient Renewal** | Abstract $E_1$ | Geometric decay model | $\text{Pr}(J=j \mid E_1) = \frac{15}{16^{j+1}}$ |
 
-### 5.2 The $-1/3$ Pole Singularity
-In $\mathbb{Z}_2$, the odd Collatz numerator $3x+1$ vanishes when $x = -1/3$. The 2-adic expansion of $-1/3$ is:
-$$-\frac{1}{3} = 1 + 2 + 2^3 + 2^5 + 2^7 + \dots = \dots 10101011_2$$
-
-At $x = -1/3$, $v_2(3x+1) = \infty$, causing the odd-only map $S(x)$ to be undefined. Any valuation word whose prefixes force residues approaching $-1/3 \pmod{2^{A_k}}$ will exhibit unbounded valuation growth ($a_i \to \infty$).
-
-### 5.3 2-Adic Realizability vs. Ordinary Integer Realizability
-* **2-Adic Realizability:** In $\mathbb{Z}_2$, **every** infinite valuation word not converging to the **2-adic pole or singularity $-1/3$** (where $3x+1=0$ and the accelerated odd-only map is undefined) is realized by a unique 2-adic integer. Note that $-1/3$ is an essential topological singularity, while $-1$ is a 2-adic fixed point.
-* **Ordinary Integer Realizability ($\mathbb{N}^+$):** A valuation word is realized by a positive integer $n \in \mathbb{N}^+$ if and only if its 2-adic limit $x_{\infty}$ has a finite binary length and $x_{\infty} > 0$.
-* **Spurious Abstract Paths:** In CEGAR, an abstract trajectory cycle with positive growth debt is always realizable in $\mathbb{Z}_2$ (often approaching a negative 2-adic integer like $-1$ or $-5/7$). Intermediate positivity guards ($n_i \ge 1$) establish positive-integer feasibility for the particular concretized trace.
-
+### 5.2 Truncated Dyadic Kraft Measure Sum $K_J$
+$$K_J = \sum_{j=0}^J N_j 2^{-(9 + 4j)}$$
+- **Gap $j=0$**: $N_0 = 1, B_0 = 9 \implies K_0 = \frac{1}{512}$.
+- **Gap $j=1$**: $N_1 = 3, B_1 = 13 \implies K_1 = \frac{19}{8192}$.
+- **Gap $j=2$**: $N_2 = 13, B_2 = 17 \implies K_2 = \frac{317}{131072}$.
 
 ---
 
-## 6. Cycle Equations & Certificates
+## 6. Discrete Lift-Digit Decomposition & Realization Equivalence
 
-If a valuation word $(a_0, \ldots, a_{k-1})$ produces a periodic trajectory of length $k$ returning to $n_0$:
-$$n_k = n_0 \quad \iff \quad \frac{3^k n_0 + c_k}{2^{A_k}} = n_0$$
+### 6.1 Lift-Digit Decomposition Formula
+Let $H_0 = 5, r_0 = 7$, and $H_m = 5 + \sum_{i=0}^{m-1} B(w_i)$.
+Because prefix cylinders are nested ($r_{m+1} \equiv r_m \pmod{2^{H_m}}$), each step decomposes into:
+$$r_{m+1} = r_m + d_m 2^{H_m}, \qquad 0 \le d_m < 2^{B(w_m)}$$
 
-Solving for $n_0$ yields the exact **Cycle Equation**:
-$$n_0 = \frac{c_k}{2^{A_k} - 3^k}$$
+Cumulative summation formula:
+$$r_m = 7 + \sum_{i=0}^{m-1} d_i 2^{H_i}$$
 
-A valid non-trivial positive cycle requires:
-1. $2^{A_k} > 3^k$ (positive denominator).
-2. $(2^{A_k} - 3^k) \mid c_k$ (exact integer division).
-3. $n_0$ is odd and positive ($n_0 \in 2\mathbb{N}+1$).
-4. Every intermediate value $n_j = \frac{3^j n_0 + c_j}{2^{A_j}}$ is odd and positive.
-5. $v_2(3n_j + 1) = a_j$ exactly for all $0 \le j < k$.
-6. The trajectory is not the trivial cycle $1 \mapsto 1$ ($a_0 = 2$, repeated word $(2, 2)$).
+Because $d_i \ge 0$, the representative sequence $(r_m)_{m \ge 0}$ is **monotone nondecreasing**.
 
----
+### 6.2 The Realization Equivalence Theorem
+For an infinite itinerary $\omega = (w_0, w_1, \dots)$ with 2-adic limit point $\kappa(\omega)$:
+$$\kappa(\omega) \in \mathbb{N}^+ \iff (r_m)_{m \ge 0} \text{ is bounded} \iff (r_m)_{m \ge 0} \text{ eventually constant} \iff \mathbf{d_m = 0 \text{ for all large } m}$$
 
-## 7. Fundamental Literature References
-
-The theoretical framework of the Collatz Research Workbench builds upon and connects to the following key literature:
-
-1. **2-Adic Conjugacy & Valuation Encodings:**
-   - Bernstein, D. J., & Lagarias, J. C. (1996). *The 3x+1 conjugacy map*. Canadian Journal of Mathematics, 48(6), 1154-1169.
-2. **Stopping-Time Density Framework:**
-   - Terras, R. (1976). *A stopping time problem on the positive integers*. Acta Arithmetica, 30(3), 241-252.
-   - Everett, C. J. (1977). *Iteration of the 3x+1 function*. Advances in Mathematics, 25(1), 42-45.
-3. **Logarithmic Density Bounds:**
-   - Tao, T. (2022). *Almost all Collatz orbits attain almost bounded values*. Forum of Mathematics, Pi, 10, e12.
-4. **Paradoxical Sequences & Growth Ratio Dynamics:**
-   - Rozier, O., & Terracol, R. (2025). *Paradoxical behavior and exponent dynamics in Collatz sequences*.
-5. **Adaptive Exponent-Code Search (2-Adic / 3-Adic):**
-   - Kramer, O. (2026). *Adaptive search in Collatz exponent-code space*.
-6. **Difference Inequalities & Potential Invariants:**
-   - Krasikov, I., & Lagarias, J. C. (2003). *Bounds for the 3x+1 problem using difference inequalities*. Acta Arithmetica, 109(3), 237-258.
-7. **Computational Baselines & High-Performance Sieving:**
-   - Barina, D. (2021). *Convergence verification of the Collatz problem*. Journal of Supercomputing, 77(3), 2681-2688.
-
----
-
-## 8. Phase 4 Theoretical Discoveries & Automata Theorems
-
-### 8.1 Automata DFA Sample Observations
-Let $\mathcal{A} = (Q, \Sigma, \delta, q_0, F)$ be the Deterministic Finite Automaton (DFA) constructed over a sample of 500 unresolved valuation-word prefixes $\mathcal{L}_{\text{sampled}}$ at depth $k$.
-
-**Empirical Finding (Sampled Acyclic Structure):**
-In the sampled automaton with $V = |Q| = 2349$ state vertices and $E = |\delta| = 2348$ active state transitions, the graph satisfies $E = V - 1$.
-*Note:* This empirical observation confirms that no directed cycles were detected within the 500-sample prefix set. It is an empirical heuristic diagnostic, not a universal theorem over all finite depths or over the full unresolved language.
-
-### 8.2 Macrostep Rational Potential Contraction
-Let $W = (a_0, a_1, \ldots, a_{k-1})$ be a $k$-step macrostep valuation prefix. Define the rational linear potential function $V_r(n) = q_r n + b_r$.
-
-**Theorem (Macrostep Contraction):**
-For all 20-step macrosteps in the unresolved language $\mathcal{L}_{\text{unresolved}}$, the total cumulative valuation satisfies $A_{20} \ge 34 > 20 \log_2 3 \approx 31.70$. The exact affine macrostep transformation $n_{20} = \frac{3^{20} n_0 + c_{20}}{2^{A_{20}}}$ satisfies:
-$$\Delta V = V(n_{20}) - V(n_0) \le -\varepsilon < 0$$
-proving that all oscillatory "breathing" trajectories strictly decrease potential across macrosteps.
-
----
-
-## 9. Phase 6 Relational Countdown Theorems & 2-Adic Fixed-Point Invariants
-
-### 9.1 The Minus-One Residue Exit Theorem ($v_2(n+1)$ Invariant)
-For any $m \ge 2$ and odd integer $n \equiv 2^m - 1 \pmod{2^m}$:
-1. Since $n \equiv 3 \pmod{4}$, the odd Collatz step $S(n) = \frac{3n+1}{2}$ has exact 2-adic valuation $a = 1$.
-2. **Valuation Decrement Identity:**
-   $$v_2(S(n) + 1) = v_2(n+1) - 1$$
-3. Defining the guarded countdown $\tau_m(n) = v_2(n+1) - m \ge 0$ for $r = 2^m - 1 \pmod{2^m}$:
-   - **Loop Rule ($\tau_m(n) > 0$):** $S(n) \equiv 2^m - 1 \pmod{2^m}$, with $\tau_m(S(n)) = \tau_m(n) - 1$.
-   - **Exit Rule ($\tau_m(n) = 0$):** $S(n) \equiv 2^{m-1} - 1 \pmod{2^m}$ (exits the self-loop to residue $2^{m-1} - 1$).
-   - For $m = 4$ ($r = 15 \pmod{16}$): $(15, \tau=0) \xrightarrow{a=1} 7 \pmod{16}$ (exits to residue 7!).
-
-### 9.3 Periodic 2-Adic Fixed-Point & Finite-Fuel Dichotomy Theorem
-
-### 9.3 Periodic 2-Adic Fixed-Point & Integer Primitive Form
-
-Let $S: \mathbb{Z}_2^{\text{odd}} \to \mathbb{Z}_2^{\text{odd}}$ be the accelerated Collatz map on odd 2-adic integers.
-For a canonical return macrostep block $v$, define:
-$$F_v(D) = \frac{M_v}{Q_v} D + \beta_v, \qquad M_v = 2^{B_v}, \quad Q_v = 3^{E_v}, \quad d_v = Q_v - M_v > 0 \text{ (odd)}$$
-
-Since $Q_v > M_v$ and $\beta_v = c_v > 0$, the unique 2-adic fixed point $\xi_v$ of $F_v$ is strictly negative:
-$$\xi_v = \frac{-\beta_v}{d_v} = \frac{-\beta_v}{Q_v - M_v} = \frac{\beta_v}{M_v - Q_v} < 0$$
-
-The error-transport identity across macrostep repetitions is:
-$$F_v(D) - \xi_v = \frac{M_v}{Q_v} (D - \xi_v) \implies v_2(F_v^r(D) - \xi_v) = v_2(D - \xi_v) - r B_v$$
-
-To avoid rational division during verification, define the **Integer Primitive Form** $A_v(D)$:
-$$A_v(D) := d_v D + \beta_v$$
-Because $d_v$ is odd, $v_2(D - \xi_v) = v_2(A_v(D))$.
-
-### 9.4 Core Interaction Determinant & Affine Commutator Identity
-
-For two return blocks $v, w$, define the **Core Interaction Determinant**:
-$$\Gamma_{v,w} = d_v \beta_w - d_w \beta_v$$
-
-This invariant satisfies:
-1. **Core Difference Identity:**
-   $$\xi_v - \xi_w = \frac{\Gamma_{v,w}}{d_v d_w} \implies v_2(\xi_v - \xi_w) = v_2(\Gamma_{v,w})$$
-2. **Affine Commutator Identity:**
-   $$F_w(F_v(D)) - F_v(F_w(D)) = -\frac{M_v M_w}{Q_v Q_w} \Gamma_{v,w}$$
-3. **Unification Theorem:**
-   $$\Gamma_{v,w} = 0 \iff \xi_v = \xi_w \iff F_v \circ F_w = F_w \circ F_v \iff v, w \text{ share a common rational affine center.}$$
-
-### 9.5 Integer Core-Switching Law & 4-Case Valuation Budget
-
-Using $A_v(D) = d_v D + \beta_v$ and $A_w(D) = d_w D + \beta_w$, core switching obeys the exact integer identity:
-$$d_v A_w(D) = d_w A_v(D) + \Gamma_{v,w}$$
-
-Let $s = v_2(A_v(D))$ and $\kappa = v_2(\Gamma_{v,w}) \in \mathbb{N} \cup \{\infty\}$. The outgoing depth $s_w = v_2(A_w(D))$ follows four exact cases:
-1. **`SameCore` ($\Gamma_{v,w} = 0, \kappa = \infty$):** $s_w = s$.
-2. **`Inherited` ($s < \kappa$):** $s_w = s$ (precision is too shallow to distinguish cores).
-3. **`Reset` ($s > \kappa$):** $s_w = \kappa$ (switching resets surviving depth to core separation $\kappa$).
-4. **`Resonant` ($s = \kappa$):** Writing $u = \frac{d_w A_v(D)}{2^\kappa}$ and $g = \frac{\Gamma_{v,w}}{2^\kappa}$ (both odd), $s_w = \kappa + v_2(u + g) \ge \kappa + 1$.
-
-### 9.6 Fine–Wilf Symbolic Overlap & Morse–Hedlund Complexity
-
-- **Fine–Wilf Overlap Theorem:** If a concrete trajectory simultaneously shadows two repeated patterns $v^\infty$ and $w^\infty$ over an exact symbolic interval of length $|x| \ge |v| + |w| - \gcd(|v|, |w|)$, then $v$ and $w$ reduce to a common primitive period.
-- **Morse–Hedlund Complexity Bound:** Any infinite aperiodic path over a finite gap alphabet has subword complexity $p(n) \ge n + 1$ for all $n$. Paths with $p(n) \le n$ are eventually periodic and eliminated by positive-integer non-periodicity theorems.
-
----
-
-## 10. Multi-Word Trajectories & Size-Change Termination (Phase 7 Framework)
-
-### 10.1 Size-Change Feature Vectors & Monotonicity Graphs
-For trajectories switching among multiple valuation words $w_1, w_2, \ldots$ inside abstract SCCs, termination is analyzed over a tuple of total well-founded natural-valued features on $\mathbb{N}$:
-$$\mathbf{v}(n) = \big(v_2(L_1(n)), v_2(L_2(n)), \ldots, v_2(L_d(n)), \text{bitlength}(n)\big) \quad \text{for } L_i(n) \neq 0$$
-
-> **Soundness Requirement:** All features in $\mathbf{v}(n)$ must take values in declared well-founded domains ($\mathbb{N}$). Floating-point diagnostics (e.g. `growth_debt`) and finite control states (`control_state`) are excluded from SCT feature vectors and managed separately via monotonicity-constraint systems and finite control state graphs.
-
-For each transition $e: u \to v$ under macrostep $F_w$, define a bipartite size-change monotonicity graph $G_e = (V_{\text{src}} \cup V_{\text{dst}}, E_e)$ with edge relations:
-* **Strict Decrease ($\downarrow$):** $v_j(F_w(n)) < v_i(n)$
-* **Non-Increase ($\le$):** $v_j(F_w(n)) \le v_i(n)$
-* **Reset ($\star$):** Component is reset to a proven bounded value with explicit phase invariants.
-
-### 10.2 Ramsey Transitive Closure & Idempotent Graph Criterion
-Form the transitive closure of size-change graphs under composition $\mathcal{G}^*$. 
-- **Theorem (Ben-Amram SCT & Podelski-Rybalchenko):** An abstract SCC terminates if and only if every idempotent graph $G \in \mathcal{G}^*$ (satisfying $G = G \circ G$) contains a strict descending self-edge $v_i \xrightarrow{\downarrow} v_i$.
-
-### 10.3 Büchi Automata over Infinite Valuation Words
-Trajectories are represented as infinite words $w_0 w_1 w_2 \ldots \in \Sigma^\omega$ over a **finite, certified macrostep library alphabet** $\Sigma = \{M_1, M_2, \ldots, M_m\}$.
-
-> **Finite Alphabet Construction:** Each symbol $M_j \in \Sigma$ corresponds to a sound macrostep transition with a bounded 2-adic shift $\Delta A \le A_{\text{max}}$. Valuation branches $a_k \ge a_{\text{crit}}(q)$ are grouped into guarded tail symbols to guarantee that $\Sigma$ remains strictly finite while soundly overapproximating all positive-integer trajectories.
-
-The language of non-contracting infinite trajectories is defined as the Büchi automaton intersection:
-$$\mathcal{L}_{\text{infinite\_bad}} = \mathcal{L}(\mathcal{A}_{\text{realizable}}) \cap \mathcal{L}(\mathcal{A}_{\text{non-descent}}) \cap \mathcal{L}(\mathcal{A}_{\text{critical\_scc}})$$
-If $\mathcal{L}_{\text{infinite\_bad}} = \varnothing$ (empty language), the SCC is provably terminating (`buchi_emptiness_scc_v1`).
-
-### 10.4 Non-Semilinear Integrality Boundary Guardrail
-> **Architectural Separation:** Regular/omega-regular language automata and Presburger arithmetic cannot capture the non-semilinear 2-adic divisibility predicates that separate ghost cycles $x^* \in \mathbb{Z}_2$ from genuine positive integer cycles $n^* \in \mathbb{N}^+$.
-> Therefore, Phase 7 uses a strict 2-layer architecture:
-> 1. **Layer 1:** Omega-regular Büchi automata and Size-Change closure over valuation words.
-> 2. **Layer 2:** Exact non-linear rational replay & 2-adic/3-adic integrality checks over $\mathbb{Q}$.
-
-
-
-
-
+### 6.3 Arithmetic No-Escape Reduction
+The global survivor-set integer intersection theorem is reduced to proving:
+$$X_\infty \cap \mathbb{N}^+ = \emptyset \iff \forall \omega \in L_{\text{valid}}^\mathbb{N}, \quad \neg \text{EventuallyZeroLift}(\omega)$$
