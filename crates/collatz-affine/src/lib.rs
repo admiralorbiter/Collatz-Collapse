@@ -14,6 +14,15 @@ pub mod projective_residues;
 pub mod semantic_bridge;
 pub mod sturmian_graph;
 pub mod symbolic_language;
+pub mod counterexample_capture;
+pub mod canonical_math;
+
+pub use canonical_math::{canonical_branch, CanonicalBranch};
+pub use counterexample_capture::{
+    iota, verify_canonical_return, verify_prefix_cylinder_fidelity, CandidateRejection,
+    CaptureEvent, EscapeWitness, FiniteCaptureTrace, OrdinaryToCanonicalPrefixExtractor,
+    ReturnFailure, ReturnWitness,
+};
 
 pub use aperiodic_complexity::{
     DeterministicBenchmarkGenerators, FactorComplexityAnalyzer, MultiscaleCoverageMetrics,
