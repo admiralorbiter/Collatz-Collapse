@@ -94,6 +94,10 @@ path = "../../tests/phase73h0a_all_zero_core.rs"
 name = "phase73h0b_consolidation"
 path = "../../tests/phase73h0b_consolidation.rs"
 
+[[test]]
+name = "zero_lift_search_test"
+path = "../../tests/zero_lift_search_test.rs"
+
 
 
 
