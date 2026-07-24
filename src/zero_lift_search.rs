@@ -12,6 +12,13 @@ pub struct ZeroLiftSearchBounds {
 }
 
 #[derive(Debug, Clone)]
+pub struct AvoidanceSearchBounds {
+    pub max_depth: usize,
+    pub max_exponent: usize,
+    pub max_precision_bits: usize,
+}
+
+#[derive(Debug, Clone)]
 pub struct ZeroLiftStep {
     pub index: usize,
     pub word: Vec<usize>,
@@ -46,6 +53,31 @@ pub struct CounterexampleSearchTrace {
     pub endpoint_modulus3: BigUint,
 }
 
+#[derive(Debug, Clone)]
+pub struct EndpointResidue3Diagnostic {
+    pub prefix_time: usize,
+    pub prefix_exponent: usize,
+    pub modulus: BigUint,
+    pub affine_offset: BigUint,
+    pub inverse_two_power: BigUint,
+    pub least_residue: BigUint,
+    pub actual_endpoint_modulus_residue: BigUint,
+    pub verified: bool,
+}
+
+#[derive(Debug, Clone)]
+pub struct PrefixArithmeticSignature {
+    pub step_time: usize,
+    pub exponent_sum: usize,
+    pub multiplier_numerator: BigUint,   // 3^T
+    pub multiplier_denominator: BigUint, // 2^A
+    pub drift_sign: std::cmp::Ordering,
+    pub real_drift_approx: f64,
+    pub least_residue_2adic: BigUint,
+    pub least_residue_3adic: BigUint,
+    pub is_realizable: bool,
+}
+
 pub fn syracuse_step(n: &BigUint) -> (BigUint, usize) {
     if n.is_zero() || n % 2u32 == BigUint::zero() {
         return (BigUint::zero(), 0);
@@ -57,6 +89,14 @@ pub fn syracuse_step(n: &BigUint) -> (BigUint, usize) {
         val += 1;
     }
     (next, val)
+}
+
+pub fn mod_inverse(a: &BigUint, m: &BigUint) -> BigUint {
+    if m == &BigUint::one() {
+        return BigUint::zero();
+    }
+    let phi = (m / 3u32) * 2u32;
+    a.modpow(&(&phi - 1u32), m)
 }
 
 pub fn search_orbit_first_zero_lift_runs(bounds: &ZeroLiftSearchBounds) -> Vec<ZeroLiftRunTrace> {
@@ -158,4 +198,33 @@ pub fn search_counterexample_q1_traces(bounds: &ZeroLiftSearchBounds) -> Vec<Cou
     }
 
     traces
+}
+
+pub fn compute_prefix_signature(run: &ZeroLiftRunTrace) -> PrefixArithmeticSignature {
+    let total_time: usize = run.steps.iter().map(|s| s.word.len()).sum();
+    let total_exp: usize = run.steps.iter().map(|s| s.exponent_sum).sum();
+
+    let num = BigUint::from(3u32).pow(total_time as u32);
+    let den = BigUint::from(2u32).pow(total_exp as u32);
+    let sign = num.cmp(&den);
+
+    let ln3 = 3.0f64.ln();
+    let ln2 = std::f64::consts::LN_2;
+    let approx = (total_time as f64) * ln3 - (total_exp as f64) * ln2;
+
+    let res2 = &run.anchor % BigUint::from(2u32).pow((total_exp + 5) as u32);
+    let last_endpoint = run.steps.last().map(|s| s.endpoint.clone()).unwrap_or(BigUint::zero());
+    let res3 = &last_endpoint % &num;
+
+    PrefixArithmeticSignature {
+        step_time: total_time,
+        exponent_sum: total_exp,
+        multiplier_numerator: num,
+        multiplier_denominator: den,
+        drift_sign: sign,
+        real_drift_approx: approx,
+        least_residue_2adic: res2,
+        least_residue_3adic: res3,
+        is_realizable: true,
+    }
 }
