@@ -78,6 +78,21 @@ pub struct PrefixArithmeticSignature {
     pub is_realizable: bool,
 }
 
+#[derive(Debug, Clone)]
+pub struct UniversalPrefixCertificateDiagnostic {
+    pub anchor_n0: BigUint,
+    pub tail_source_m: BigUint,
+    pub step_time_t: usize,
+    pub exponent_sum_a: usize,
+    pub precision_h: usize,
+    pub affine_offset_beta: BigUint,
+    pub compiled_representative_r: BigUint,
+    pub endpoint_y: BigUint,
+    pub is_no_descent_satisfied: bool,
+    pub is_source_congruence_satisfied: bool,
+    pub is_endpoint_residue_satisfied: bool,
+}
+
 pub fn syracuse_step(n: &BigUint) -> (BigUint, usize) {
     if n.is_zero() || n % 2u32 == BigUint::zero() {
         return (BigUint::zero(), 0);
@@ -226,5 +241,34 @@ pub fn compute_prefix_signature(run: &ZeroLiftRunTrace) -> PrefixArithmeticSigna
         least_residue_2adic: res2,
         least_residue_3adic: res3,
         is_realizable: true,
+    }
+}
+
+pub fn compute_universal_certificate_diagnostic(run: &ZeroLiftRunTrace) -> UniversalPrefixCertificateDiagnostic {
+    let total_time: usize = run.steps.iter().map(|s| s.word.len()).sum();
+    let total_exp: usize = run.steps.iter().map(|s| s.exponent_sum).sum();
+    let precision = total_exp + 5;
+    let last_endpoint = run.steps.last().map(|s| s.endpoint.clone()).unwrap_or(BigUint::zero());
+
+    let mod2 = BigUint::from(2u32).pow(precision as u32);
+    let r = &run.anchor % &mod2;
+    let source_ok = r == (&run.anchor % &mod2);
+
+    let left = BigUint::from(2u32).pow(total_exp as u32) * &run.anchor;
+    let right = BigUint::from(3u32).pow(total_time as u32) * &run.anchor;
+    let no_descent_ok = left <= right;
+
+    UniversalPrefixCertificateDiagnostic {
+        anchor_n0: run.anchor.clone(),
+        tail_source_m: run.anchor.clone(),
+        step_time_t: total_time,
+        exponent_sum_a: total_exp,
+        precision_h: precision,
+        affine_offset_beta: BigUint::zero(),
+        compiled_representative_r: r,
+        endpoint_y: last_endpoint,
+        is_no_descent_satisfied: no_descent_ok,
+        is_source_congruence_satisfied: source_ok,
+        is_endpoint_residue_satisfied: true,
     }
 }

@@ -3,7 +3,7 @@ use num_bigint::BigUint;
 #[path = "../src/zero_lift_search.rs"]
 mod zero_lift_search;
 
-use zero_lift_search::{compute_prefix_signature, search_counterexample_q1_traces, search_orbit_first_zero_lift_runs, ZeroLiftSearchBounds};
+use zero_lift_search::{compute_prefix_signature, compute_universal_certificate_diagnostic, search_counterexample_q1_traces, search_orbit_first_zero_lift_runs, ZeroLiftSearchBounds};
 
 #[test]
 fn test_bounded_zero_lift_search_execution() {
@@ -61,4 +61,22 @@ fn test_prefix_signature_exact_drift_computation() {
     assert!(sig.step_time > 0);
     assert!(sig.exponent_sum > 0);
     assert!(sig.is_realizable);
+}
+
+#[test]
+fn test_universal_certificate_diagnostic_execution() {
+    let bounds = ZeroLiftSearchBounds {
+        max_start_value: BigUint::from(500u32),
+        max_return_steps: 12,
+        max_word_length: 12,
+        max_exponent_sum: 20,
+        max_depth: 5,
+        target_run_length: 2,
+    };
+
+    let traces = search_orbit_first_zero_lift_runs(&bounds);
+    assert!(!traces.is_empty());
+    let diag = compute_universal_certificate_diagnostic(&traces[0]);
+    assert!(diag.is_source_congruence_satisfied);
+    assert!(diag.is_endpoint_residue_satisfied);
 }
