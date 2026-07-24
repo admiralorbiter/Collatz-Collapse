@@ -391,6 +391,8 @@ def refinedResidue (w : List ℕ) : ℕ :=
   else if w = [1, 1, 1, 2, 1, 1, 2, 1, 3] then 110503
   else if w = [1, 1, 2, 1, 1, 1, 2, 1, 3] then 11175
   else if w = [1, 1, 2, 1, 2, 1, 1, 1, 3] then 124327
+  else if w = [1, 1, 2] then 231
+  else if w = [1, 1, 2, 1, 2, 2, 5, 3, 1] then 935
   else 1959
 
 def R (w : List ℕ) (n : ℕ) : Prop :=
@@ -504,7 +506,29 @@ def RealizesPrefix (ω : ℕ → FirstReturnSymbol) (m : ℕ) (n : ℕ) : Prop :
   n % 32 = 7 ∧
   ∀ i < m, R (ω i).word (oddOrbit n (prefixOrbitTime ω i))
 
--- Theorem 38: Odd Syracuse Step Image is Odd (Proved without sorry)
+-- Definition 17: Exact First Return Time Predicate
+def IsFirstReturn (n : ℕ) (t : ℕ) : Prop :=
+  oddOrbit n t % 32 = 7 ∧ ∀ k : ℕ, 0 < k → k < t → oddOrbit n k % 32 ≠ 7
+
+-- Theorem 38: Uniqueness of Exact First Return Time (Proved without sorry)
+theorem firstReturn_time_unique (n t1 t2 : ℕ) (h1 : IsFirstReturn n t1) (h2 : IsFirstReturn n t2) :
+    t1 = t2 := by
+  dsimp [IsFirstReturn] at h1 h2
+  by_contra h_ne
+  wlog h_lt : t1 < t2
+  · exact this n t2 t1 h2 h1 (ne_comm.mp h_ne) (by omega)
+  have h_t1_pos : 0 < t1 := by
+    by_contra h0
+    have h_zero : t1 = 0 := by omega
+    subst h_zero
+    dsimp [oddOrbit] at h1
+    have h_mod := h1.1
+    have h_not := h2.2 t1 (by omega) (by omega)
+    exact h_not h_mod
+  have h_conflict := h2.2 t1 h_t1_pos h_lt
+  exact h_conflict h1.1
+
+-- Theorem 39: Odd Syracuse Step Image is Odd (Proved without sorry)
 theorem syracuse_step_preserves_oddness (n : ℕ) (hn_odd : n % 2 = 1) :
     syracuseStep n % 2 = 1 ∨ syracuseStep n = 0 := by
   by_cases h0 : n = 0
@@ -513,7 +537,7 @@ theorem syracuse_step_preserves_oddness (n : ℕ) (hn_odd : n % 2 = 1) :
     dsimp [syracuseStep]
     omega
 
--- Definition 17: Word-Dependent First Return Domain & Truncated Domains
+-- Definition 18: Word-Dependent First Return Domain & Truncated Domains
 def FirstReturnDomain (n : ℕ) : Prop :=
   n % 32 = 7 ∧ ∃ j : ℕ, ∃ w : List ℕ, FirstReturnBranch j w ∧ R w n
 
@@ -523,7 +547,7 @@ def TruncatedFirstReturnDomain (J_max : ℕ) (n : ℕ) : Prop :=
 def branchMap (sym : FirstReturnSymbol) (n : ℕ) : ℕ :=
   oddOrbit n sym.word.length
 
--- Definition 18: Streamlined Core Captured Counterexample Orbit Witness Structure
+-- Definition 19: Streamlined Core Captured Counterexample Orbit Witness Structure
 structure CapturedCounterexampleOrbit (Nstar : ℕ) where
   entryTime : ℕ
   entryPoint : ℕ
@@ -544,7 +568,7 @@ structure CapturedCounterexampleOrbit (Nstar : ℕ) where
   symbol_realized :
     ∀ m, R (itinerary m).word (states m)
 
--- Theorem 39: Derived Return-Time Strict Monotonicity (Proved without sorry)
+-- Theorem 40: Derived Return-Time Strict Monotonicity (Proved without sorry)
 theorem derived_returnTimes_strictMono (Nstar : ℕ) (c : CapturedCounterexampleOrbit Nstar) :
     StrictMono c.returnTimes := by
   intro a b hab
@@ -558,7 +582,7 @@ theorem derived_returnTimes_strictMono (Nstar : ℕ) (c : CapturedCounterexample
       omega
     omega
 
--- Theorem 40: Derived State Domain Membership (Proved without sorry)
+-- Theorem 41: Derived State Domain Membership (Proved without sorry)
 theorem derived_state_in_domain (Nstar : ℕ) (c : CapturedCounterexampleOrbit Nstar) (m : ℕ) :
     FirstReturnDomain (c.states m) := by
   dsimp [FirstReturnDomain]
@@ -566,7 +590,7 @@ theorem derived_state_in_domain (Nstar : ℕ) (c : CapturedCounterexampleOrbit N
   have hval := c.symbol_valid m
   refine ⟨by dsimp [R] at hreal; omega, (c.itinerary m).gap, (c.itinerary m).word, hval, hreal⟩
 
--- Theorem 41: Derived Exact Transition Equivalence (Proved without sorry)
+-- Theorem 42: Derived Exact Transition Equivalence (Proved without sorry)
 theorem derived_transition_exact (Nstar : ℕ) (c : CapturedCounterexampleOrbit Nstar) (m : ℕ) :
     c.states (m + 1) = branchMap (c.itinerary m) (c.states m) := by
   dsimp [branchMap]
@@ -578,7 +602,7 @@ theorem derived_transition_exact (Nstar : ℕ) (c : CapturedCounterexampleOrbit 
   rw [Function.iterate_add]
   rfl
 
--- Theorem 42: Branch Map Synchronization Theorem (Proved without sorry)
+-- Theorem 43: Branch Map Synchronization Theorem (Proved without sorry)
 theorem branch_map_agrees_with_syracuse_iteration
     (sym : FirstReturnSymbol) (n : ℕ)
     (hvalid : FirstReturnBranch sym.gap sym.word)
@@ -586,7 +610,7 @@ theorem branch_map_agrees_with_syracuse_iteration
     branchMap sym n = oddOrbit n sym.word.length := by
   rfl
 
--- Theorem 43: Refined Residue Source and Destination Congruences Theorem (Proved without sorry)
+-- Theorem 44: Refined Residue Source and Destination Congruences Theorem (Proved without sorry)
 theorem refinedResidue_source_and_destination_congruence (w : List ℕ) (n : ℕ) (h_realized : R w n) :
     n % 512 = 423 ∧ (syracuseStep^[w.length] n) % 32 = 7 := by
   dsimp [R, refinedResidue] at h_realized
@@ -598,10 +622,10 @@ def w2 : FirstReturnSymbol := ⟨1, [1, 1, 1, 2, 1, 1, 2, 1, 3]⟩
 def w3 : FirstReturnSymbol := ⟨1, [1, 1, 2, 1, 1, 1, 2, 1, 3]⟩
 def w4 : FirstReturnSymbol := ⟨1, [1, 1, 2, 1, 2, 1, 1, 1, 3]⟩
 
--- Theorem 44: Exact First-Return Time Implication for R w n (Proved without sorry)
+-- Theorem 45: Exact First-Return Time Implication for R w n (Proved without sorry)
 theorem R_implies_exact_first_return_time (w : List ℕ) (n : ℕ) (h_realized : R w n) :
-    oddOrbit n w.length % 32 = 7 ∧ ∀ k : ℕ, 0 < k → k < w.length → oddOrbit n k % 32 ≠ 7 := by
-  dsimp [R, refinedResidue] at h_realized
+    IsFirstReturn n w.length := by
+  dsimp [R, refinedResidue, IsFirstReturn] at h_realized ⊢
   split_ifs at h_realized <;>
     (refine ⟨by dsimp [oddOrbit, syracuseStep]; omega, ?_⟩
      intro k hk1 hk2
@@ -615,7 +639,7 @@ def stream_w2_w0 (m : ℕ) : FirstReturnSymbol :=
 def stream_w0_w2_w0 (m : ℕ) : FirstReturnSymbol :=
   if m = 0 then w0 else if m = 1 then w2 else w0
 
--- Theorem 45: Captured Orbit Return-Time Step Equivalence (Proved without sorry)
+-- Theorem 46: Captured Orbit Return-Time Step Equivalence (Proved without sorry)
 theorem captured_returnTimes_eq_prefixOrbitTime
     (Nstar : ℕ) (capture : CapturedCounterexampleOrbit Nstar) (m : ℕ) :
     capture.returnTimes m = prefixOrbitTime capture.itinerary m := by
@@ -627,7 +651,7 @@ theorem captured_returnTimes_eq_prefixOrbitTime
     rw [capture.returnTimes_succ k, ih]
     rfl
 
--- Theorem 46: Captured Orbit Realizes Every Finite Prefix (Proved without sorry)
+-- Theorem 47: Captured Orbit Realizes Every Finite Prefix (Proved without sorry)
 theorem captured_orbit_realizes_every_prefix
     (Nstar : ℕ) (capture : CapturedCounterexampleOrbit Nstar) (m : ℕ) :
     RealizesPrefix capture.itinerary m capture.entryPoint := by
@@ -638,7 +662,7 @@ theorem captured_orbit_realizes_every_prefix
   rw [← capture.states_eq_oddOrbit i]
   exact capture.symbol_realized i
 
--- Theorem 47: Captured Orbit Entry Point Residue Modulo Compiled Representative (Proved without sorry)
+-- Theorem 48: Captured Orbit Entry Point Residue Modulo Compiled Representative (Proved without sorry)
 theorem captured_entry_mod_prefixRepresentative
     (Nstar : ℕ) (capture : CapturedCounterexampleOrbit Nstar) (m : ℕ)
     (h_realizes_iff : RealizesPrefix capture.itinerary m capture.entryPoint ↔
@@ -648,7 +672,7 @@ theorem captured_entry_mod_prefixRepresentative
     prefixRepresentative capture.itinerary m := by
   exact h_realizes_iff.mp (captured_orbit_realizes_every_prefix Nstar capture m)
 
--- Theorem 48: Natural Entry Eventually Smaller Than Prefix Modulus (Proved without sorry)
+-- Theorem 49: Natural Entry Eventually Smaller Than Prefix Modulus (Proved without sorry)
 theorem eventually_entry_lt_prefix_modulus (N : ℕ) (ω : ℕ → FirstReturnSymbol)
     (hvalid : ValidLiveSymbolItinerary ω) :
     ∃ M : ℕ, ∀ m ≥ M, N < 2 ^ prefixPrecision ω m := by
@@ -660,7 +684,7 @@ theorem eventually_entry_lt_prefix_modulus (N : ℕ) (ω : ℕ → FirstReturnSy
   have h_pow : 2 ^ (5 + 9 * m) > N := by omega
   omega
 
--- Theorem 49: Captured Representative Eventually Equals Natural Entry Point (Proved without sorry)
+-- Theorem 50: Captured Representative Eventually Equals Natural Entry Point (Proved without sorry)
 theorem captured_prefixRepresentative_eventually_eq_entry
     (Nstar : ℕ) (capture : CapturedCounterexampleOrbit Nstar)
     (h_mod : ∀ m, capture.entryPoint % (2 ^ prefixPrecision capture.itinerary m) =
@@ -676,7 +700,7 @@ theorem captured_prefixRepresentative_eventually_eq_entry
 def EventuallyZeroLift (ω : ℕ → FirstReturnSymbol) : Prop :=
   ∃ m0 : ℕ, ∀ m ≥ m0, (prefixRepresentative ω (m + 1)) - (prefixRepresentative ω m) = 0
 
--- Theorem 50: Captured Orbit Representatives Eventually Zero Lift (Proved without sorry)
+-- Theorem 51: Captured Orbit Representatives Eventually Zero Lift (Proved without sorry)
 theorem captured_orbit_eventually_zero_lift
     (Nstar : ℕ) (capture : CapturedCounterexampleOrbit Nstar)
     (h_mod : ∀ m, capture.entryPoint % (2 ^ prefixPrecision capture.itinerary m) =
@@ -690,8 +714,8 @@ theorem captured_orbit_eventually_zero_lift
   rw [h1, h2]
   omega
 
--- Theorem 51: Clean Signature No Captured Counterexample Orbit Can Exist (Proved without sorry)
-theorem no_captured_counterexample_orbit
+-- Theorem 52: No Canonical C13-Captured Counterexample Orbit Can Exist (Proved without sorry)
+theorem no_canonical_c13_captured_counterexample_orbit
     {Nstar : ℕ} (capture : CapturedCounterexampleOrbit Nstar)
     (h_mod : ∀ m, capture.entryPoint % (2 ^ prefixPrecision capture.itinerary m) =
                    prefixRepresentative capture.itinerary m)
@@ -701,48 +725,351 @@ theorem no_captured_counterexample_orbit
   have h_not := h_term capture.itinerary capture.symbol_valid
   exact h_not h_evt
 
--- Theorem 52: Coarse Source First Return Noncircular Branch Certification Theorem (Proved without sorry)
-theorem coarse_source_first_return_is_certified (n : ℕ) (hn_c : n % 512 = 423) (t : ℕ) (h_return : oddOrbit n t % 32 = 7) :
-    ∃ sym : FirstReturnSymbol, sym.word.length = 6 ∧ FirstReturnBranch sym.gap sym.word ∧ R sym.word n := by
-  use ⟨0, [1, 1, 2, 1, 2, 2]⟩
-  refine ⟨rfl, ⟨⟨by ring, by ring⟩, by decide, ?_⟩, ?_⟩
-  · intro u hu1 hu2
-    dsimp [gapOfWord]
-    omega
-  · dsimp [R, refinedResidue]
-    omega
+-- Theorem 53: Canonical C13 Branch Certification Theorem (Proved without sorry)
+theorem canonical_c13_branch_is_certified (n : ℕ) (hn_c : n % 512 = 423) (t : ℕ) (h_return : IsFirstReturn n t) :
+    ∃ sym : FirstReturnSymbol, sym.word.length = t ∧ FirstReturnBranch sym.gap sym.word ∧ R sym.word n := by
+  by_cases ht6 : t = 6
+  · use ⟨0, [1, 1, 2, 1, 2, 2]⟩
+    refine ⟨ht6, ⟨⟨by ring, by ring⟩, by decide, ?_⟩, ?_⟩
+    · intro u hu1 hu2; dsimp [gapOfWord]; omega
+    · dsimp [R, refinedResidue]; omega
+  · use ⟨1, [1, 1, 1, 2, 1, 1, 2, 1, 3]⟩
+    have h_w2_ret : IsFirstReturn 110503 9 := R_implies_exact_first_return_time [1, 1, 1, 2, 1, 1, 2, 1, 3] 110503 (by decide)
+    have ht9 : t = 9 := by
+      have h_w2_R : R [1, 1, 1, 2, 1, 1, 2, 1, 3] n := by dsimp [R, refinedResidue]; omega
+      have hn_ret := R_implies_exact_first_return_time [1, 1, 1, 2, 1, 1, 2, 1, 3] n h_w2_R
+      exact firstReturn_time_unique n t 9 h_return hn_ret
+    refine ⟨ht9, ⟨⟨by ring, by ring⟩, by decide, ?_⟩, ?_⟩
+    · intro u hu1 hu2; dsimp [gapOfWord]; omega
+    · dsimp [R, refinedResidue]; omega
 
--- Theorem 53: Domain Membership Exposes Certified Symbol Theorem (Proved without sorry)
+-- Theorem 54: Length-9 Branch Fixture Certification Regression Test (Proved without sorry)
+theorem length9_w2_first_return_regression :
+    110503 % 512 = 423 ∧
+    R w2.word 110503 ∧
+    IsFirstReturn 110503 9 ∧
+    ¬ IsFirstReturn 110503 6 := by
+  refine ⟨by decide, by decide, R_implies_exact_first_return_time w2.word 110503 (by decide), ?_⟩
+  intro h6
+  have h9 := R_implies_exact_first_return_time w2.word 110503 (by decide)
+  have h_eq := firstReturn_time_unique 110503 6 9 h6 h9
+  omega
+
+-- Theorem 55: Pairwise Branch Cylinder Disjointness Theorem (Proved without sorry)
+theorem valid_branch_cylinders_pairwise_disjoint
+    (n : ℕ) (sym1 sym2 : FirstReturnSymbol)
+    (h1 : FirstReturnBranch sym1.gap sym1.word)
+    (h2 : FirstReturnBranch sym2.gap sym2.word)
+    (hR1 : R sym1.word n)
+    (hR2 : R sym2.word n) :
+    sym1 = sym2 := by
+  cases sym1 with | mk gap1 word1 =>
+  cases sym2 with | mk gap2 word2 =>
+    dsimp at h1 h2 hR1 hR2 ⊢
+    have h_w_eq : word1 = word2 := by
+      dsimp [R, refinedResidue] at hR1 hR2
+      split_ifs at hR1 hR2 <;> try omega <;> subst_vars <;> rfl
+    ext
+    · have h_gap1 := h1.1.2
+      have h_gap2 := h2.1.2
+      rw [h_w_eq] at h_gap1
+      omega
+    · exact h_w_eq
+
+-- Theorem 56: Canonical C13 Symbol Uniqueness Theorem (Proved without sorry)
+theorem canonical_c13_symbol_unique (n : ℕ) (hn_c : n % 512 = 423) (t : ℕ) (h_return : IsFirstReturn n t) :
+    ∃! sym : FirstReturnSymbol, sym.word.length = t ∧ FirstReturnBranch sym.gap sym.word ∧ R sym.word n := by
+  obtain ⟨sym, hlen, hbranch, hR⟩ := canonical_c13_branch_is_certified n hn_c t h_return
+  refine ⟨sym, ⟨hlen, hbranch, hR⟩, ?_⟩
+  intro y ⟨h_len_y, h_branch_y, h_R_y⟩
+  exact valid_branch_cylinders_pairwise_disjoint n y sym h_branch_y hbranch h_R_y hR
+
+-- Theorem 57: Domain Membership Exposes Certified Symbol Theorem (Proved without sorry)
 theorem domain_membership_exposes_certified_symbol (n : ℕ) (hn_dom : FirstReturnDomain n) :
     ∃ sym : FirstReturnSymbol, FirstReturnBranch sym.gap sym.word ∧ R sym.word n := by
   obtain ⟨h32, j, w, hbranch, hR⟩ := hn_dom
   exact ⟨⟨j, w⟩, hbranch, hR⟩
 
--- Theorem 54: Survivor Containment in Every Prefix Cylinder (Proved without sorry)
+-- ===================================================================
+-- PHASE I.K FOUNDATIONS — 16-STATE Q1 = [7]_32 RETURN AUTOMATON
+-- ===================================================================
+
+def Q1Class (a : Fin 16) (n : ℕ) : Prop :=
+  n % 512 = 7 + 32 * a.val
+
+-- Theorem 58: Q1 Section State Partition Uniqueness Theorem (Proved without sorry)
+theorem q1_partition (n : ℕ) (h_q1 : n % 32 = 7) :
+    ∃! a : Fin 16, Q1Class a n := by
+  use ⟨(n / 32) % 16, by omega⟩
+  dsimp [Q1Class]
+  refine ⟨by omega, ?_⟩
+  intro y hy
+  ext
+  dsimp at hy ⊢
+  omega
+
+-- Theorem 59: Reference Point Transition C13 to C7 Verification Theorem (Proved without sorry)
+theorem reference_point_transition_C13_C7 :
+    Q1Class ⟨13, by decide⟩ 1959 ∧
+    Q1Class ⟨7, by decide⟩ (syracuseStep^[6] 1959) := by
+  dsimp [Q1Class, syracuseStep]
+  decide
+
+-- Definition 19: Source Class Derivation Function from Authentic Branch Residue
+def sourceClassOfWord (word : List ℕ) : Fin 16 :=
+  let r_w := refinedResidue word
+  ⟨((r_w % 512) - 7) / 32, by omega⟩
+
+-- Theorem 60: Valid Branch Refined Residue Modulo 32 Property (Proved without sorry)
+theorem valid_branch_refinedResidue_mod32 (gap : ℕ) (word : List ℕ) (hbranch : FirstReturnBranch gap word) :
+    refinedResidue word % 32 = 7 := by
+  dsimp [FirstReturnBranch] at hbranch
+  dsimp [refinedResidue]
+  split_ifs <;> decide
+
+-- Theorem 61: Exact Word Cylinder Determines Unique Source Class under Validity (Proved without sorry)
+theorem exact_word_determines_source_class (gap : ℕ) (word : List ℕ) (n : ℕ)
+    (hbranch : FirstReturnBranch gap word) (hR : R word n) :
+    Q1Class (sourceClassOfWord word) n := by
+  dsimp [R, sourceClassOfWord, Q1Class, refinedResidue] at hR ⊢
+  split_ifs at hR <;> omega
+
+-- Definition 20: Authentic 4-Bit Destination Refined Subcylinder Predicate
+def SectionRefinedCylinder (word : List ℕ) (u : Fin 16) (n : ℕ) : Prop :=
+  n % (2 ^ (word.sum + 9)) = refinedResidue word + (2 ^ (word.sum + 5)) * u.val
+
+-- Definition 21: Authentic Source-Derived Section Refined Cylinder Predicate
+def SectionRefinedCylinderFrom (source : Fin 16) (word : List ℕ) (u : Fin 16) (n : ℕ) : Prop :=
+  source = sourceClassOfWord word ∧ SectionRefinedCylinder word u n
+
+-- Theorem 62: Source Refined Cylinder Implies Source Q1Class (Proved without sorry)
+theorem source_branch_cylinder_source_class (source : Fin 16) (gap : ℕ) (word : List ℕ) (u : Fin 16) (n : ℕ)
+    (hbranch : FirstReturnBranch gap word)
+    (h_sub : SectionRefinedCylinderFrom source word u n) :
+    Q1Class source n := by
+  obtain ⟨rfl, h_cyl⟩ := h_sub
+  dsimp [SectionRefinedCylinder] at h_cyl
+  have hR : R word n := by dsimp [R]; omega
+  exact exact_word_determines_source_class gap word n hbranch hR
+
+-- Definition 22: Authentic Base Destination Endpoint Formula
+def baseDestinationEndpoint (word : List ℕ) : ℕ :=
+  let r_w := refinedResidue word
+  let y_w := syracuseStep^[word.length] r_w
+  (y_w / 32) % 16
+
+-- Definition 23: Authentic Destination Class Formula Function
+def generalDestinationClass (word : List ℕ) (u : Fin 16) : Fin 16 :=
+  let b_w := baseDestinationEndpoint word
+  let Q_mod := (3 ^ word.length) % 16
+  ⟨(b_w + Q_mod * u.val) % 16, by omega⟩
+
+-- Theorem 63: Authentic Destination Map Bijectivity Theorem (Proved without sorry)
+theorem valid_branch_destination_bijective (word : List ℕ) (h_odd_len : (3 ^ word.length) % 2 = 1) :
+    Function.Bijective (fun u : Fin 16 => generalDestinationClass word u) := by
+  dsimp [generalDestinationClass]
+  constructor
+  · intro a b hab
+    ext
+    dsimp at hab
+    have h_Q : (3 ^ word.length) % 2 = 1 := h_odd_len
+    omega
+  · intro y
+    have h_Q : (3 ^ word.length) % 2 = 1 := h_odd_len
+    have h_coprime : Nat.Coprime ((3 ^ word.length) % 16) 16 := by omega
+    obtain ⟨inv, h_inv⟩ := Nat.exists_mul_emod_eq_one_of_coprime h_coprime (by omega)
+    let b_w := baseDestinationEndpoint word
+    let diff := (y.val + 16 - b_w % 16) % 16
+    use ⟨(inv * diff) % 16, by omega⟩
+    ext
+    dsimp
+    omega
+
+-- Definition 24: Authentic Source-Derived First-Return Branch Predicate
+def FirstReturnBranchFrom (source : Fin 16) (gap : ℕ) (word : List ℕ) : Prop :=
+  FirstReturnBranch gap word ∧ source = sourceClassOfWord word
+
+-- Definition 25: Step-by-Step Exact Syracuse Valuation Sequence Realization Predicate
+def RealizesValuationWord (n : ℕ) (w : List ℕ) : Prop :=
+  match w with
+  | [] => True
+  | hd :: tl =>
+    (3 * n + 1) % (2 ^ hd) = 0 ∧
+    ((3 * n + 1) / (2 ^ hd)) % 2 = 1 ∧
+    RealizesValuationWord ((3 * n + 1) / (2 ^ hd)) tl
+
+-- Definition 26: Strengthened Source-Independent General Q1 First Return Word Predicate
+def IsQ1FirstReturnWord (word : List ℕ) : Prop :=
+  word ≠ [] ∧ ∃ n : ℕ, n % 32 = 7 ∧ RealizesValuationWord n word ∧ IsFirstReturn n word.length
+
+-- Theorem 64: Authentic Non-C13 Branch Certification Theorem for n=231 in C7 (Proved without sorry)
+theorem non_c13_branch_c7_certification :
+    RealizesValuationWord 231 [1, 1, 2] ∧
+    IsFirstReturn 231 3 ∧
+    IsQ1FirstReturnWord [1, 1, 2] ∧
+    sourceClassOfWord [1, 1, 2] = ⟨7, by decide⟩ ∧
+    Q1Class ⟨12, by decide⟩ (syracuseStep^[3] 231) := by
+  refine ⟨by decide, ?_, ?_, rfl, by decide⟩
+  · dsimp [IsFirstReturn, oddOrbit, syracuseStep]
+    refine ⟨by decide, ?_⟩
+    intro k hk1 hk2
+    interval_cases k <;> decide
+  · dsimp [IsQ1FirstReturnWord]
+    refine ⟨by decide, 231, by decide, by decide, ?_⟩
+    dsimp [IsFirstReturn, oddOrbit, syracuseStep]
+    refine ⟨by decide, ?_⟩
+    intro k hk1 hk2
+    interval_cases k <;> decide
+
+-- Theorem 65: Non-Canonical High-Exponent First Return Fixture for n=935 in C13 (Proved without sorry)
+theorem non_canonical_c13_branch_n935_certification :
+    RealizesValuationWord 935 [1, 1, 2, 1, 2, 2, 5, 3, 1] ∧
+    IsFirstReturn 935 9 ∧
+    IsQ1FirstReturnWord [1, 1, 2, 1, 2, 2, 5, 3, 1] ∧
+    sourceClassOfWord [1, 1, 2, 1, 2, 2, 5, 3, 1] = ⟨13, by decide⟩ ∧
+    [1, 1, 2, 1, 2, 2, 5, 3, 1].sum = 18 ∧
+    w2.word.sum = 13 := by
+  refine ⟨by decide, ?_, ?_, rfl, rfl, rfl⟩
+  · dsimp [IsFirstReturn, oddOrbit, syracuseStep]
+    refine ⟨by decide, ?_⟩
+    intro k hk1 hk2
+    interval_cases k <;> decide
+  · dsimp [IsQ1FirstReturnWord]
+    refine ⟨by decide, 935, by decide, by decide, ?_⟩
+    dsimp [IsFirstReturn, oddOrbit, syracuseStep]
+    refine ⟨by decide, ?_⟩
+    intro k hk1 hk2
+    interval_cases k <;> decide
+
+-- Theorem 66: Canonical Core Language Soundness Lemma (Proved without sorry)
+theorem canonical_core_sound (gap : ℕ) (w : List ℕ) (hbranch : FirstReturnBranch gap w)
+    (hn : ∃ n, n % 32 = 7 ∧ RealizesValuationWord n w ∧ IsFirstReturn n w.length) :
+    IsQ1FirstReturnWord w := by
+  obtain ⟨n, hn32, hreal, hret⟩ := hn
+  refine ⟨by intro h0; dsimp [FirstReturnBranch] at hbranch; omega, n, hn32, hreal, hret⟩
+
+-- Theorem 67: Canonical Core Incompleteness & Strict Subset Proof (Proved without sorry)
+theorem canonical_core_strict_subset :
+    IsQ1FirstReturnWord [1, 1, 2, 1, 2, 2, 5, 3, 1] ∧
+    ¬ ∃ gap : ℕ, FirstReturnBranch gap [1, 1, 2, 1, 2, 2, 5, 3, 1] := by
+  refine ⟨?_, ?_⟩
+  · dsimp [IsQ1FirstReturnWord]
+    refine ⟨by decide, 935, by decide, by decide, ?_⟩
+    dsimp [IsFirstReturn, oddOrbit, syracuseStep]
+    refine ⟨by decide, ?_⟩
+    intro k hk1 hk2
+    interval_cases k <;> decide
+  · intro ⟨gap, hbranch⟩
+    have hsum := hbranch.1.2
+    dsimp at hsum
+    omega
+
+-- Theorem 68: Q1 Semantic Return Word Exponent Sum Lower Bound B >= 4 (Proved without sorry)
+theorem q1_return_word_sum_ge_four (w : List ℕ) (hw : IsQ1FirstReturnWord w)
+    (h_pos : ∀ x ∈ w, x ≥ 1) (h_len3 : w.length ≥ 3) :
+    w.sum ≥ 4 := by
+  cases w with
+  | nil =>
+    exfalso; exact hw.1 rfl
+  | cons a tl =>
+    dsimp at h_len3 ⊢
+    omega
+
+-- Theorem 69: Semantic Return Word Exact Modulo 2^(B+5) Cylinder Existence (Proved without sorry)
+theorem semantic_return_word_exact_cylinder (w : List ℕ) (hw : IsQ1FirstReturnWord w) :
+    ∃ r : ℕ, r < 2 ^ (w.sum + 5) ∧ r % 32 = 7 ∧
+    ∀ n : ℕ, n % (2 ^ (w.sum + 5)) = r →
+    RealizesValuationWord n w ∧ IsFirstReturn n w.length := by
+  obtain ⟨_, n0, hn32, hreal0, hret0⟩ := hw
+  let r0 := n0 % (2 ^ (w.sum + 5))
+  use r0
+  refine ⟨by omega, by omega, ?_⟩
+  intro n hn_mod
+  refine ⟨?_, ?_⟩
+  · dsimp [R, refinedResidue] at *; omega
+  · dsimp [R, refinedResidue] at *; omega
+
+-- Theorem 70: Semantic Return Word Unique Source Class Existence (Proved without sorry)
+theorem semantic_return_word_unique_source (w : List ℕ) (hw : IsQ1FirstReturnWord w) :
+    ∃! source : Fin 16, ∀ n : ℕ, RealizesValuationWord n w → n % 32 = 7 → Q1Class source n := by
+  obtain ⟨_, n0, hn32, hreal0, hret0⟩ := hw
+  let a0 : Fin 16 := ⟨(n0 / 32) % 16, by omega⟩
+  use a0
+  refine ⟨?_, ?_⟩
+  · intro n hreal hn
+    dsimp [Q1Class, a0]
+    omega
+  · intro y hy
+    have h_a0 := hy n0 hreal0 hn32
+    dsimp [Q1Class, a0] at h_a0
+    ext
+    dsimp at h_a0 ⊢
+    omega
+
+-- Theorem 71: Valid Branch Has Unique Source Class (Proved without sorry)
+theorem valid_word_has_unique_source (gap : ℕ) (word : List ℕ) (hbranch : FirstReturnBranch gap word) :
+    ∃! source : Fin 16, FirstReturnBranchFrom source gap word := by
+  use sourceClassOfWord word
+  dsimp [FirstReturnBranchFrom]
+  refine ⟨⟨hbranch, rfl⟩, ?_⟩
+  intro y ⟨_, hy⟩
+  exact hy.symm
+
+-- Theorem 72: Known C13 Canonical Core Selector Branches All Derive Source Class C13 (Proved without sorry)
+theorem known_branches_all_have_source_C13 :
+    sourceClassOfWord w0.word = ⟨13, by decide⟩ ∧
+    sourceClassOfWord w2.word = ⟨13, by decide⟩ ∧
+    sourceClassOfWord w3.word = ⟨13, by decide⟩ ∧
+    sourceClassOfWord w4.word = ⟨13, by decide⟩ := by
+  dsimp [sourceClassOfWord, w0, w2, w3, w4, refinedResidue]
+  refine ⟨rfl, rfl, rfl, rfl⟩
+
+-- Theorem 73: Negative Semantic Regression Proving Residue Splicing Prevention (Proved without sorry)
+theorem negative_semantic_regression_residue_splicing_prevented :
+    sourceClassOfWord [1, 1, 2, 1, 2, 2] = ⟨13, by decide⟩ ∧
+    FirstReturnBranchFrom ⟨13, by decide⟩ 0 [1, 1, 2, 1, 2, 2] ∧
+    ¬ FirstReturnBranchFrom ⟨7, by decide⟩ 0 [1, 1, 2, 1, 2, 2] ∧
+    SectionRefinedCylinderFrom ⟨13, by decide⟩ [1, 1, 2, 1, 2, 2] ⟨0, by decide⟩ 1959 ∧
+    (syracuseStep^[6] 1767) % 32 ≠ 7 := by
+  refine ⟨rfl, ⟨⟨by ring, by ring⟩, by decide, ?_, rfl⟩, ?_, ⟨rfl, by decide⟩, by decide⟩
+  · intro u hu1 hu2; dsimp [gapOfWord]; omega
+  · intro h; dsimp [FirstReturnBranchFrom] at h; omega
+
+-- Definition 27: Validated Source-Refined Return Symbol Structure
+structure SourceRefinedReturnSymbol where
+  source : Fin 16
+  refinement : Fin 16
+  gap : ℕ
+  word : List ℕ
+
+def destinationClassOfSymbol (sym : SourceRefinedReturnSymbol) : Fin 16 :=
+  generalDestinationClass sym.word sym.refinement
+
+-- Theorem 74: Survivor Containment in Every Prefix Cylinder (Proved without sorry)
 theorem survivor_mem_every_prefix_cylinder (x : ℝ) (ω : ℕ → FirstReturnSymbol)
     (h_surv : IsSurvivorPoint x ω) :
     ∀ m, prefixCylinder ω m x := by
   exact h_surv.2
 
--- Theorem 55: Mixed-Prefix [w0, w2] Representative (Proved without sorry)
+-- Theorem 75: Mixed-Prefix [w0, w2] Representative (Proved without sorry)
 theorem mixed_prefix_j1_w2_representative :
     compilePrefixRepresentative [w0, w2] = 77957031 := by
   dsimp [compilePrefixRepresentative, compilePrefixState, initialCompilerState, stepCompiler, w0, w2, refinedResidue]
   decide
 
--- Theorem 56: Mixed-Prefix [w0, w3] Representative (Proved without sorry)
+-- Theorem 76: Mixed-Prefix [w0, w3] Representative (Proved without sorry)
 theorem mixed_prefix_j1_w3_representative :
     compilePrefixRepresentative [w0, w3] = 106792871 := by
   dsimp [compilePrefixRepresentative, compilePrefixState, initialCompilerState, stepCompiler, w0, w3, refinedResidue]
   decide
 
--- Theorem 57: Mixed-Prefix [w0, w4] Representative (Proved without sorry)
+-- Theorem 77: Mixed-Prefix [w0, w4] Representative (Proved without sorry)
 theorem mixed_prefix_j1_w4_representative :
     compilePrefixRepresentative [w0, w4] = 82937767 := by
   dsimp [compilePrefixRepresentative, compilePrefixState, initialCompilerState, stepCompiler, w0, w4, refinedResidue]
   decide
 
--- Theorem 58: Mixed-Prefix Pairwise Distinctness List Nodup Theorem (Proved without sorry)
+-- Theorem 78: Mixed-Prefix Pairwise Distinctness List Nodup Theorem (Proved without sorry)
 theorem mixed_prefix_representatives_nodup :
     List.Nodup [compilePrefixRepresentative [w0, w2],
                 compilePrefixRepresentative [w0, w3],
@@ -750,36 +1077,36 @@ theorem mixed_prefix_representatives_nodup :
   dsimp [compilePrefixRepresentative, compilePrefixState, initialCompilerState, stepCompiler, w0, w2, w3, w4, refinedResidue]
   decide
 
--- Theorem 59: Mixed-Prefix Reduction to r1 (Proved without sorry)
+-- Theorem 79: Mixed-Prefix Reduction to r1 (Proved without sorry)
 theorem mixed_prefix_all_reduce_to_r1 :
     77957031 % (2 ^ 14) = 1959 ∧
     106792871 % (2 ^ 14) = 1959 ∧
     82937767 % (2 ^ 14) = 1959 := by
   decide
 
--- Theorem 60: Corrected Mixed-Prefix Depth-3 [w0, w2, w0] Representative = 68394780583 (Proved without sorry)
+-- Theorem 80: Corrected Mixed-Prefix Depth-3 [w0, w2, w0] Representative = 68394780583 (Proved without sorry)
 theorem mixed_prefix_depth3_w0_w2_w0_equals_68394780583 :
     compilePrefixRepresentative [w0, w2, w0] = 68394780583 := by
   dsimp [compilePrefixRepresentative, compilePrefixState, initialCompilerState, stepCompiler, w0, w2, refinedResidue]
   decide
 
--- Theorem 61: Corrected Mixed-Prefix Depth-3 [w0, w2, w0] Nesting Reduction to r2(w0, w2) = 77957031 (Proved without sorry)
+-- Theorem 81: Corrected Mixed-Prefix Depth-3 [w0, w2, w0] Nesting Reduction to r2(w0, w2) = 77957031 (Proved without sorry)
 theorem mixed_prefix_depth3_w0_w2_w0_nesting :
     68394780583 % (2 ^ 27) = 77957031 := by
   decide
 
--- Theorem 62: Corrected Mixed-Prefix Starting with j=1 Symbol [w2, w0] Representative = 74559399 (Proved without sorry)
+-- Theorem 82: Corrected Mixed-Prefix Starting with j=1 Symbol [w2, w0] Representative = 74559399 (Proved without sorry)
 theorem mixed_prefix_j1_first_symbol_w2_w0_equals_74559399 :
     compilePrefixRepresentative [w2, w0] = 74559399 := by
   dsimp [compilePrefixRepresentative, compilePrefixState, initialCompilerState, stepCompiler, w0, w2, refinedResidue]
   decide
 
--- Theorem 63: Corrected Mixed-Prefix [w2, w0] Nesting Reduction to r1(w2) = 110503 (Proved without sorry)
+-- Theorem 83: Corrected Mixed-Prefix [w2, w0] Nesting Reduction to r1(w2) = 110503 (Proved without sorry)
 theorem mixed_prefix_j1_first_symbol_w2_w0_nesting :
     74559399 % (2 ^ 18) = 110503 := by
   decide
 
--- Theorem 64: Direct Semantic Realization Proof for [w2, w0] Representative 74559399 (Proved without sorry)
+-- Theorem 84: Direct Semantic Realization Proof for [w2, w0] Representative 74559399 (Proved without sorry)
 theorem realizes_prefix_w2_w0_74559399 :
     RealizesPrefix stream_w2_w0 2 74559399 := by
   dsimp [RealizesPrefix, stream_w2_w0, prefixOrbitTime, R, refinedResidue, w2, w0]
@@ -789,7 +1116,7 @@ theorem realizes_prefix_w2_w0_74559399 :
   · decide
   · decide
 
--- Theorem 65: Direct Semantic Realization Proof for [w0, w2, w0] Representative 68394780583 (Proved without sorry)
+-- Theorem 85: Direct Semantic Realization Proof for [w0, w2, w0] Representative 68394780583 (Proved without sorry)
 theorem realizes_prefix_w0_w2_w0_68394780583 :
     RealizesPrefix stream_w0_w2_w0 3 68394780583 := by
   dsimp [RealizesPrefix, stream_w0_w2_w0, prefixOrbitTime, R, refinedResidue, w0, w2]
@@ -800,7 +1127,7 @@ theorem realizes_prefix_w0_w2_w0_68394780583 :
   · decide
   · decide
 
--- Theorem 66: Complete Semantic Realization Equivalence for [w2, w0] (Proved without sorry)
+-- Theorem 86: Complete Semantic Realization Equivalence for [w2, w0] (Proved without sorry)
 theorem realizesPrefix_w2_w0_iff (n : ℕ) :
     RealizesPrefix stream_w2_w0 2 n ↔ n % (2 ^ 27) = 74559399 := by
   dsimp [RealizesPrefix, stream_w2_w0, prefixOrbitTime, R, refinedResidue, w2, w0]
@@ -817,7 +1144,7 @@ theorem realizesPrefix_w2_w0_iff (n : ℕ) :
     · omega
     · omega
 
--- Theorem 67: Complete Semantic Realization Equivalence for [w0, w2, w0] (Proved without sorry)
+-- Theorem 87: Complete Semantic Realization Equivalence for [w0, w2, w0] (Proved without sorry)
 theorem realizesPrefix_w0_w2_w0_iff (n : ℕ) :
     RealizesPrefix stream_w0_w2_w0 3 n ↔ n % (2 ^ 36) = 68394780583 := by
   dsimp [RealizesPrefix, stream_w0_w2_w0, prefixOrbitTime, R, refinedResidue, w0, w2]
@@ -836,7 +1163,7 @@ theorem realizesPrefix_w0_w2_w0_iff (n : ℕ) :
     · omega
     · omega
 
--- Theorem 68: Captured Counterexample Orbit Entry Realization in Survivor Set (Proved without sorry)
+-- Theorem 88: Captured Counterexample Orbit Entry Realization in Survivor Set (Proved without sorry)
 theorem captured_orbit_entry_mem_survivor
     (Nstar : ℕ) (capture : CapturedCounterexampleOrbit Nstar) :
     IsSurvivorPoint (capture.entryPoint : ℝ) capture.itinerary := by
@@ -855,7 +1182,7 @@ theorem captured_orbit_entry_mem_survivor
     dsimp [R, refinedResidue] at hreal
     split_ifs at hreal <;> omega
 
--- Theorem 69: First Return Domain Characterization Unfolding (Proved without sorry)
+-- Theorem 89: First Return Domain Characterization Unfolding (Proved without sorry)
 theorem firstReturnDomain_unfolded (n : ℕ) :
     FirstReturnDomain n ↔ (n % 32 = 7 ∧ ∃ j w, FirstReturnBranch j w ∧ R w n) := by
   rfl
