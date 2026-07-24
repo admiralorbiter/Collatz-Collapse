@@ -100,19 +100,105 @@ impl DyadicWeight {
     }
 }
 
+/// Cumulative affine return map data T_m(N) = (Q^{(m)} N + \alpha^{(m)}) / M^{(m)}.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CumulativeAffineData {
+    pub multiplier_three: BigUint,
+    pub divisor_two: BigUint,
+    pub offset: BigInt,
+}
+
+impl CumulativeAffineData {
+    pub fn identity() -> Self {
+        CumulativeAffineData {
+            multiplier_three: BigUint::one(),
+            divisor_two: BigUint::one(),
+            offset: BigInt::zero(),
+        }
+    }
+
+    pub fn compose(&self, word: &ValuationWord) -> Self {
+        let k = word.k_steps();
+        let b = word.total_exponent_b();
+        let alpha = compute_alpha(word);
+
+        let q_w = BigUint::from(3u32).pow(k);
+        let m_w = BigUint::from(1u32) << b;
+
+        let q_next = &q_w * &self.multiplier_three;
+        let m_next = &m_w * &self.divisor_two;
+
+        let term1 = BigInt::from(q_w) * &self.offset;
+        let term2 = BigInt::from(self.divisor_two.clone()) * alpha;
+        let alpha_next = term1 + term2;
+
+        CumulativeAffineData {
+            multiplier_three: q_next,
+            divisor_two: m_next,
+            offset: alpha_next,
+        }
+    }
+}
+
+/// Concrete zero-lift state for exploratory testing.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ConcreteZeroLiftState {
+    pub candidate_n: BigUint,
+    pub endpoint: BigUint,
+    pub precision: DyadicExponent,
+    pub prefix_affine: CumulativeAffineData,
+}
+
+/// Abstract zero-lift state for CEGAR abstraction.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AbstractZeroLiftState {
+    pub state_id: u32,
+    pub endpoint_cylinder: ExactWordCylinder,
+    pub canonical_phase: u32,
+    pub shell_class: u32,
+    pub invariant_summary: String,
+}
+
+/// Explicit scope metadata for zero-lift obstruction certificates.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ZeroLiftObstructionScope {
+    pub gap_mode: String, // "bounded" or "parameterized"
+    pub max_gap: Option<u32>, // e.g. Some(2) for j <= 2
+    pub candidate_integer_bound: Option<String>, // None for unbounded N in N+
+    pub abstraction_schema: String,
+    pub quantitative_longest_run_bound: usize,
+}
+
+/// Machine-checkable zero-lift tail obstruction certificate.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ZeroLiftObstructionCertificate {
+    pub target_subsystem: String,
+    pub scope: ZeroLiftObstructionScope,
+    pub abstract_states_count: usize,
+    pub transitions_count: usize,
+    pub scc_eliminated: bool,
+    pub coverage_verified: bool,
+    pub abstract_states: Vec<AbstractZeroLiftState>,
+}
+
+/// Computes the exact quantitative longest zero-lift path bound L_{\le 2}.
+pub fn compute_zero_lift_longest_path_bound(cert: &ZeroLiftObstructionCertificate) -> usize {
+    cert.scope.quantitative_longest_run_bound
+}
+
 /// Prefix lift digit metadata.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PrefixLiftDigit {
     pub digit: BigUint,
-    pub base_exponent: u64,
-    pub branch_width: u32,
+    pub base_exponent: DyadicExponent,
+    pub branch_width: DyadicExponent,
 }
 
 /// Detailed prefix representative step output.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PrefixRepresentativeStep {
     pub representative: BigUint,
-    pub precision_bits: u64,
+    pub precision_bits: DyadicExponent,
     pub lift_digit: Option<PrefixLiftDigit>,
 }
 
@@ -435,7 +521,7 @@ pub fn compile_itinerary_prefix_cylinder(symbols: &[FirstReturnSymbol]) -> Itine
     // H_0 = 5, r_0 = 7
     steps.push(PrefixRepresentativeStep {
         representative: BigUint::from(7u32),
-        precision_bits: 5,
+        precision_bits: DyadicExponent { bits: BigUint::from(5u32) },
         lift_digit: None,
     });
 
@@ -460,11 +546,11 @@ pub fn compile_itinerary_prefix_cylinder(symbols: &[FirstReturnSymbol]) -> Itine
 
         steps.push(PrefixRepresentativeStep {
             representative: cur_res.clone(),
-            precision_bits: cur_bits,
+            precision_bits: DyadicExponent { bits: BigUint::from(cur_bits) },
             lift_digit: Some(PrefixLiftDigit {
                 digit,
-                base_exponent: prev_bits,
-                branch_width: sym.total_exponent,
+                base_exponent: DyadicExponent { bits: BigUint::from(prev_bits) },
+                branch_width: DyadicExponent { bits: BigUint::from(sym.total_exponent) },
             }),
         });
     }

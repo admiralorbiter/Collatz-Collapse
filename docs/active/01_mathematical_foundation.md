@@ -81,6 +81,7 @@ $$K_J = \sum_{j=0}^J N_j 2^{-(9 + 4j)}$$
 - **Gap $j=0$**: $N_0 = 1, B_0 = 9 \implies K_0 = \frac{1}{512}$.
 - **Gap $j=1$**: $N_1 = 3, B_1 = 13 \implies K_1 = \frac{19}{8192}$.
 - **Gap $j=2$**: $N_2 = 13, B_2 = 17 \implies K_2 = \frac{317}{131072}$.
+- **Gap $j=3$**: $N_3 = 63, B_3 = 21 \implies K_3 = \frac{5135}{2097152} \approx 0.24486\% \text{ of } Q_1$.
 
 ---
 

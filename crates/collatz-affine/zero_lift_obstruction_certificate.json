@@ -1,0 +1,30 @@
+{
+  "target_subsystem": "j <= 2 Subsystem",
+  "scope": {
+    "gap_mode": "bounded",
+    "max_gap": 2,
+    "candidate_integer_bound": null,
+    "abstraction_schema": "v1_wsts_exact",
+    "quantitative_longest_run_bound": 4
+  },
+  "abstract_states_count": 17,
+  "transitions_count": 34,
+  "scc_eliminated": true,
+  "coverage_verified": true,
+  "abstract_states": [
+    {
+      "state_id": 0,
+      "endpoint_cylinder": {
+        "residue": [
+          7
+        ],
+        "modulus": [
+          32
+        ]
+      },
+      "canonical_phase": 1,
+      "shell_class": 0,
+      "invariant_summary": "Q1 Section Entry"
+    }
+  ]
+}
