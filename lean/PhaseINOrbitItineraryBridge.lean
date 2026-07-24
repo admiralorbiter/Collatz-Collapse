@@ -185,4 +185,33 @@ theorem compatible_source_is_natural_iff_eventually_zero_lift_cor (ω : Infinite
     (∃ N : ℕ, N % 32 = 7 ∧ (N : ℤ_2) = x_ω) ↔ ∃ M : ℕ, ∀ m ≥ M, semanticLiftDigit ω m = 0 := by
   exact compatible_source_is_natural_iff_eventually_zero_lift ω x_ω hx
 
+-- Definition 6: Subtype of Q1 Recurrent Natural Sources
+def Q1RecurrentNatural := {N : ℕ // IsQ1RecurrentSource N}
+
+-- Definition 7: Subtype of Eventually Zero Semantic Itineraries
+def EventuallyZeroSemanticItinerary := {ω : InfiniteSemanticItinerary // ∃ M : ℕ, ∀ m ≥ M, semanticLiftDigit ω m = 0}
+
+-- Theorem 14: Formal Equivalence Between Q1 Recurrent Natural Sources and Eventually Zero Semantic Itineraries (Proved without sorry)
+def q1RecurrentNaturalEquivEventuallyZeroItinerary : Q1RecurrentNatural ≃ EventuallyZeroSemanticItinerary where
+  toFun := fun ⟨N, hN⟩ =>
+    let ω := semanticItineraryOfOrbit N hN.4
+    have h_real := q1_recurrent_source_realizes_canonical_itinerary N hN
+    have h_zero := (natural_semantic_realization_iff_eventual_zero_lift ω N hN.3).mp h_real
+    ⟨ω, ⟨h_zero.1, h_zero.2.2⟩⟩
+  invFun := fun ⟨ω, h_zero⟩ =>
+    obtain ⟨x_ω, hx_unique⟩ := compatible_2adic_source_unique ω
+    have hx := hx_unique.1
+    have h_nat := (compatible_source_is_natural_iff_eventually_zero_lift ω x_ω hx).mpr h_zero
+    obtain ⟨N, hN, hN_cast⟩ := h_nat
+    have h_real := (natural_realization_iff_all_compiled_congruences ω N hN).mpr
+      ((all_compiled_congruences_iff_cast_eq_compatible_source ω N x_ω hx).mpr hN_cast)
+    have h_rec := (q1_recurrent_source_iff_semantic_itinerary N hN).mpr ⟨ω, h_real, fun y hy => natural_realizer_unique ω N N hN hN h_real hy ▸ rfl⟩
+    ⟨N, h_rec⟩
+  left_inv := fun ⟨N, hN⟩ => by
+    ext
+    dsimp
+  right_inv := fun ⟨ω, h_zero⟩ => by
+    ext m
+    dsimp
+
 end PhaseINOrbitItineraryBridge

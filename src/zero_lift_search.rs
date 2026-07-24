@@ -33,6 +33,19 @@ pub struct ZeroLiftRunTrace {
     pub terminated_within_horizon: bool,
 }
 
+#[derive(Debug, Clone)]
+pub struct CounterexampleSearchTrace {
+    pub anchor: BigUint,
+    pub q1_source: BigUint,
+    pub entry_time: usize,
+    pub minimum_odd_state: BigUint,
+    pub survived_horizon: bool,
+    pub no_descent_below_anchor: bool,
+    pub return_words: Vec<Vec<usize>>,
+    pub endpoint_residue3: BigUint,
+    pub endpoint_modulus3: BigUint,
+}
+
 pub fn syracuse_step(n: &BigUint) -> (BigUint, usize) {
     if n.is_zero() || n % 2u32 == BigUint::zero() {
         return (BigUint::zero(), 0);
@@ -67,8 +80,6 @@ pub fn search_orbit_first_zero_lift_runs(bounds: &ZeroLiftSearchBounds) -> Vec<Z
                 let (next, val) = syracuse_step(&curr_val);
                 if next < min_state {
                     no_descent = false;
-                }
-                if next < min_state {
                     min_state = next.clone();
                 }
                 word.push(val);
@@ -114,6 +125,36 @@ pub fn search_orbit_first_zero_lift_runs(bounds: &ZeroLiftSearchBounds) -> Vec<Z
         }
 
         current += &step_32;
+    }
+
+    traces
+}
+
+pub fn search_counterexample_q1_traces(bounds: &ZeroLiftSearchBounds) -> Vec<CounterexampleSearchTrace> {
+    let mut traces = Vec::new();
+    let runs = search_orbit_first_zero_lift_runs(bounds);
+
+    for run in runs {
+        let min_odd = run.steps.iter().map(|s| s.minimum_odd_state.clone()).min().unwrap_or(run.anchor.clone());
+        let no_descent_anchor = min_odd >= run.anchor;
+        let return_words = run.steps.iter().map(|s| s.word.clone()).collect();
+        let last_endpoint = run.steps.last().map(|s| s.endpoint.clone()).unwrap_or(BigUint::zero());
+
+        let total_time: usize = run.steps.iter().map(|s| s.word.len()).sum();
+        let modulus3 = BigUint::from(3u32).pow(total_time as u32);
+        let res3 = &last_endpoint % &modulus3;
+
+        traces.push(CounterexampleSearchTrace {
+            anchor: run.anchor.clone(),
+            q1_source: run.anchor.clone(),
+            entry_time: 0,
+            minimum_odd_state: min_odd,
+            survived_horizon: !run.terminated_within_horizon,
+            no_descent_below_anchor: no_descent_anchor,
+            return_words,
+            endpoint_residue3: res3,
+            endpoint_modulus3: modulus3,
+        });
     }
 
     traces
