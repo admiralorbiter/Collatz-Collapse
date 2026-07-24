@@ -12,6 +12,15 @@ import PhaseITQuotientsAndPotentials
 import PhaseIUConcreteElimination
 import PhaseIVComponentCoverage
 import PhaseIWComponentCensus
+import PhaseIXDiophantineDefect
+import PhaseIXDGrowthDecomposition
+import PhaseIYRecurrentQuotient
+import PhaseIZARecurrentInstantiation
+import PhaseIZCRecurrentCensus
+import PhaseIZDPathwiseForcing
+import PhaseIZEEndpointCompression
+import PhaseIZFRefinedQuotient
+import PhaseIZGCompressionRefinement
 
 namespace TrustedStatementSurface
 
@@ -26,13 +35,28 @@ open PhaseITQuotientsAndPotentials
 open PhaseIUConcreteElimination
 open PhaseIVComponentCoverage
 open PhaseIWComponentCensus
+open PhaseIXDiophantineDefect
+open PhaseIXDGrowthDecomposition
+open PhaseIYRecurrentQuotient
+open PhaseIZARecurrentInstantiation
+open PhaseIZCRecurrentCensus
+open PhaseIZDPathwiseForcing
+open PhaseIZEEndpointCompression
+open PhaseIZFRefinedQuotient
+open PhaseIZGCompressionRefinement
 
 /-!
 # Trusted Statement Surface: Universal Counterexample Reduction & Complete Component Census
 
 This file exposes the minimal, self-contained trusted statement surface
 for the universal counterexample reduction, concrete component partition,
-component relevance classification, and unconditional master recurrent-branch forced synthesis.
+component relevance classification, unconditional master recurrent-branch forced synthesis,
+Phase I.X-D Diophantine defect & telescoping growth infrastructure, Phase I.Y parameterized
+recurrent control quotient & conditional master reduction theorem, Phase I.Z-A pilot
+instantiation & distance theorems, Phase I.Z-B multigraph transition & certified neutral-band cycle-cone classification theorems,
+Phase I.Z-C concrete reachable SCC census & regime forcing theorems, Phase I.Z-D pathwise linear defect & growth forcing theorems,
+Phase I.Z-E first concrete recurrent SCC elimination & 3-adic endpoint compression theorems, Phase I.Z-F above-band recurrent-component
+elimination criterion & leading ternary zero compression theorems, and Phase I.Z-G compression-aware refined quotient & named concrete recurrent SCC elimination theorems.
 -/
 
 -- Headline 1: Minimal Counterexample Definition
@@ -48,14 +72,11 @@ component relevance classification, and unconditional master recurrent-branch fo
 #print ConcreteComponentId
 #print concreteComponentOf
 #print concreteComponentStates
-#print same_component_reachable
-#print mutually_reachable_same_component
 
 -- Headline 5: Relevant Component Classification & Tail Residence
 #print ConcreteComponentReachable
 #print ConcreteComponentCyclic
 #print ConcreteRelevantComponent
-#print ConcreteReachablePersistentComponents
 #print actual_avoiding_tail_eventually_stays_in_relevant_component
 
 -- Headline 6: Unconditional Elimination & Master Recurrent Forced Synthesis
@@ -68,6 +89,88 @@ component relevance classification, and unconditional master recurrent-branch fo
 #print HasInfinitelyManyQ1Returns
 #print minimal_odd_counterexample_returns_to_q1_infinitely_often
 
+-- Headline 8: Phase I.X-D Telescoping Growth & Shifted-Height Endpoint Infrastructure
+#print localCorrectionFactor
+#print localCorrectionProduct
+#print odd_prefix_local_multiplicative_telescoping_identity
+#print local_correction_product_eq_affine_correction
+#print odd_prefix_aggregate_correction_identity
+#print odd_step_shifted_height_bound
+#print odd_prefix_shifted_height_bound
+#print sufficient_time_for_endpoint_below_3_power
+#print endpoint_eq_least_representative_of_lt
+#print eventual_endpoint_equals_3adic_least_representative
+#print recurrent_tail_eventually_endpoint_eq_least_representative
+#print BoundedRecurrentReturns
+#print HasSubexponentialReturnSubsequence
+#print HasUniformExponentialReturnGrowth
+#print recurrent_return_growth_dichotomy
+#print subexponential_not_uniform_exponential
+#print not_subexponential_iff_uniform_exponential
+
+-- Headline 9: Phase I.Y Parameterized Recurrent Control Quotient & Conditional Master Reduction Theorem
+#print RecurrentQuotientParameters
+#print RecurrentQuotientState
+#print RecurrentEdge
+#print ZeroLiftRecurrentEdge
+#print RecurrentComponentCertificate
+#print actual_recurrent_extension_projects_to_edge
+#print actual_zero_lift_extension_projects_to_zero_lift_edge
+#print no_recurrent_tail_if_all_relevant_components_eliminated
+
+-- Headline 10: Phase I.Z-A Pilot Instantiation & Distance Theorems
+#print concreteRecurrentParameters
+#print ConcreteFiniteTransitionPredicate
+#print recurrent_edge_iff_finite_algebraic_conditions
+#print actual_recurrent_tail_eventually_projects_to_zero_lift_edges
+#print actual_recurrent_tail_eventually_stays_in_reachable_zero_lift_scc
+
+-- Headline 11: Phase I.Z-B Multigraph Transitions & Certified Neutral-Band Cycle-Cone Theorems
+#print RecurrentTransition
+#print transitionDefect
+#print InternalZeroLiftCycle
+#print cycleTime
+#print cycleExponent
+#print cycleDefect
+#print ComponentStrictlyBelowNeutralBand
+#print ComponentStrictlyAboveNeutralBand
+#print ComponentIntersectsNeutralBand
+#print negative_cycle_defect_yields_potential
+#print weighted_potential_with_cocycle_bound_eliminates_exact_run
+#print off_reference_cycle_slope_has_positive_distance
+
+-- Headline 12: Phase I.Z-C Concrete Reachable SCC Census & Regime Forcing Theorems
+#print recurrent_transition_deltaT_pos
+#print potential_difference_bounded_below_on_component
+#print above_neutral_component_forces_return_height_decay
+#print below_neutral_component_forces_uniform_exponential_return_growth
+
+-- Headline 13: Phase I.Z-D Pathwise Linear Defect & Growth Forcing Theorems
+#print potential_difference_abs_bounded_on_component
+#print below_band_component_forces_linear_negative_defect
+#print above_band_component_forces_linear_positive_defect
+#print below_band_forces_uniform_exponential_growth
+#print above_band_margin_dominates_local_correction
+
+-- Headline 14: Phase I.Z-E First Recurrent SCC Elimination & 3-Adic Endpoint Compression Theorems
+#print no_minimal_counterexample_tail_eventually_in_above_band_component
+#print normalized_endpoint_exponentially_small
+#print normalized_endpoint_affine_identity
+#print recurrent_endpoint_compression_tends_to_zero
+
+-- Headline 15: Phase I.Z-F Above-Band Recurrent Component Elimination Criterion & Leading Ternary Zero Compression Theorems
+#print topTernaryWindow
+#print endpoint_has_arbitrarily_many_leading_ternary_zeros
+#print eventual_top_ternary_window_zero
+#print above_band_recurrent_component_elimination_criterion
+
+-- Headline 16: Phase I.Z-G Compression-Aware Refined Quotient & Named Concrete Recurrent SCC Elimination Theorems
+#print topTernaryWindowGuarded
+#print eventual_top_ternary_window_zero_guarded
+#print no_infinite_zero_lift_path_yields_component_certificate
+#print concreteRecurrentSCC0
+#print concrete_recurrent_scc_0_eliminated
+
 -- Axiom Audits
 #print axioms minimal_counterexample_has_universally_certified_tail
 #print axioms actual_avoiding_tail_eventually_stays_in_relevant_component
@@ -75,5 +178,45 @@ component relevance classification, and unconditional master recurrent-branch fo
 #print axioms no_minimal_counterexample_avoiding_tail
 #print axioms minimal_counterexample_must_be_q1_recurrent_unconditional
 #print axioms minimal_odd_counterexample_returns_to_q1_infinitely_often
+#print axioms odd_prefix_local_multiplicative_telescoping_identity
+#print axioms local_correction_product_eq_affine_correction
+#print axioms odd_prefix_aggregate_correction_identity
+#print axioms odd_step_shifted_height_bound
+#print axioms odd_prefix_shifted_height_bound
+#print axioms sufficient_time_for_endpoint_below_3_power
+#print axioms endpoint_eq_least_representative_of_lt
+#print axioms eventual_endpoint_equals_3adic_least_representative
+#print axioms recurrent_tail_eventually_endpoint_eq_least_representative
+#print axioms recurrent_return_growth_dichotomy
+#print axioms subexponential_not_uniform_exponential
+#print axioms not_subexponential_iff_uniform_exponential
+#print axioms actual_recurrent_extension_projects_to_edge
+#print axioms actual_zero_lift_extension_projects_to_zero_lift_edge
+#print axioms no_recurrent_tail_if_all_relevant_components_eliminated
+#print axioms recurrent_edge_iff_finite_algebraic_conditions
+#print axioms actual_recurrent_tail_eventually_projects_to_zero_lift_edges
+#print axioms actual_recurrent_tail_eventually_stays_in_reachable_zero_lift_scc
+#print axioms negative_cycle_defect_yields_potential
+#print axioms weighted_potential_with_cocycle_bound_eliminates_exact_run
+#print axioms off_reference_cycle_slope_has_positive_distance
+#print axioms recurrent_transition_deltaT_pos
+#print axioms potential_difference_bounded_below_on_component
+#print axioms above_neutral_component_forces_return_height_decay
+#print axioms below_neutral_component_forces_uniform_exponential_return_growth
+#print axioms potential_difference_abs_bounded_on_component
+#print axioms below_band_component_forces_linear_negative_defect
+#print axioms above_band_component_forces_linear_positive_defect
+#print axioms below_band_forces_uniform_exponential_growth
+#print axioms above_band_margin_dominates_local_correction
+#print axioms no_minimal_counterexample_tail_eventually_in_above_band_component
+#print axioms normalized_endpoint_exponentially_small
+#print axioms normalized_endpoint_affine_identity
+#print axioms recurrent_endpoint_compression_tends_to_zero
+#print axioms endpoint_has_arbitrarily_many_leading_ternary_zeros
+#print axioms eventual_top_ternary_window_zero
+#print axioms above_band_recurrent_component_elimination_criterion
+#print axioms eventual_top_ternary_window_zero_guarded
+#print axioms no_infinite_zero_lift_path_yields_component_certificate
+#print axioms concrete_recurrent_scc_0_eliminated
 
 end TrustedStatementSurface
