@@ -1,108 +1,62 @@
-# Active Roadmap and Phase Overview
+# Active Roadmap and Phase Overview — Verified Collatz Formalization & Obstruction-Discovery Program
 
-## Phase Hierarchy
+## Project Scope & Retrospective Verdict Notice
 
-- **Phase 7.3A — Symbolic Language & Topological Entropy**: Complete
-- **Phase 7.3B — Exact Two-Adic Switching Calculus**: Complete
-- **Phase 7.3C — Residue Preimage Solver**: Complete
-- **Phase 7.3D — Induced Return Map Invariant Geometry**: Complete
-- **Phase H.0 — System-Wide Foundation & Convention Freezing**: Complete (`CANONICAL_RETURN_CONVENTION_V1_FROZEN`)
-- **Phase H.1 — Pointwise Minimal Realization & Stabilization**: Complete (`PHASE_H1_MINIMAL_POINTWISE_REDUCTION_COMPLETE`)
-- **Phase H.2 — Canonical Core Selector & Precision Ledger**: Complete (`PHASE_H2_COMPLETE`)
-- **Phase H.3 — Bounded-Gap Aperiodic Complexity Stratification**: Complete (`STURMIAN_GAP_ALPHABET_1_2_ELIMINATED`)
-- **Phase I — Counterexample Capture**: Active Phase (Conditional Reduction Framework)
-  - Phase I.0 — Capture Interface Freeze (`PHASE_I0_CAPTURE_INTERFACE_FROZEN`)
-  - Phase I.1 — Minimal Counterexample Foundation (`MINIMAL_COUNTEREXAMPLE_EXISTENCE_PROVED_LEAN4`)
-  - Phase I.C — Coordinate Reconciliation & Coboundary Architecture (`ORDINARY_AND_CANONICAL_MEASURES_DISTINGUISHED`)
-  - Phase I.D — First-Return Factor Architecture (`TRUNCATED_FIRST_RETURN_MASS_K2_EQUALS_317_OVER_131072`)
-  - Phase I.E — Survivor-Set Coding & Canonical Semiconjugacy (`COLLATZ_SURVIVOR_SET_HAAR_MEASURE_ZERO_CONDITIONAL`)
-  - Phase I.F — Integer Realization & Lift-Digit Arithmetic No-Escape (`INTEGER_NO_ESCAPE_REDUCTION_PROVED_LEAN4`)
-  - Phase I.G — Zero-Lift Tail Obstruction Subsystem (`NO_INFINITE_ZERO_LIFT_PATH_IN_J_LE_2_SUBSYSTEM`)
-  - Phase I.H — Uniform Zero-Lift Obstruction Research (`J3_FIRST_RETURN_COUNT_N3_EQUALS_63`)
-  - Phase I.I — WSTS Elimination & Self-Covering Obstruction Discovery (`SURVIVOR_SET_CONTAINS_NO_POSITIVE_INTEGER_PROVED_LEAN4`)
-  - Phase I.J — Section Entry & Complete Counterexample Capture (`VALID_BRANCH_CYLINDERS_PAIRWISE_DISJOINT_PROVED_LEAN4`)
-  - Phase I.K — Multi-State $Q_1$ Return Automaton (`SEMANTIC_RETURN_WORD_EXACT_CYLINDER_PROVED_LEAN4`)
-  - Phase I.L — Semantic Prefix Compiler & 16-State Transducer (`SEMANTIC_PREFIX_EXTENSION_UNIQUE_PULLBACK_PROVED_LEAN4`)
-  - Phase I.M — 2-Adic Completion & Natural-Point Classification (`NATURAL_SEMANTIC_REALIZATION_IFF_EVENTUAL_ZERO_LIFT_PROVED_LEAN4`)
-  - Phase I.N — Zero-Lift Rigidity & Orbit-Itinerary Bridge (`Q1_RECURRENT_SOURCE_IFF_SEMANTIC_ITINERARY_PROVED_LEAN4`)
-  - Phase I.O — Minimal-Counterexample Rigidity & Universal Capture Partition (`MINIMAL_COUNTEREXAMPLE_CAPTURE_OR_AVOIDANCE_DICHOTOMY_PROVED_LEAN4`)
-  - Phase I.P — Exact Endpoint Residues & Avoidance-Language Foundation (`MINIMAL_COUNTEREXAMPLE_23INF_OR_AVOIDANCE_SYNTHESIS_PROVED_LEAN4`)
-  - Phase I.Q — Avoidance Prefix Compiler & Height Rigidity Experiments (`AVOIDING_PREFIX_UNREALIZABLE_IFF_COMPILER_NONE_PROVED_LEAN4`)
-  - Phase I.R — Infinite Avoidance Completion & Natural Realization (`MINIMAL_COUNTEREXAMPLE_DUAL_2ADIC_CODING_SYNTHESIS_PROVED_LEAN4`)
-  - Phase I.S — Universal Odd-Prefix Certificate & Dual-Branch Rigidity (`MINIMAL_COUNTEREXAMPLE_HAS_UNIVERSALLY_CERTIFIED_TAIL_PROVED_LEAN4`)
-  - Phase I.T — Finite Residual Quotients & Certified Potentials (`STRICT_RANKING_ELIMINATES_INFINITE_QUOTIENT_PATH_PROVED_LEAN4`)
-  - Phase I.U — Discovery-First Concrete Quotient Discovery & Certified Component Elimination (`MINIMAL_COUNTEREXAMPLE_AVOIDING_TAIL_CANNOT_STAY_IN_REGION_PROVED_LEAN4`)
-  - Phase I.V — Persistent-Component Coverage & Avoidance Reduction (`MINIMAL_COUNTEREXAMPLE_MUST_BE_Q1_RECURRENT_CONDITIONAL_PROVED_LEAN4`)
-  - Phase I.W — Concrete SCC Census & Persistent-Component Elimination (`MINIMAL_ODD_COUNTEREXAMPLE_RETURNS_TO_Q1_INFINITELY_OFTEN_PROVED_LEAN4`)
-  - Phase I.X-A — Exact Diophantine Defect & Height-Control Infrastructure (`RECURRENT_PREFIX_Q_POWER_IDENTITY_PROVED_LEAN4`)
-  - Phase I.X-B — Quantitative Signed Defect Identity & Parameterized Height Control (`SMALL_DEFECT_FINITE_AFFINE_CLASSIFICATION_PROVED_LEAN4`)
-  - Phase I.X-C — Concrete Conditional Defect Census & Time-Residue Exclusion (`SMALL_DEFECT_TIME_RESIDUE_SIX_ELIMINATED_LEAN4`)
-  - Phase I.X-D — Growth Decomposition & Shifted-Height Endpoint Infrastructure (`RECURRENT_TAIL_EVENTUALLY_ENDPOINT_EQ_LEAST_REPRESENTATIVE_PROVED_LEAN4`)
-  - Phase I.Y — Parameterized Recurrent Return Quotient & Invariant SCC Census (`NO_RECURRENT_TAIL_IF_ALL_RELEVANT_COMPONENTS_ELIMINATED_PROVED_LEAN4`)
-  - Phase I.Z-A — Pilot Concrete Recurrent Quotient Instantiation (`OFF_REFERENCE_CYCLE_SLOPE_HAS_POSITIVE_DISTANCE_PROVED_LEAN4`)
-  - Phase I.Z-B — Cycle-Weight Cone & Per-Regime Component Elimination (`NEGATIVE_CYCLE_DEFECT_YIELDS_POTENTIAL_PROVED_LEAN4`)
-  - Phase I.Z-C — Concrete Reachable SCC Census & Regime Forcing Theorems (`BELOW_NEUTRAL_COMPONENT_FORCES_UNIFORM_EXPONENTIAL_RETURN_GROWTH_PROVED_LEAN4`)
-  - Phase I.Z-D — Pathwise Linear Defect & Growth Forcing Infrastructure (`BELOW_BAND_FORCES_UNIFORM_EXPONENTIAL_GROWTH_PROVED_LEAN4`)
-  - Phase I.Z-E — First Recurrent SCC Elimination & 3-Adic Endpoint Compression (`RECURRENT_ENDPOINT_COMPRESSION_TENDS_TO_ZERO_PROVED_LEAN4`)
-  - Phase I.Z-F — Above-Band Recurrent Component Elimination Criterion & Leading Ternary Zero Compression (`EVENTUAL_TOP_TERNARY_WINDOW_ZERO_PROVED_LEAN4`)
-  - Phase I.Z-G — Compression-Aware Refined Quotient & Named Component Certificate Schema (`CONCRETE_RECURRENT_SCC_0_CERTIFICATE_SCHEMA_COMPLETE`)
-  - **ARCHITECTURAL FREEZE & PROOF AUDIT**: Active Audit Phase prior to Phase I.Z-H (Discharging `NoInfiniteZeroLiftPath`)
-  - Phase I.2 — Minimal Counterexample & No-Escape Specification (`SECTION_ENTRY_AND_NO_ESCAPE_OPEN`)
-  - Phase I.3 — Prefix Fidelity & Stream Construction (`EXACT_SYRACUSE_VALUATION_REPLAY_VERIFIED`)
-- **Phase J — Canonical Path Exhaustion Framework**: Queued Phase (Structured vs. Unstructured Path Elimination)
+> [!CAUTION]
+> **Project Scope Update**: The project is formally designated as the **Verified Collatz Formalization and Obstruction-Discovery Program**.
+> All phase expansions beyond Phase I.Z-G are halted. All focus is dedicated to the Gate 0–8 Zero-Echo Reconstruction plan and the Adaptive CEGAR-Refinement Program.
+> The headline theorems `minimal_odd_counterexample_returns_to_q1_infinitely_often` and `no_minimal_counterexample_avoiding_tail` are marked as **Compiled but Mathematically Untrusted** pending reconstruction of the avoidance graph proof.
 
 ---
 
-## Active Phase I Milestones & Badges
+## 864-State Diagnostic Census & Retrospective Verdict Findings
 
-### Verified (Green)
-- `ARCHITECTURAL_FREEZE_AND_PROOF_AUDIT_LEDGER_COMPLETE`
-- `CONCRETE_RECURRENT_SCC_0_ELIMINATED_PROVED_LEAN4`
-- `NO_INFINITE_ZERO_LIFT_PATH_YIELDS_COMPONENT_CERTIFICATE_PROVED_LEAN4`
-- `EVENTUAL_TOP_TERNARY_WINDOW_ZERO_GUARDED_PROVED_LEAN4`
-- `ABOVE_BAND_RECURRENT_COMPONENT_ELIMINATION_CRITERION_PROVED_LEAN4`
-- `EVENTUAL_TOP_TERNARY_WINDOW_ZERO_PROVED_LEAN4`
-- `ENDPOINT_HAS_ARBITRARILY_MANY_LEADING_TERNARY_ZEROS_PROVED_LEAN4`
-- `RECURRENT_ENDPOINT_COMPRESSION_TENDS_TO_ZERO_PROVED_LEAN4`
-- `NORMALIZED_ENDPOINT_AFFINE_IDENTITY_PROVED_LEAN4`
-- `NORMALIZED_ENDPOINT_EXPONENTIALLY_SMALL_PROVED_LEAN4`
-- `NO_MINIMAL_COUNTEREXAMPLE_TAIL_EVENTUALLY_IN_ABOVE_BAND_COMPONENT_PROVED_LEAN4`
-- `ABOVE_BAND_MARGIN_DOMINATES_LOCAL_CORRECTION_PROVED_LEAN4`
-- `BELOW_BAND_FORCES_UNIFORM_EXPONENTIAL_GROWTH_PROVED_LEAN4`
-- `ABOVE_BAND_COMPONENT_FORCES_LINEAR_POSITIVE_DEFECT_PROVED_LEAN4`
-- `BELOW_BAND_COMPONENT_FORCES_LINEAR_NEGATIVE_DEFECT_PROVED_LEAN4`
-- `POTENTIAL_DIFFERENCE_ABS_BOUNDED_ON_COMPONENT_PROVED_LEAN4`
-- `BELOW_NEUTRAL_COMPONENT_FORCES_UNIFORM_EXPONENTIAL_RETURN_GROWTH_PROVED_LEAN4`
-- `ABOVE_NEUTRAL_COMPONENT_FORCES_RETURN_HEIGHT_DECAY_PROVED_LEAN4`
-- `POTENTIAL_DIFFERENCE_BOUNDED_BELOW_ON_COMPONENT_PROVED_LEAN4`
-- `RECURRENT_TRANSITION_DELTA_T_POS_PROVED_LEAN4`
-- `NEGATIVE_CYCLE_DEFECT_YIELDS_POTENTIAL_PROVED_LEAN4`
-- `WEIGHTED_POTENTIAL_WITH_COCYCLE_BOUND_ELIMINATES_EXACT_RUN_PROVED_LEAN4`
-- `OFF_REFERENCE_CYCLE_SLOPE_HAS_POSITIVE_DISTANCE_PROVED_LEAN4`
-- `RECURRENT_EDGE_IFF_FINITE_ALGEBRAIC_CONDITIONS_PROVED_LEAN4`
-- `NO_RECURRENT_TAIL_IF_ALL_RELEVANT_COMPONENTS_ELIMINATED_PROVED_LEAN4`
-- `ODD_PREFIX_LOCAL_MULTIPLICATIVE_TELESCOPING_IDENTITY_PROVED_LEAN4`
-- `LOCAL_CORRECTION_PRODUCT_EQ_AFFINE_CORRECTION_PROVED_LEAN4`
-- `RECURRENT_TAIL_EVENTUALLY_ENDPOINT_EQ_LEAST_REPRESENTATIVE_PROVED_LEAN4`
-- `EVENTUAL_ENDPOINT_EQUALS_3ADIC_LEAST_REPRESENTATIVE_PROVED_LEAN4`
-- `ODD_PREFIX_SHIFTED_HEIGHT_BOUND_PROVED_LEAN4`
-- `ODD_PREFIX_AGGREGATE_CORRECTION_IDENTITY_PROVED_LEAN4`
-- `RECURRENT_RETURN_GROWTH_DICHOTOMY_PROVED_LEAN4`
-- `SMALL_DEFECT_TIME_RESIDUE_SIX_ELIMINATED_LEAN4`
-- `CONCRETE_ALLOWED_TIME_RESIDUES_EXACTLY_COMPUTED_LEAN4`
-- `CONCRETE_ALLOWED_TIME_RESIDUES_CARDINALITY_11_PROVED_LEAN4`
-- `CONCRETE_FAMILY_FIXED_HEIGHT_INTERVAL_PROVED_LEAN4`
-- `SMALL_DEFECT_FINITE_AFFINE_CLASSIFICATION_PROVED_LEAN4`
-- `ALLOWED_TIME_RESIDUES_CARD_LE_PROVED_LEAN4`
-- `SMALL_DEFECT_FORCES_ALLOWED_TIME_RESIDUE_PROVED_LEAN4`
-- `INTEGER_DEFECT_ZPOW_IDENTITY_PROVED_LEAN4`
-- `RECURRENT_PREFIX_SMALL_INTEGER_DEFECT_PROVED_LEAN4`
-- `RECURRENT_PREFIX_DEFECT_DIVISIBILITY_PROVED_LEAN4`
-- `REDUCED_EXPONENT_TIME_RATIO_COPRIME_PROVED_LEAN4`
-- `MINIMAL_ODD_COUNTEREXAMPLE_RETURNS_TO_Q1_INFINITELY_OFTEN_PROVED_LEAN4`
-- `MINIMAL_COUNTEREXAMPLE_MUST_BE_Q1_RECURRENT_UNCONDITIONAL_PROVED_LEAN4`
+Following the zero-echo reconstruction of **Gates 0–6** (where actual shifted height contraction, linear time growth, 3-adic residue compiler correctness, eventual least-representative equality, full ternary compression, and 864-state trajectory projection were derived 100% in Lean 4 without `sorry`), we executed a diagnostic Tarjan SCC census over the 864-state quotient space:
 
-### Open Gates
-- `NO_INFINITE_ZERO_LIFT_PATH_CONCRETE_SCC0_OPEN`
-- `RECURRENT_SCC_ELIMINATED_PROVED_LEAN4`
-- `SECTION_ENTRY_AND_NO_ESCAPE_OPEN`
+```
+=== 864-STATE AVOIDANCE GRAPH DIAGNOSTIC CENSUS ===
+States (Total): 864 (810 avoiding, 54 Q1)
+Boolean edges: 7,992
+SCC count: 271
+Largest SCC size: 540 (1 Giant Recurrent SCC containing ~92.3% of reachable states)
+Cyclic SCCs: 1
+Reachable states: 585
+Reachable SCCs: 46
+Reachable cyclic SCCs: 1 (The 540-state giant SCC is fully reachable)
+====================================================
+```
+
+### Strategic Verdict & CEGAR Pivot:
+1. **Do NOT Formalize the 864-State Partition**: The current quotient over-approximation collapses into a single giant 540-state cyclic SCC due to mod-32 non-determinism at $r=21 \pmod{32}$ and path-splicing across abstract cycles.
+2. **Freeze Top-Level Contradiction DAG**: Before certifying refined graphs, state the exact top-level contradiction proof connecting $y_m = \mu_m$ (and leading ternary zeros) to a formal contradiction $\bot$.
+3. **CEGAR Cycle-Lifting Harness**: Implement a diagnostic harness in Rust to test concrete liftability of simple cycles in the giant SCC, identifying path-splicing and carry/valuation failures to refine only the necessary predicates.
+
+---
+
+## Six-Stage Adaptive Reconstruction Roadmap
+
+- **Stage 1 — Kernel Freeze & Snapshot for Gates 0–6**: Complete (`lean/OddPrefixWitness.lean`, `Gate2OrbitBridge.lean`, `Gate3TimeGrowth.lean`, `Gate4ResidueBridge.lean`, `Gate5TailCompression.lean`, `Gate6AvoidanceReflection.lean` verified without `sorry`).
+- **Stage 2 — Top-Level Contradiction DAG Formalization**: Active (`Gate2EDagContradiction.lean` - formalizing $\neg\text{Collatz} \implies \bot$ via recurrent compression and avoiding graph elimination).
+- **Stage 3 — CEGAR Cycle-Lifting Diagnostic Harness**: Active (`src/zero_lift_search.rs` - concrete path-splicing & cycle-lifting analysis).
+- **Stage 4 — Controlled Precision & Valuation-Drift Sweep**: Open (Parameter sweep over binary precision $a$, 3-adic compiler $b$, valuation cutoff $K$, and block length $L$).
+- **Stage 5 — Adaptive Quotient Design & State Refinement**: Open (`lean/Gate7AdaptiveQuotient.lean` - Valuation Cylinders $\times$ Compiler Carry State $\times$ Compression Guard).
+- **Stage 6 — Verified Refined Graph Certification & Elimination**: Open (`lean/Gate7SCCPartition.lean`, `Gate8AvoidanceGraph.lean` - Lean 4 verified parent tree certificates and elimination).
+
+---
+
+## Verified Kernel & Gate Sequence (Gates 0–8)
+
+| Gate ID | Reconstruction Objective | Target Symbol / Signature | Status |
+|---|---|---|---|
+| **Gate 0** | **Definition-Fidelity Audit** | Audit `OddPrefixWitness`, `UniversalOddPrefixCertificateAt`, and `semanticPrefixTime` | **PASSED** |
+| **Gate 1** | **Shifted Height Contraction & Prefix Bound** | `odd_step_shifted_height_step` proved; `odd_prefix_shifted_height_bound_of_witness` derived without `h_bound` | **PASSED** |
+| **Gate 2A** | **Generic Orbit Prefix Witness** | `oddStep_exact`, `oddStep_pos`, `oddStep_odd`, `v2_3x_plus_1_pos`, `oddOrbit_state_pos`, `oddOrbit_state_odd`, `oddOrbit_step_exact`, `oddOrbit_prefix_has_odd_prefix_witness` | **PASSED** |
+| **Gate 2B** | **Semantic Endpoint Identification** | `semantic_return_state_eq_oddOrbit_prefix` ($y_m = \text{oddOrbit}(M, T_m)$) | **PASSED** |
+| **Gate 2C** | **Source Facts from hreal** | `semantic_realizer_source_q1`, `semantic_realizer_source_pos`, `semantic_realizer_source_odd` | **PASSED** |
+| **Gate 2D** | **Category B Witness & Shifted Height** | `semantic_prefix_has_odd_prefix_witness` & `semantic_prefix_shifted_height_bound` | **PASSED** |
+| **Gate 3** | **Time Growth & Exponential Domination** | `semantic_word_time_pos`, `semantic_prefix_time_ge_index`, `nat_le_two_pow`, `two_pow_mono`, `initial_height_below_two_power_of_large_index`, `semantic_prefix_time_exponential_domination` | **PASSED** |
+| **Gate 4** | **Residue Congruence Bridge** | `semantic_prefix_endpoint_residue_lt`, `semantic_return_state_endpoint_mod`, `semantic_return_state_endpoint_congruence` | **PASSED** |
+| **Gate 5** | **Tail Compression & Least Representative** | `sufficient_time_forces_endpoint_lt_three_power`, `recurrent_tail_eventually_endpoint_eq_least_representative`, `semantic_return_endpoint_compression`, `semantic_return_endpoint_has_leading_ternary_zeros` | **PASSED** |
+| **Gate 6** | **Avoidance Edge Reflection & Trajectory Projection** | `concrete_state_space_cardinality` (864), `two_pow_mod_nine_depends_on_mod_six`, `AvoidingStepWitness`, `avoidingEdgeSpec_implies_finiteConditions`, `avoidingEdgeB_overapproximates`, `actual_avoiding_transition_projects_to_boolean_edge` | **PASSED** |
+| **Gate 7** | **Refined Adaptive SCC Partition** | Bounded-rank parent tree certified SCC partition over refined adaptive quotient space | **NEXT TARGET** |
+| **Gate 8** | **Avoidance Graph Elimination** | `all_true_avoiding_components_eliminated` with closed certificates | OPEN |

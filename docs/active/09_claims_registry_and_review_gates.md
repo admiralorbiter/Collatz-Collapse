@@ -1,176 +1,73 @@
-# Claims Registry and Review Gates
+# Claims Registry and Review Gates — Verified Collatz Formalization & Obstruction-Discovery Program
 
-## Verified Claims & Badges Ledger
+## Four-Category Single-Source-of-Truth Ledger
 
-### Phase I.Z-G — Compression-Aware Refined Quotient & Named Component Certificate Schema
-- `ARCHITECTURAL_FREEZE_AND_PROOF_AUDIT_LEDGER_COMPLETE`
-- `CONCRETE_RECURRENT_SCC_0_ELIMINATED_PROVED_LEAN4`
-- `NO_INFINITE_ZERO_LIFT_PATH_YIELDS_COMPONENT_CERTIFICATE_PROVED_LEAN4`
-- `EVENTUAL_TOP_TERNARY_WINDOW_ZERO_GUARDED_PROVED_LEAN4`
+### Category A: Proved Definition-Faithful Theorems (Lean 4 Verified Without Sorry)
+- `collatz_false_implies_minimal_counterexample_exists` (Proved from well-foundedness of $\mathbb{N}$)
+- `minimal_counterexample_is_odd` (Proved via $N/2 < N$)
+- `odd_step_shifted_height_step` ($2(s_{\text{next}}+1) \le 3(s_{\text{curr}}+1)$)
+- `odd_prefix_shifted_height_at` ($2^j(x_j+1) \le 3^j(M+1)$ by induction on $j \le T$)
+- `odd_prefix_shifted_height_bound_of_witness` ($2^T(y+1) \le 3^T(M+1)$ at $j=T$)
+- `oddStep_exact` ($2^{v_2(3x+1)} \text{oddStep}(x) = 3x+1$)
+- `oddStep_pos` ($0 < \text{oddStep}(x)$)
+- `oddStep_odd` ($\text{Odd}(\text{oddStep}(x))$)
+- `v2_3x_plus_1_pos` ($1 \le v_2(3x+1)$)
+- `oddOrbit_state_pos` ($0 < \text{oddOrbit}(M, n)$)
+- `oddOrbit_state_odd` ($\text{Odd}(\text{oddOrbit}(M, n))$)
+- `oddOrbit_step_exact` ($2^{v_2(3x_n+1)} \text{oddOrbit}(M, n+1) = 3 \text{oddOrbit}(M, n) + 1$)
+- `oddOrbit_prefix_has_odd_prefix_witness` (`OddPrefixWitness M T (oddOrbit M T)`)
+- `semantic_realizer_source_pos_from_q1` ($0 < M$ for $M \equiv 7 \pmod{32}$)
+- `semantic_realizer_source_odd_from_q1` ($\text{Odd}(M)$ for $M \equiv 7 \pmod{32}$)
+- `oddOrbit_add` ($\text{oddOrbit}(\text{oddOrbit}(M, T), U) = \text{oddOrbit}(M, T + U)$)
+- `semantic_word_time_pos` ($1 \le w.\text{word}.\text{length}$)
+- `semantic_prefix_time_ge_index` ($m \le T_m$)
+- `nat_le_two_pow` ($n \le 2^n$)
+- `two_pow_mono` ($a \le b \implies 2^a \le 2^b$)
+- `initial_height_below_two_power_of_large_index` ($M + 1 \le 2^{T_m}$ for $M + 1 \le m$)
+- `semantic_prefix_time_exponential_domination` ($\exists m_0 = M+1, \forall m \ge m_0, M + 1 \le 2^{T_m}$)
+- `semantic_prefix_endpoint_residue_lt` ($\mu_m < 3^{T_m}$)
+- `concrete_state_space_cardinality` ($\text{Fintype.card ConcreteAvoidingQuotientState} = 864$)
+- `two_pow_mod_nine_depends_on_mod_six` ($2^k \equiv 2^{k \pmod 6} \pmod 9$)
+- `avoidingEdgeSpec_implies_finiteConditions` ($\text{AvoidingEdgeSpec}(s,t) \implies \text{AvoidingFiniteConditions}(s,t)$)
+- `avoidingEdgeB_overapproximates` ($\text{AvoidingEdgeSpec}(s,t) \implies \text{avoidingEdgeB}(s,t) = \text{true}$)
 
-### Phase I.Z-F — Above-Band Recurrent Component Elimination Criterion & Leading Ternary Zero Compression
-- `ABOVE_BAND_RECURRENT_COMPONENT_ELIMINATION_CRITERION_PROVED_LEAN4`
-- `EVENTUAL_TOP_TERNARY_WINDOW_ZERO_PROVED_LEAN4`
-- `ENDPOINT_HAS_ARBITRARILY_MANY_LEADING_TERNARY_ZEROS_PROVED_LEAN4`
+### Category B: Proved Actual-Orbit Bridges (Lean 4 Verified Without Sorry)
+- `semantic_realizer_source_q1` ($M \equiv 7 \pmod{32}$)
+- `semantic_realizer_source_pos` ($0 < M$)
+- `semantic_realizer_source_odd` ($\text{Odd}(M)$)
+- `semantic_return_state_eq_oddOrbit_prefix` ($y_m = \text{oddOrbit}(M, T_m)$)
+- `semantic_prefix_has_odd_prefix_witness` (`OddPrefixWitness M T_m y_m`)
+- `semantic_prefix_shifted_height_bound` ($2^{T_m} (y_m + 1) \le 3^{T_m} (M + 1)$ with zero witness arguments)
+- `semantic_return_state_endpoint_mod` ($y_m \pmod{3^{T_m}} = \mu_m$)
+- `semantic_return_state_endpoint_congruence` ($(y_m : \text{ZMod } 3^{T_m}) = (\mu_m : \text{ZMod } 3^{T_m})$)
+- `sufficient_time_forces_endpoint_lt_three_power` ($y_m < 3^{T_m}$ for $m \ge M+1$)
+- `recurrent_tail_eventually_endpoint_eq_least_representative` ($y_m = \mu_m$ for $m \ge M+1$ with zero open hypotheses)
+- `semantic_return_endpoint_compression` ($2^K y_m < 3^{T_m}$ eventually for any $K \ge 0$)
+- `semantic_return_endpoint_has_leading_ternary_zeros` ($y_m < 3^{T_m - L}$ eventually for any $L \ge 0$)
+- `actual_avoiding_step_projects_to_witness` (Actual trajectory step projects to `AvoidingStepWitness`)
+- `actual_avoiding_transition_projects_to_boolean_edge` (`avoidingEdgeB s t = true` directly from `RealizesAvoidingItinerary α M` with zero open premises)
 
-### Phase I.Z-E — First Recurrent SCC Elimination & 3-Adic Endpoint Compression
-- `RECURRENT_ENDPOINT_COMPRESSION_TENDS_TO_ZERO_PROVED_LEAN4`
-- `NORMALIZED_ENDPOINT_AFFINE_IDENTITY_PROVED_LEAN4`
-- `NORMALIZED_ENDPOINT_EXPONENTIALLY_SMALL_PROVED_LEAN4`
-- `NO_MINIMAL_COUNTEREXAMPLE_TAIL_EVENTUALLY_IN_ABOVE_BAND_COMPONENT_PROVED_LEAN4`
+### Category C: Valid Reduction Lemmas with Open Premises / Bridges
+- `minimal_counterexample_has_universally_certified_tail` (Requires actual-tail itinerary bridge)
 
-### Phase I.Z-D — Pathwise Linear Defect & Growth Forcing Infrastructure
-- `ABOVE_BAND_MARGIN_DOMINATES_LOCAL_CORRECTION_PROVED_LEAN4`
-- `BELOW_BAND_FORCES_UNIFORM_EXPONENTIAL_GROWTH_PROVED_LEAN4`
-- `ABOVE_BAND_COMPONENT_FORCES_LINEAR_POSITIVE_DEFECT_PROVED_LEAN4`
-- `BELOW_BAND_COMPONENT_FORCES_LINEAR_NEGATIVE_DEFECT_PROVED_LEAN4`
-- `POTENTIAL_DIFFERENCE_ABS_BOUNDED_ON_COMPONENT_PROVED_LEAN4`
-
-### Phase I.Z-C — Concrete Reachable SCC Census & Regime Forcing Theorems
-- `BELOW_NEUTRAL_COMPONENT_FORCES_UNIFORM_EXPONENTIAL_RETURN_GROWTH_PROVED_LEAN4`
-- `ABOVE_NEUTRAL_COMPONENT_FORCES_RETURN_HEIGHT_DECAY_PROVED_LEAN4`
-- `POTENTIAL_DIFFERENCE_BOUNDED_BELOW_ON_COMPONENT_PROVED_LEAN4`
-- `RECURRENT_TRANSITION_DELTA_T_POS_PROVED_LEAN4`
-
-### Phase I.Z-B — Cycle-Weight Cone & Per-Regime Component Elimination
-- `NEGATIVE_CYCLE_DEFECT_YIELDS_POTENTIAL_PROVED_LEAN4`
-- `WEIGHTED_POTENTIAL_WITH_COCYCLE_BOUND_ELIMINATES_EXACT_RUN_PROVED_LEAN4`
-
-### Phase I.Z-A — Pilot Concrete Recurrent Quotient Instantiation
-- `OFF_REFERENCE_CYCLE_SLOPE_HAS_POSITIVE_DISTANCE_PROVED_LEAN4`
-- `RECURRENT_EDGE_IFF_FINITE_ALGEBRAIC_CONDITIONS_PROVED_LEAN4`
-
-### Phase I.Y — Parameterized Recurrent Return Quotient & Invariant SCC Census
-- `NO_RECURRENT_TAIL_IF_ALL_RELEVANT_COMPONENTS_ELIMINATED_PROVED_LEAN4`
-- `ODD_PREFIX_LOCAL_MULTIPLICATIVE_TELESCOPING_IDENTITY_PROVED_LEAN4`
-- `LOCAL_CORRECTION_PRODUCT_EQ_AFFINE_CORRECTION_PROVED_LEAN4`
-
-### Phase I.X-D — Growth Decomposition & Shifted-Height Endpoint Infrastructure
-- `RECURRENT_TAIL_EVENTUALLY_ENDPOINT_EQ_LEAST_REPRESENTATIVE_PROVED_LEAN4`
-- `EVENTUAL_ENDPOINT_EQUALS_3ADIC_LEAST_REPRESENTATIVE_PROVED_LEAN4`
-- `ODD_PREFIX_SHIFTED_HEIGHT_BOUND_PROVED_LEAN4`
-- `ODD_PREFIX_AGGREGATE_CORRECTION_IDENTITY_PROVED_LEAN4`
-- `RECURRENT_RETURN_GROWTH_DICHOTOMY_PROVED_LEAN4`
-
-### Phase I.X-C — Concrete Conditional Defect Census & Time-Residue Exclusion
-- `SMALL_DEFECT_TIME_RESIDUE_SIX_ELIMINATED_LEAN4`
-- `CONCRETE_ALLOWED_TIME_RESIDUES_EXACTLY_COMPUTED_LEAN4`
-- `CONCRETE_ALLOWED_TIME_RESIDUES_CARDINALITY_11_PROVED_LEAN4`
-- `CONCRETE_FAMILY_FIXED_HEIGHT_INTERVAL_PROVED_LEAN4`
-
-### Phase I.X-B — Quantitative Signed Defect Identity & Parameterized Height Control
-- `SMALL_DEFECT_FINITE_AFFINE_CLASSIFICATION_PROVED_LEAN4`
-- `ALLOWED_TIME_RESIDUES_CARD_LE_PROVED_LEAN4`
-- `SMALL_DEFECT_FORCES_ALLOWED_TIME_RESIDUE_PROVED_LEAN4`
-- `INTEGER_DEFECT_ZPOW_IDENTITY_PROVED_LEAN4`
-- `RECURRENT_PREFIX_SMALL_INTEGER_DEFECT_PROVED_LEAN4`
-- `RECURRENT_PREFIX_DEFECT_DIVISIBILITY_PROVED_LEAN4`
-- `REDUCED_EXPONENT_TIME_RATIO_COPRIME_PROVED_LEAN4`
-
-### Phase I.X-A — Exact Diophantine Defect & Height-Control Infrastructure
-- `RECURRENT_PREFIX_Q_POWER_IDENTITY_PROVED_LEAN4`
-- `RECURRENT_PREFIX_POWER_RATIO_IDENTITY_PROVED_LEAN4`
-- `INTEGER_DEFECT_DEFINITIONAL_BOUNDS_PROVED_LEAN4`
-- `INTEGER_DEFECT_ADDITIVE_PROVED_LEAN4`
-- `CERTIFIED_LOG23_COARSE_ENCLOSURE_PROVED_LEAN4`
-
-### Phase I.W — Concrete SCC Census & Persistent-Component Elimination
-- `MINIMAL_ODD_COUNTEREXAMPLE_RETURNS_TO_Q1_INFINITELY_OFTEN_PROVED_LEAN4`
-- `MINIMAL_COUNTEREXAMPLE_MUST_BE_Q1_RECURRENT_UNCONDITIONAL_PROVED_LEAN4`
-- `ACTUAL_AVOIDING_TAIL_EVENTUALLY_STAYS_IN_RELEVANT_COMPONENT_PROVED_LEAN4`
-- `SAME_COMPONENT_REACHABLE_PROVED_LEAN4`
-- `MUTUALLY_REACHABLE_SAME_COMPONENT_PROVED_LEAN4`
-
-### Phase I.V — Persistent-Component Coverage & Avoidance Reduction
-- `MINIMAL_COUNTEREXAMPLE_MUST_BE_Q1_RECURRENT_CONDITIONAL_PROVED_LEAN4`
-- `ACTUAL_AVOIDING_TAIL_PROJECTS_INTO_SOUND_REACHABLE_PROVED_LEAN4`
-
-### Phase I.U — Discovery-First Concrete Quotient Discovery & Certified Component Elimination
-- `MINIMAL_COUNTEREXAMPLE_AVOIDING_TAIL_CANNOT_STAY_IN_REGION_PROVED_LEAN4`
-- `ACTUAL_AVOIDING_EXTENSION_PROJECTS_TO_SOUND_EDGE_PROVED_LEAN4`
-
-### Phase I.T — Finite Residual Quotients & Certified Potentials
-- `STRICT_RANKING_ELIMINATES_INFINITE_QUOTIENT_PATH_PROVED_LEAN4`
-- `WEIGHTED_RANKING_WITH_BOUNDED_COCYCLE_ELIMINATES_PATH_PROVED_LEAN4`
-
-### Phase I.S — Universal Odd-Prefix Certificate & Dual-Branch Rigidity
-- `MINIMAL_COUNTEREXAMPLE_HAS_UNIVERSALLY_CERTIFIED_TAIL_PROVED_LEAN4`
-- `RECURRENT_PREFIX_HAS_UNIVERSAL_CERTIFICATE_PROVED_LEAN4`
-- `AVOIDING_PREFIX_HAS_UNIVERSAL_CERTIFICATE_PROVED_LEAN4`
-
-### Phase I.R — Infinite Avoidance Completion & Natural Realization
-- `MINIMAL_COUNTEREXAMPLE_DUAL_2ADIC_CODING_SYNTHESIS_PROVED_LEAN4`
-- `EVENTUAL_Q1_AVOIDANCE_REALIZES_CANONICAL_AVOIDING_ITINERARY_PROVED_LEAN4`
-- `REALIZES_AVOIDING_ITINERARY_IFF_EQUALS_COMPATIBLE_2ADIC_SOURCE_PROVED_LEAN4`
-- `EVERY_INFINITE_AVOIDING_ITINERARY_HAS_UNIQUE_COMPATIBLE_2ADIC_SOURCE_PROVED_LEAN4`
-- `NATURAL_AVOIDING_REALIZATION_IFF_EVENTUAL_ZERO_LIFT_PROVED_LEAN4`
-- `NATURAL_AVOIDING_REALIZER_UNIQUE_PROVED_LEAN4`
-
-### Phase I.Q — Avoidance Prefix Compiler & Height Rigidity Experiments
-- `AVOIDING_PREFIX_UNREALIZABLE_IFF_COMPILER_NONE_PROVED_LEAN4`
-- `AVOIDANCE_PREFIX_COMPILER_SUCCESS_IFF_REALIZABLE_PROVED_LEAN4`
-- `REALIZES_AVOIDING_PREFIX_IFF_COMPILED_RESIDUE_PROVED_LEAN4`
-- `NATURAL_SOURCE_IMPLIES_ZERO_2ADIC_HEIGHT_RATE_PROVED_LEAN4`
-
-### Phase I.P — Exact Endpoint Residues & Avoidance-Language Foundation
-- `MINIMAL_COUNTEREXAMPLE_23INF_OR_AVOIDANCE_SYNTHESIS_PROVED_LEAN4`
-- `MINIMAL_COUNTEREXAMPLE_2_3_INFINITY_PREFIX_CERTIFICATE_PROVED_LEAN4`
-- `SEMANTIC_PREFIX_UNIQUE_3ADIC_ENDPOINT_RESIDUE_PROVED_LEAN4`
-- `EVENTUAL_Q1_AVOIDANCE_INDUCES_AVOID_PATH_PROVED_LEAN4`
-
-### Phase I.O — Minimal-Counterexample Semantic Rigidity
-- `MINIMAL_COUNTEREXAMPLE_CAPTURE_OR_AVOIDANCE_DICHOTOMY_PROVED_LEAN4`
-- `PERIODIC_SEMANTIC_REALIZER_CONTRACTING_MACROCYCLE_COMPOSITE_PROVED_LEAN4`
-- `SEMANTIC_PREFIX_ANCHORED_NO_DESCENT_INEQUALITY_PROVED_LEAN4`
-- `SEMANTIC_PREFIX_REAL_DRIFT_LOWER_BOUND_PROVED_LEAN4`
-- `PERIODIC_SEMANTIC_REALIZER_IMPLIES_CONTRACTING_MACROCYCLE_PROVED_LEAN4`
-- `Q1_RECURRENCE_OR_EVENTUAL_AVOIDANCE_PROVED_LEAN4`
-
-### Phase I.N — Zero-Lift Rigidity & Orbit-Itinerary Bridge
-- `Q1_RECURRENT_SOURCE_IFF_SEMANTIC_ITINERARY_PROVED_LEAN4`
-- `EVENTUALLY_ZERO_LIFT_IFF_UNIQUE_NATURAL_SOURCE_PROVED_LEAN4`
-- `COMPATIBLE_SOURCE_IS_NATURAL_IFF_EVENTUALLY_ZERO_LIFT_PROVED_LEAN4`
-- `SEMANTIC_ITINERARY_OF_ORBIT_PROOF_IRREL_PROVED_LEAN4`
-- `ZERO_LIFT_TAIL_RETURN_STATES_EQ_ACTUAL_ORBIT_PROVED_LEAN4`
-- `REALIZED_ITINERARY_EQ_CANONICAL_PROVED_LEAN4`
-
-### Phase I.M — 2-Adic Completion & Natural-Point Classification
-- `EVERY_INFINITE_SEMANTIC_ITINERARY_HAS_UNIQUE_COMPATIBLE_2ADIC_SOURCE_PROVED_LEAN4`
-- `NATURAL_SEMANTIC_REALIZATION_IFF_EVENTUAL_ZERO_LIFT_PROVED_LEAN4`
-- `ZERO_LIFT_TRANSITION_CHARACTERIZATION_PROVED_LEAN4`
-- `NATURAL_REALIZER_UNIQUE_PROVED_LEAN4`
-- `NON_EVENTUALLY_ZERO_LIFT_NOT_NATURAL_PROVED_LEAN4`
+### Category D: Reclassified Echo / Schema Wrappers
+- Legacy theorems with $P \implies P$, `False` premise, or `Finset.univ` schema wrappers.
 
 ---
 
 ## Active Review Gates
 
-| Gate ID | Description | Status |
-|---|---|---|
-| `GATE_ARCH_FREEZE` | Architectural Freeze & Proof-Gap Audit Ledger Complete | PASSED |
-| `GATE_I_Z_07` | Compression-Aware Refined Quotient & Named Component Certificate Schema | PASSED |
-| `GATE_I_Z_06` | Above-Band Recurrent Component Elimination Criterion & Leading Ternary Zero Compression | PASSED |
-| `GATE_I_Z_05` | First Recurrent SCC Elimination & 3-Adic Endpoint Compression | PASSED |
-| `GATE_I_Z_04` | Pathwise Linear Defect & Growth Forcing Infrastructure | PASSED |
-| `GATE_I_Z_03` | Concrete Reachable SCC Census & Regime Forcing Theorems | PASSED |
-| `GATE_I_Z_02` | Cycle-Weight Cone & Per-Regime Component Elimination | PASSED |
-| `GATE_I_Z_01` | Pilot Concrete Recurrent Quotient Instantiation | PASSED |
-| `GATE_I_Y_01` | Parameterized Recurrent Return Quotient & Invariant SCC Census | PASSED |
-| `GATE_I_X_04` | Growth Decomposition & Shifted-Height Endpoint Infrastructure | PASSED |
-| `GATE_I_X_03` | Concrete Conditional Defect Census & Time-Residue Exclusion | PASSED |
-| `GATE_I_X_02` | Concrete Controlled Recurrent Family & Finite Defect Census | PASSED |
-| `GATE_I_X_01` | Quantitative Signed Defect Identity & Parameterized Height Control | PASSED |
-| `GATE_I_W_01` | Concrete SCC Census & Persistent-Component Elimination | PASSED |
-| `GATE_I_V_01` | Persistent-Component Coverage & Avoidance Reduction | PASSED |
-| `GATE_I_U_01` | Discovery-First Concrete Quotient & Certified Component Elimination | PASSED |
-| `GATE_I_T_01` | Finite Residual Quotients & Certified Potentials | PASSED |
-| `GATE_I_S_01` | Universal Odd-Prefix Certificate & Dual-Branch Rigidity | PASSED |
-| `GATE_I_R_01` | Infinite Avoidance Completion & Natural Realization | PASSED |
-| `GATE_I_Q_01` | Avoidance Prefix Compiler & Height Rigidity | PASSED |
-| `GATE_I_P_01` | Exact Endpoint Residues & Avoidance-Language Foundation | PASSED |
-| `GATE_I_O_01` | Minimal-Counterexample Semantic Rigidity | PASSED |
-| `GATE_I_N_01` | Zero-Lift Rigidity & Orbit-Itinerary Bridge | PASSED |
-| `GATE_I_M_01` | 2-Adic Completion & Natural-Point Classification | PASSED |
-| `GATE_I_L_01` | Semantic Prefix Compiler & Transducer Structure | PASSED |
-| `GATE_I_K_01` | Multi-State $Q_1$ Return Automaton & Language Stratification | PASSED |
-| `GATE_I_2_01` | Section Entry & No-Escape Specification | OPEN |
+| Gate ID | Reconstruction Objective | Target Symbol / Signature | Status |
+|---|---|---|---|
+| **Gate 0** | **Definition-Fidelity Audit** | Audit `OddPrefixWitness`, `UniversalOddPrefixCertificateAt`, and `semanticPrefixTime` | **PASSED** |
+| **Gate 1** | **Shifted Height Contraction & Prefix Bound** | `odd_step_shifted_height_step` proved; `odd_prefix_shifted_height_bound_of_witness` derived without `h_bound` | **PASSED** |
+| **Gate 2A** | **Generic Orbit Prefix Witness** | `oddStep_exact`, `oddStep_pos`, `oddStep_odd`, `v2_3x_plus_1_pos`, `oddOrbit_state_pos`, `oddOrbit_state_odd`, `oddOrbit_step_exact`, `oddOrbit_prefix_has_odd_prefix_witness` | **PASSED** |
+| **Gate 2B** | **Semantic Endpoint Identification** | `semantic_return_state_eq_oddOrbit_prefix` ($y_m = \text{oddOrbit}(M, T_m)$) | **PASSED** |
+| **Gate 2C** | **Source Facts from hreal** | `semantic_realizer_source_q1`, `semantic_realizer_source_pos`, `semantic_realizer_source_odd` | **PASSED** |
+| **Gate 2D** | **Category B Witness & Shifted Height** | `semantic_prefix_has_odd_prefix_witness` & `semantic_prefix_shifted_height_bound` | **PASSED** |
+| **Gate 3** | **Time Growth & Exponential Domination** | `semantic_word_time_pos`, `semantic_prefix_time_ge_index`, `nat_le_two_pow`, `two_pow_mono`, `initial_height_below_two_power_of_large_index`, `semantic_prefix_time_exponential_domination` | **PASSED** |
+| **Gate 4** | **Residue Congruence Bridge** | `semantic_prefix_endpoint_residue_lt`, `semantic_return_state_endpoint_mod`, `semantic_return_state_endpoint_congruence` | **PASSED** |
+| **Gate 5** | **Tail Compression & Least Representative** | `sufficient_time_forces_endpoint_lt_three_power`, `recurrent_tail_eventually_endpoint_eq_least_representative`, `semantic_return_endpoint_compression`, `semantic_return_endpoint_has_leading_ternary_zeros` | **PASSED** |
+| **Gate 6** | **Avoidance Edge Over-Approximation & Trajectory Projection** | `concrete_state_space_cardinality` (864), `two_pow_mod_nine_depends_on_mod_six`, `AvoidingStepWitness`, `avoidingEdgeSpec_implies_finiteConditions`, `avoidingEdgeB_overapproximates`, `actual_avoiding_transition_projects_to_boolean_edge` | **PASSED** |
+| **Gate 7** | **Refined Adaptive SCC Partition** | Bounded-rank parent tree certified SCC partition over refined adaptive quotient space | **NEXT TARGET** |
+| **Gate 8** | **Avoidance Graph Elimination** | `all_true_avoiding_components_eliminated` with closed certificates | OPEN |

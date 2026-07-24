@@ -193,6 +193,182 @@ fn test_compute_guarded_top_ternary_window_diagnostic_execution() {
     assert!(diag.is_guarded_and_zero_verified);
 }
 
+#[test]
+fn test_compute_864_state_diagnostic_census() {
+    let state_index = |r: usize, mu: usize, beta: usize| -> usize {
+        r * 54 + mu * 6 + beta
+    };
+
+    let mut transition_exists = [[[false; 16]; 6]; 16];
+    for r in 0..16 {
+        for m in 0..2048 {
+            let x: u64 = 2 * r as u64 + 1 + 32 * m as u64;
+            let val = (3 * x + 1).trailing_zeros() as usize;
+            let k_mod = val % 6;
+            let target = (3 * x + 1) >> val;
+            let r_next = (target % 32 / 2) as usize;
+            if r_next < 16 {
+                transition_exists[r][k_mod][r_next] = true;
+            }
+        }
+    }
+
+    let mut adj: Vec<Vec<usize>> = vec![Vec::new(); 864];
+    let mut edge_count = 0;
+
+    for r in 0..16 {
+        if r == 3 { continue; } // Q1 excluded state
+        for mu in 0..9 {
+            for beta in 0..6 {
+                let u = state_index(r, mu, beta);
+                for r_next in 0..16 {
+                    if r_next == 3 { continue; } // Target avoids Q1
+                    for k_mod in 0..6 {
+                        if transition_exists[r][k_mod][r_next] {
+                            let beta_next = (beta + k_mod) % 6;
+                            let lhs = (3 * mu + 1) % 9;
+                            let pow2 = match k_mod {
+                                0 => 1, 1 => 2, 2 => 4, 3 => 8, 4 => 7, 5 => 5,
+                                _ => unreachable!(),
+                            };
+                            for mu_next in 0..9 {
+                                if lhs == (pow2 * mu_next) % 9 {
+                                    let v = state_index(r_next, mu_next, beta_next);
+                                    adj[u].push(v);
+                                    edge_count += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    let mut index = 0;
+    let mut indices = vec![None; 864];
+    let mut lowlink = vec![0; 864];
+    let mut on_stack = vec![false; 864];
+    let mut stack = Vec::new();
+    let mut sccs = Vec::new();
+
+    fn strongconnect(
+        u: usize,
+        index: &mut usize,
+        indices: &mut Vec<Option<usize>>,
+        lowlink: &mut Vec<usize>,
+        on_stack: &mut Vec<bool>,
+        stack: &mut Vec<usize>,
+        sccs: &mut Vec<Vec<usize>>,
+        adj: &Vec<Vec<usize>>,
+    ) {
+        indices[u] = Some(*index);
+        lowlink[u] = *index;
+        *index += 1;
+        stack.push(u);
+        on_stack[u] = true;
+
+        for &v in &adj[u] {
+            if indices[v].is_none() {
+                strongconnect(v, index, indices, lowlink, on_stack, stack, sccs, adj);
+                lowlink[u] = lowlink[u].min(lowlink[v]);
+            } else if on_stack[v] {
+                lowlink[u] = lowlink[u].min(indices[v].unwrap());
+            }
+        }
+
+        if lowlink[u] == indices[u].unwrap() {
+            let mut scc = Vec::new();
+            loop {
+                let v = stack.pop().unwrap();
+                on_stack[v] = false;
+                scc.push(v);
+                if v == u { break; }
+            }
+            sccs.push(scc);
+        }
+    }
+
+    for u in 0..864 {
+        let r = u / 54;
+        if r != 3 && indices[u].is_none() {
+            strongconnect(u, &mut index, &mut indices, &mut lowlink, &mut on_stack, &mut stack, &mut sccs, &adj);
+        }
+    }
+
+    let mut largest_scc_size = 0;
+    let mut cyclic_sccs = 0;
+    for scc in &sccs {
+        largest_scc_size = largest_scc_size.max(scc.len());
+        let is_cyclic = if scc.len() > 1 {
+            true
+        } else {
+            let u = scc[0];
+            adj[u].contains(&u)
+        };
+        if is_cyclic {
+            cyclic_sccs += 1;
+        }
+    }
+
+    let mut reachable = vec![false; 864];
+    let mut q = Vec::new();
+    for r in 0..16 {
+        if r == 3 { continue; }
+        for mu in 0..9 {
+            let u = state_index(r, mu, 0);
+            reachable[u] = true;
+            q.push(u);
+        }
+    }
+
+    let mut head = 0;
+    while head < q.len() {
+        let u = q[head];
+        head += 1;
+        for &v in &adj[u] {
+            if !reachable[v] {
+                reachable[v] = true;
+                q.push(v);
+            }
+        }
+    }
+
+    let reachable_state_count = reachable.iter().filter(|&&r| r).count();
+
+    let mut reachable_sccs = 0;
+    let mut reachable_cyclic_sccs = 0;
+    for scc in &sccs {
+        let is_reachable = scc.iter().any(|&u| reachable[u]);
+        if is_reachable {
+            reachable_sccs += 1;
+            let is_cyclic = if scc.len() > 1 {
+                true
+            } else {
+                let u = scc[0];
+                adj[u].contains(&u)
+            };
+            if is_cyclic {
+                reachable_cyclic_sccs += 1;
+            }
+        }
+    }
+
+    println!("\n=== 864-STATE AVOIDANCE GRAPH DIAGNOSTIC CENSUS ===");
+    println!("States (Total): 864 (810 avoiding, 54 Q1)");
+    println!("Boolean edges: {}", edge_count);
+    println!("SCC count: {}", sccs.len());
+    println!("Largest SCC size: {}", largest_scc_size);
+    println!("Cyclic SCCs: {}", cyclic_sccs);
+    println!("Reachable states: {}", reachable_state_count);
+    println!("Reachable SCCs: {}", reachable_sccs);
+    println!("Reachable cyclic SCCs: {}", reachable_cyclic_sccs);
+    println!("====================================================\n");
+
+    assert!(sccs.len() > 0);
+}
+
+
 
 
 
