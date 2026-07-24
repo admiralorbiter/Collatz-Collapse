@@ -2,6 +2,13 @@
 
 ## Verified Claims & Badges Ledger
 
+### Phase I.W — Concrete SCC Census & Persistent-Component Elimination
+- `MINIMAL_ODD_COUNTEREXAMPLE_RETURNS_TO_Q1_INFINITELY_OFTEN_PROVED_LEAN4`
+- `MINIMAL_COUNTEREXAMPLE_MUST_BE_Q1_RECURRENT_UNCONDITIONAL_PROVED_LEAN4`
+- `ACTUAL_AVOIDING_TAIL_EVENTUALLY_STAYS_IN_RELEVANT_COMPONENT_PROVED_LEAN4`
+- `SAME_COMPONENT_REACHABLE_PROVED_LEAN4`
+- `MUTUALLY_REACHABLE_SAME_COMPONENT_PROVED_LEAN4`
+
 ### Phase I.V — Persistent-Component Coverage & Avoidance Reduction
 - `MINIMAL_COUNTEREXAMPLE_MUST_BE_Q1_RECURRENT_CONDITIONAL_PROVED_LEAN4`
 - `ACTUAL_AVOIDING_TAIL_PROJECTS_INTO_SOUND_REACHABLE_PROVED_LEAN4`
@@ -68,6 +75,7 @@
 
 | Gate ID | Description | Status |
 |---|---|---|
+| `GATE_I_W_01` | Concrete SCC Census & Persistent-Component Elimination | PASSED |
 | `GATE_I_V_01` | Persistent-Component Coverage & Avoidance Reduction | PASSED |
 | `GATE_I_U_01` | Discovery-First Concrete Quotient & Certified Component Elimination | PASSED |
 | `GATE_I_T_01` | Finite Residual Quotients & Certified Potentials | PASSED |

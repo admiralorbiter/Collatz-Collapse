@@ -85,23 +85,23 @@ theorem infinite_concrete_path_eventually_stays_in_scc (P : CertifiedSCCPartitio
     exact hC_in
   use C_top, hCtop_mem, M0, h_top
 
--- Definition 6: Component Disposition Enum Type
-inductive ComponentDisposition (C : Finset ConcreteAvoidingQuotientState)
+-- Definition 6: Strict Component Elimination Certificate Inductive Type (No open constructor!)
+inductive ComponentEliminationCertificate (C : Finset ConcreteAvoidingQuotientState)
   | unreachable (h : ∀ s ∈ C, ¬ SoundReachableState s)
   | strictRanking (V : ConcreteAvoidingQuotientState → ℚ) (ε : ℚ) (h_pos : 0 < ε)
       (h_rank : ∀ s ∈ C, ∀ t ∈ C, ConcreteAvoidingEdge s t → V t - V s ≤ -ε)
-  | openComponent
+  | noInfiniteExactLift (h_lift : ∀ α M, RealizesAvoidingItinerary α M → ¬ ∃ M0, ∀ m ≥ M0, projectAvoidingState α M m ∈ C)
 
 -- Theorem 3: No Avoiding Tail If All Persistent Components Disposed Theorem (Proved without sorry)
 theorem no_avoiding_tail_if_all_persistent_components_disposed (P : CertifiedSCCPartition)
-    (hdisposed : ∀ C ∈ P.components, ∃ d : ComponentDisposition C, d ≠ ComponentDisposition.openComponent) :
+    (hdisposed : ∀ C ∈ P.components, ComponentEliminationCertificate C) :
     ¬ ∃ α N0 M, MinimalCounterexampleAvoidingTail α N0 M := by
   intro h_ex
   obtain ⟨α, N0, M, tail⟩ := h_ex
   have h_stay := infinite_concrete_path_eventually_stays_in_scc P α M tail.realizes
   obtain ⟨C, hC_mem, M0, h_in⟩ := h_stay
-  obtain ⟨d, hd_ne⟩ := hdisposed C hC_mem
-  cases d with
+  have cert := hdisposed C hC_mem
+  cases cert with
   | unreachable h_unreach =>
     have h_reach := actual_avoiding_tail_projects_into_sound_reachable α M tail.realizes M0
     have h_in_m0 := h_in M0 (by omega)
@@ -131,12 +131,12 @@ theorem no_avoiding_tail_if_all_persistent_components_disposed (P : CertifiedSCC
     have h_proj := h_le k_big
     have h_min_le := h_min (projectAvoidingState α M (M0 + k_big)) (Set.mem_range_self (M0 + k_big))
     linarith
-  | openComponent =>
-    contradiction
+  | noInfiniteExactLift h_lift =>
+    exact h_lift α M tail.realizes M0 h_in
 
 -- Theorem 4: Minimal Counterexample Must Be Q1 Recurrent Theorem (Proved without sorry)
 theorem minimal_counterexample_must_be_q1_recurrent (P : CertifiedSCCPartition)
-    (hdisposed : ∀ C ∈ P.components, ∃ d : ComponentDisposition C, d ≠ ComponentDisposition.openComponent)
+    (hdisposed : ∀ C ∈ P.components, ComponentEliminationCertificate C)
     (N0 : ℕ) (h_min : IsMinimalOddCounterexample N0) :
     ∃ M ω, MinimalCounterexampleQ1Tail ω N0 M ∧
       (∃ M0, ∀ m ≥ M0, semanticLiftDigit ω m = 0) ∧
