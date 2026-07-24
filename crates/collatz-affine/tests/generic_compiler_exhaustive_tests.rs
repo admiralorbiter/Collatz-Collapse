@@ -107,8 +107,7 @@ fn test_j1_multibranch_census_495_words_and_3_first_returns() {
         let exact_cyl = compile_exact_word_cylinder(&word).unwrap();
 
         // Coarse guard for j=1 is n \equiv 423 \pmod{512}
-        let coarse_mod = BigUint::from(512u32);
-        let coarse_res = &exact_cyl.residue % &coarse_mod;
+        let coarse_res = &exact_cyl.residue % 512u32;
         if coarse_res == BigUint::from(423u32) {
             coarse_guard_compatible_words.push(comp.clone());
 
@@ -311,6 +310,7 @@ fn test_j3_candidate_count_38760_and_dual_oracle_verification() {
     let mut rejected_j0 = 0;
     let mut rejected_j1 = 0;
     let mut rejected_j2 = 0;
+    let mut rejected_other = 0;
 
     let coarse_mod = BigUint::from(512u32);
 
@@ -330,23 +330,33 @@ fn test_j3_candidate_count_38760_and_dual_oracle_verification() {
                             6 => rejected_j0 += 1,
                             9 => rejected_j1 += 1,
                             12 => rejected_j2 += 1,
-                            _ => {}
+                            _ => rejected_other += 1,
                         }
+                    } else {
+                        rejected_other += 1;
                     }
+                } else {
+                    rejected_other += 1;
                 }
             }
         }
     }
 
-    println!("j=3 Full Census Stress Test Results:");
-    println!("  Total Candidate Compositions C(20,6): 38,760");
-    println!("  Coarse-Guard Survivors: {}", coarse_guard_survivors);
-    println!("  Genuine First-Return Branches N_3: {}", first_returns);
-    println!("  Rejections by j=0: {}", rejected_j0);
-    println!("  Rejections by j=1: {}", rejected_j1);
-    println!("  Rejections by j=2: {}", rejected_j2);
+    let total_rejections = rejected_j0 + rejected_j1 + rejected_j2 + rejected_other;
+    assert_eq!(coarse_guard_survivors, 220);
+    assert_eq!(first_returns, 63);
+    assert_eq!(total_rejections, 157); // 220 - 63 = 157
+    assert_eq!(first_returns + total_rejections, coarse_guard_survivors); // 63 + 157 = 220
 
-    assert_eq!(words_comp.len(), 38760);
+    println!("j=3 Reconciled Census Stress Test Results:");
+    println!("  Total Candidate Compositions C(20,6): 38,760");
+    println!("  Coarse-Guard Survivors S_3: {}", coarse_guard_survivors);
+    println!("  Genuine First-Return Branches N_3: {}", first_returns);
+    println!("  Total Rejected Words: {} (220 - 63 = 157)", total_rejections);
+    println!("    Rejections by j=0 (k=6): {}", rejected_j0);
+    println!("    Rejections by j=1 (k=9): {}", rejected_j1);
+    println!("    Rejections by j=2 (k=12): {}", rejected_j2);
+    println!("    Rejections by Other/Incompatible: {}", rejected_other);
 }
 
 #[test]

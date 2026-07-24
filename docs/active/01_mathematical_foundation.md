@@ -73,15 +73,17 @@ $$n_0 \ge B = \left\lfloor \frac{c_k}{2^{A_k} - 3^k} \right\rfloor + 1$$
 | :--- | :--- | :--- | :--- |
 | **Exact Word Cylinder** | $\mathbb{Z}_2$ | None | $2^{-(B(w) + 1)}$ |
 | **Destination-Refined Cylinder** | $\mathbb{Z}_2$ | None ($q=5$ bits) | $2^{-(B(w) + 5)}$ |
-| **First-Return Branch** | $Q_1$ Section ($n \equiv 7 \bmod 32$) | Conditional on $Q_1$ ($\mu(Q_1) = 2^{-5}$) | $\mu_{Q_1}(R(w)) = 2^{-B(w)}$ |
-| **Canonical Quotient Renewal** | Abstract $E_1$ | Geometric decay model | $\text{Pr}(J=j \mid E_1) = \frac{15}{16^{j+1}}$ |
+| **Section Entry $Q_1$** | $[7]_{32}$ | $1/32$ of $\mathbb{Z}_2$ | $1/16$ of odd integers |
+| **Coarse Source Guard $C$** | $[423]_{512}$ | $1/512$ of $\mathbb{Z}_2$ ($1/256$ of odds) | $1/16$ of section $Q_1$ |
+| **Truncated Domain $D_{\le 3}$** | $Q_1$ Section ($n \equiv 7 \bmod 32$) | Truncated first returns ($0 \le j \le 3$) | $K_3 = \frac{5135}{2097152} \approx 0.244856\%$ of $Q_1$ ($3.9177\%$ of $C$) |
+| **Complete Domain $D$** | $Q_1$ Section ($n \equiv 7 \bmod 32$) | All first returns ($j \ge 0$) | $D = \bigcup_{j \ge 0} \bigcup_{w \in L_j} R(w)$ |
 
 ### 5.2 Truncated Dyadic Kraft Measure Sum $K_J$
 $$K_J = \sum_{j=0}^J N_j 2^{-(9 + 4j)}$$
 - **Gap $j=0$**: $N_0 = 1, B_0 = 9 \implies K_0 = \frac{1}{512}$.
 - **Gap $j=1$**: $N_1 = 3, B_1 = 13 \implies K_1 = \frac{19}{8192}$.
 - **Gap $j=2$**: $N_2 = 13, B_2 = 17 \implies K_2 = \frac{317}{131072}$.
-- **Gap $j=3$**: $N_3 = 63, B_3 = 21 \implies K_3 = \frac{5135}{2097152} \approx 0.24486\% \text{ of } Q_1$.
+- **Gap $j=3$**: $N_3 = 63, B_3 = 21 \implies K_3 = \frac{5135}{2097152} \approx 0.244856\%$ of $Q_1$ ($3.9177\%$ of $C$).
 
 ---
 
